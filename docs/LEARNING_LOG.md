@@ -147,6 +147,14 @@ The ten learning concepts, mathematical assumptions, source boundaries, parser l
 
 Completion status: Stage 3's supported scope and acceptance checks are complete. Stage 4 hint-quality evaluation is the next planned milestone and has not started. Do not start it automatically.
 
+## Stage 3 follow-up — Copied multiplication dots (2026-11-03)
+
+The user reported bounds such as `2.10^5` being treated as just `2`. Reproduction distinguished the cases: `2 . 10^5`, `2⋅10^5`, and `2·10^5` silently produced an upper bound of 2, while unspaced `2.10^5` was rejected as a fractional decimal power and lost its usable upper bound.
+
+The fix normalizes `⋅`/`·` as multiplication and interprets an ASCII period before an explicit power of ten as multiplication, preserving original-character offsets. It records that period convention in uncertainties. Numeric-continuation guards reject unsupported dotted tails instead of accepting only their coefficient. Decimal/scientific cases such as `2.10e5 = 210000` remain unchanged; lost exponent formatting is not guessed.
+
+Added 26 regression cases for notation variants, decimals, malformed suffixes, reverse/shared/aggregate bounds, source evidence, sentence punctuation, and offline API growth. The targeted pre-fix run reproduced 21 failures. The complete post-fix offline backend suite passed: **197 tests in 3.48s**, with the existing TestClient deprecation warning. API tests confirm the normalized n cap is 200000 and quadratic growth is 40 billion. No frontend, schema, dependency, provider prompt, or credential changes were required; no live Groq calls were made.
+
 ## Template for future entries
 
 ### Date / stage / feature

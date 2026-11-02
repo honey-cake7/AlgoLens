@@ -168,6 +168,8 @@ Also try just `1 <= n <= 200000` with enough descriptive filler to meet the 20-c
 
 See [the Stage 3 guide](docs/DETERMINISTIC_ANALYSIS.md) for parsing rules, formulas, limitations, extension steps, and ten learning concepts.
 
+Copy/paste notation: `2.10^5`, `2 . 10^5`, `2⋅10^5`, and `2·10⁵` now all produce 200000. An ASCII period is treated as multiplication only before an explicit power of ten, with a visible interpretation note. Ordinary decimals/scientific notation remain unchanged. Unsupported dotted bounds are not silently truncated to `2`. After updating the code, restart the backend if it is not running with `--reload`.
+
 All three hints arrive in one response. Reveal buttons change local state and make no API calls. They are a learning convenience, not a server-side secrecy boundary. Provider failures use safe `{ "detail": { "code": "...", "message": "..." } }` errors: configuration 503, quota 429, timeout 504, invalid output 502, unavailable 503, unexpected internal error 500.
 
 ## Tests and build — no model requests

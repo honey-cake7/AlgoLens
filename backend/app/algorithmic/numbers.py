@@ -28,10 +28,16 @@ def normalize_with_offsets(text: str) -> tuple[str, list[int]]:
             output.extend(expansion)
             offsets.extend([start] + list(range(start, i)))
             continue
-        expansion = {"≤": "<=", "≥": ">=", "×": "*", "−": "-"}.get(character, character)
+        expansion = {"≤": "<=", "≥": ">=", "×": "*", "⋅": "*", "·": "*", "−": "-"}.get(character, character)
         output.extend(expansion)
         offsets.extend([i] * len(expansion))
         i += 1
+    normalized = "".join(output)
+    # Competitive-programming shorthand: a period immediately before 10^k
+    # (or 10**k) means multiplication. Keep other decimal points untouched.
+    # A one-character replacement keeps original source offsets intact.
+    for match in re.finditer(r"(?<=\d)\s*\.(?=\s*10\s*(?:\^|\*\*))", normalized):
+        output[normalized.index(".", match.start(), match.end())] = "*"
     return "".join(output), offsets
 
 

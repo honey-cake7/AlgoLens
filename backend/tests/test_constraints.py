@@ -1,8 +1,8 @@
+from decimal import Decimal
+
 import pytest
 
 from app.algorithmic.constraints import ConstraintParser
-from decimal import Decimal
-
 from app.algorithmic.numbers import MAX_INTEGER, UnsupportedNumber, parse_integer, parse_number
 
 

@@ -24,11 +24,14 @@ Read these files in this order:
 
 `normalize_with_offsets` maps Unicode comparisons, multiplication, minus signs, and digit superscripts to ASCII. For example, `1 ≤ n ≤ 2 × 10⁵` becomes `1 <= n <= 2 * 10^5`. Each generated character points back to an original character, so the response still quotes the actual Unicode source rather than a reconstructed approximation.
 
+Copied multiplication dots `⋅` and `·` are also accepted. A period before an explicit power of ten is treated as multiplication: `2.10^5`, `2 . 10^5`, and `2.10⁵` normalize to `2 * 10^5`, giving 200000. The result includes a note about this period convention, and original evidence is preserved. Other decimals stay unchanged: `2.10e5` means 210000 and `2.5 * 10^5` means 250000. Unsupported dotted expressions are not silently shortened to the coefficient. A lost exponent such as `2⋅105` cannot be reconstructed from this normalization; it does not become 200000 automatically.
+
 `parse_number` uses a narrow regular-expression grammar and Decimal arithmetic, not eval, exec, a Python expression evaluator, or arbitrary function calls. It supports signed decimal literals, scientific notation, products, and simple powers. `parse_integer` requires an integer result for a bound. Strict integer comparisons become inclusive bounds: `n < 10` means an upper bound of 9, and `n > 0` means a lower bound of 1.
 
 | Input | Result |
 | --- | --- |
 | `2 * 10^5`, `2 × 10⁵`, `2e5`, `200,000` | 200000 |
+| `2.10^5`, `2 . 10^5`, `2⋅10^5`, `2·10⁵` | 200000; the ASCII period convention is explicitly noted |
 | `10**5` | 100000 |
 | `-10^2` | -100; the sign applies outside the power |
 | `2.5e5` | 250000 |

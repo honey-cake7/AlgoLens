@@ -57,6 +57,8 @@ class ConstraintParser:
         if example:
             result.uncertainties.append("Example/sample section and subsequent text were excluded from constraint extraction.")
         text, offsets = normalize_with_offsets(original)
+        if any(character == "*" and original[offset] == "." for character, offset in zip(text, offsets)):
+            result.uncertainties.append("A period before an explicit power of ten was interpreted as multiplication (2.10^5 means 2 * 10^5); check this notation against the original statement.")
 
         def raw(start: int, end: int) -> str:
             return original[offsets[start]:offsets[end - 1] + 1]
@@ -124,12 +126,14 @@ class ConstraintParser:
             prefix = text[:match.start()].rsplit("\n", 1)[-1].rstrip(" \t")
             if prefix and prefix[-1] in "+-*/^" and prefix.strip() not in {"-", "*"}:
                 return False
-            if re.search(r"\d,$", prefix):
+            if re.search(r"\d(?:,|\s*\.)$", prefix):
                 return False
             suffix = text[match.end():]
-            if suffix and (suffix[0].isalnum() or suffix.startswith(("_", ".0", ",0"))):
+            if suffix and (suffix[0].isalnum() or suffix.startswith("_")):
                 return False
-            if re.match(r"[ \t]*(?:[+*/^]|-(?=[ \t]*\d)|,\d)", suffix):
+            # A numeric/operator continuation cannot be silently discarded.
+            # A terminal sentence period ("n <= 2. Process...") is allowed.
+            if re.match(r"[ \t]*(?:[+*/^]|-(?=[ \t]*\d)|,\d|\.(?=[ \t]*[\d.+*/^]))", suffix):
                 return False
             # Do not use a comparison from a local example sentence.
             if re.search(r"\b(?:example|sample)\b|e\.g\.", prefix + " " + text[match.start():match.end()], re.I):
