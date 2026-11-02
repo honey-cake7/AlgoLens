@@ -4,6 +4,8 @@ from typing import Annotated, Literal, Self
 
 from pydantic import AfterValidator, BaseModel, ConfigDict, StringConstraints, field_validator, model_validator
 
+from app.schemas.algorithmic import AlgorithmicAssessment
+
 MIN_STATEMENT_LENGTH = 20
 MAX_STATEMENT_LENGTH = 20_000
 
@@ -76,6 +78,7 @@ class AnalysisContent(ContentModel):
 
 
 class AnalyzeResponse(AnalysisContent):
+    deterministic: AlgorithmicAssessment
     analysis_type: Literal["ai", "mock"]
     provider: Literal["groq", "fake"]
     model: Text | None

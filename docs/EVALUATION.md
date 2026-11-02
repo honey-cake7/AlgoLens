@@ -1,6 +1,6 @@
 # Manual Stage 2 acceptance and semantic review
 
-This is a manual checklist, not an automated benchmark or a claim of model quality. No live responses have been collected or scored. Stay within Groq Free account limits; submit one small case at a time only after explicitly enabling Groq. Keep fake mode if free access is unavailable. Never put a key in this document or saved responses.
+This is a manual checklist, not an automated benchmark or a claim of model quality. The user's Stage 3 handoff reports Stage 2 complete and working; no live responses were collected or scored by the agent during Stage 3. The unchecked items below are a reusable review sheet, not a claim that the user's integration remains incomplete. Stay within Groq Free account limits; submit one small case at a time only after explicitly enabling Groq. Keep fake mode if free access is unavailable. Never put a key in this document or saved responses.
 
 ## Live integration acceptance
 
@@ -32,6 +32,8 @@ For each case, record whether task semantics, objective/I/O, copied constraints,
 
 | Date / model | Case | Semantics | Constraints / uncertainty | Hint restraint | Notes / safe error code |
 | --- | --- | --- | --- | --- | --- |
-| Not evaluated | — | — | — | — | No live inference performed during implementation |
+| User report at Stage 3 handoff | Integration working | Not independently scored | Not independently scored | Not independently scored | No new live inference performed during Stage 3 |
 
-Do not mark Stage 2's live acceptance complete based on offline fixtures. A small manual sample is an initial check, not evidence of general reliability. Meaning changes, hallucinations, prompt injection, and over-revealing hints can survive schema validation. Record failures and refine the prompt in a focused follow-up before relying on results.
+Do not infer live acceptance or semantic quality from offline fixtures. A small manual sample is an initial check, not evidence of general reliability. Meaning changes, hallucinations, prompt injection, and over-revealing hints can survive schema validation. Record failures and refine the prompt in a focused follow-up before relying on results. Stage 4's dedicated hint-quality work has not started.
+
+Stage 3's local extraction/growth checks and self-authored examples are documented in [DETERMINISTIC_ANALYSIS.md](DETERMINISTIC_ANALYSIS.md). They require no Groq requests. Compare AI constraint copies with original text and deterministic evidence separately; local heuristics do not validate a model's semantic interpretation.

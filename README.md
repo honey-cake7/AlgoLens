@@ -2,11 +2,12 @@
 
 AlgoLens helps students understand competitive programming statements without immediately revealing complete solutions. It separates the underlying task from narrative and presents objectives, input/output requirements, raw constraints, technique hypotheses, preliminary complexity guidance, observations, uncertainties, and three progressive hints.
 
-**Status:** Stages 0–1 are complete. Stage 2's fake/Groq implementation is in place and verified offline. **Live Groq acceptance and semantic evaluation remain manual and unverified; Stage 2 is not yet marked complete.** No live inference was performed during implementation, startup, tests, or builds.
+**Status:** Stages 0–3 are complete. The user reports Stage 2's Groq workflow working. Stage 3 adds offline constraint extraction and cautious complexity assessment; backend tests, browser tests, and the production build pass. No live inference was performed during Stage 3 development or testing. Stage 4 has not started.
 
 ## ₹0 workflow
 
 - `LLM_PROVIDER=fake` is the default: an explicitly labeled fixed example, no key, internet connection, model download, GPU, or API quota required after dependencies are installed.
+- **Assess constraints only** works locally with either provider configured, including when Groq is unavailable. It analyzes your actual statement and uses zero AI quota.
 - `LLM_PROVIDER=groq` enables one live request only when a user submits Analyze Problem. Use a Groq **Free** account; do not add payment information or upgrade to a paid plan for this project.
 - Groq free-tier availability and limits depend on the account and can change. If free access is unavailable, keep fake mode. The application cannot determine an account's billing plan from a key.
 - No OpenAI API, paid provider, paid fallback, automatic model switch, or automatic retry exists. The `openai/gpt-oss-*` names identify open-weight models hosted by Groq; they do not invoke OpenAI's paid API.
@@ -18,10 +19,13 @@ Groq currently documents both requested GPT-OSS models in its [model catalog](ht
 - Responsive React form with trimmed character count, validation, Clear, loading protection, and preserved text on failure.
 - `GET /api/v1/health` returns `{"status":"ok","service":"algolens-api"}` without contacting any provider.
 - `POST /api/v1/analyze` validates the statement, selects a provider through the analysis service, and returns a validated structured response.
+- `POST /api/v1/assess` extracts constraints and estimates growth without initializing any provider or reading its settings. The same deterministic assessment is included in a successful combined analysis.
 - FakeLLMProvider supports offline development; GroqProvider uses the official async Groq SDK with strict JSON Schema output and Pydantic validation.
 - The UI distinguishes **Demo Mode** from **AI Analysis**, identifies provider/model, renders nine result sections, and reveals hints sequentially. Technique suggestions remain hypotheses; no fabricated confidence percentages appear.
 - Controlled errors cover missing/invalid configuration, rate limits, timeout, invalid output, provider unavailability, and internal failures. No raw SDK errors are returned.
 - Local CORS configuration, backend tests, and desktop/narrow-viewport browser tests.
+- Original constraint evidence, normalized numeric bounds, contextual size roles, test-case/aggregate scopes, explicit ambiguity, and separate time/memory limits.
+- Nine growth profiles from constant through factorial, plus conditional two-parameter profiles when meanings and bounds are known. All estimates are heuristics, not runtime or verdict predictions.
 
 ## Stack and folders
 
@@ -40,10 +44,11 @@ AlgoLens/
 ├── backend/
 │   ├── app/
 │   │   ├── api/routes/    # thin HTTP handlers
+│   │   ├── algorithmic/   # safe numbers, constraint parser, growth engine
 │   │   ├── core/          # settings and safe public errors
 │   │   ├── llm/           # provider protocol, fake, Groq, system prompt
 │   │   ├── schemas/       # content + request/response validation
-│   │   ├── services/      # provider selection and server-owned metadata
+│   │   ├── services/      # deterministic orchestration + provider combination
 │   │   └── main.py        # FastAPI, CORS, safe exception handler
 │   ├── tests/             # offline defaults and mocked SDK transport
 │   └── pyproject.toml
@@ -69,7 +74,7 @@ if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 if (-not (Test-Path frontend/.env)) { Copy-Item frontend/.env.example frontend/.env }
 ```
 
-Existing dependencies need only the backend pip install command to pick up Stage 2's Groq SDK. No new frontend runtime package was added. If the directory is renamed, refresh the editable install using the new path; recreate backend/.venv if other tools still contain old absolute paths.
+Stage 3 adds no dependencies. Existing Stage 2 environments can run it directly. If the directory is renamed, refresh the editable install using the new path; recreate backend/.venv if other tools still contain old absolute paths.
 
 Run backend in terminal 1:
 
@@ -110,13 +115,13 @@ To enable live inference manually:
 4. Review semantic preservation and hint restraint using [the manual evaluation checklist](docs/EVALUATION.md). Do not treat JSON validity as evidence of correctness.
 5. Set `LLM_PROVIDER=fake` to return to offline Demo Mode. Fake mode ignores credentials and does not call the SDK.
 
-Groq's SDK normally retries some failures; this adapter explicitly sets `max_retries=0`. A 429 response produces a free-tier-capacity message and preserves the statement. Wait for capacity or switch to fake mode; a manual Analyze click is a new request. Timeouts, authentication/model-access errors, or malformed/truncated output do not trigger a paid provider, another model, a repair call, or hidden retries. Long inputs may exceed account token limits even though they fit the character limit. Lowering the output budget too far can truncate results, which are rejected.
+Groq's SDK normally retries some failures; this adapter explicitly sets `max_retries=0`. A 429 response produces a free-tier-capacity message and preserves the statement. Use **Assess constraints only** immediately for offline results, wait for capacity, or switch to fake mode. A manual Analyze click is a new provider request. Timeouts, authentication/model-access errors, or malformed/truncated output do not trigger a paid provider, another model, a repair call, or hidden retries. Long inputs may exceed account token limits even though they fit the character limit. Lowering the output budget too far can truncate results, which are rejected.
 
 ## API contract and validation
 
 Request: `POST /api/v1/analyze` with `{"statement":"competitive programming problem..."}`. A strict string of **20–20,000 Unicode code points after trimming** is required. Missing/non-string/empty/short/oversized statements and malformed JSON use standard FastAPI HTTP 422 responses. The bound is on the statement field, not the full HTTP body.
 
-The response preserves Stage 1's structured fields and adds objective, I/O, observations, uncertainties, and metadata:
+The combined response preserves Stage 2's fields and adds a required server-owned `deterministic` object:
 
 | Field | Shape |
 | --- | --- |
@@ -129,8 +134,39 @@ The response preserves Stage 1's structured fields and adds objective, I/O, obse
 | `possible_techniques` | `name`, `explanation`; hypotheses, no confidence percentages |
 | `important_observations`, `uncertainties` | Lists of text; evidence lists may be empty |
 | `hints` | Exactly three entries in level 1, 2, 3 order, each with text |
+| `deterministic` | `source=deterministic`, extraction, selected parameter or null, growth assessments, uncertainties, discrepancies, caveats |
 
-All generation fields are required; nullable semantic values use explicit null unions. All generation objects forbid extra properties. Pydantic rejects invalid types, blank text, fenced code blocks, missing fields, and wrong hint counts/order. The generation schema excludes provider metadata entirely. The browser checks response shape and metadata consistency before rendering.
+All generation fields are required; nullable semantic values use explicit null unions. All generation objects forbid extra properties. Pydantic rejects invalid types, blank text, fenced code blocks, missing fields, and wrong hint counts/order. The generation schema excludes both provider metadata and deterministic results; the model cannot populate these fields. The browser checks response shape, finite numeric bounds, and metadata consistency before rendering.
+
+`POST /api/v1/assess` takes the identical validated request and returns the `AlgorithmicAssessment` object directly, without an AI/demo wrapper. Combined analysis preserves provider errors; it does not silently return partial success. The UI exposes an explicit offline action after failure. Both endpoints appear in `/docs`.
+
+## Try Stage 3 without using Groq
+
+Start the two servers above. Paste this self-authored example and click **Assess constraints only**, even if your root .env still selects Groq:
+
+```text
+Given an array of n integers, determine whether it is sorted.
+1 ≤ n ≤ 2 × 10⁵
+Time limit: 2 seconds
+Memory limit: 256 MB
+```
+
+Expect original Unicode evidence, normalized `1 <= n <= 200000`, an array-length parameter, and approximately 200,000 linear units, 3.52 million n-log-n units, and 40 billion quadratic units. The configured heuristic bands label these promising, possibly feasible, and likely infeasible respectively. The time/memory limits are shown as context, without converting work to seconds or claiming memory fit.
+
+Then try:
+
+```text
+There are t test cases, each with an array of n integers.
+1 <= t <= 10000
+1 <= n <= 1000
+The sum of n over all test cases does not exceed 2000
+```
+
+Expect a total linear upper bound of 2,000, not 10,000 × 1,000. The quadratic total bound is 2,000 × 1,000 = 2 million, not 2,000. Constant/log profiles use at most 2,000 cases here because every n is at least 1. Aggregate exponential/factorial totals remain unavailable rather than inventing a size distribution.
+
+Also try just `1 <= n <= 200000` with enough descriptive filler to meet the 20-character input minimum: the bound is extracted, but no size meaning is invented. Two different array lengths, element-value-only bounds, missing caps, or conflicting bounds explain why a primary estimate is unavailable. In Demo Mode, **Analyze Problem** adds the unrelated fixed provider example beside the deterministic result from your real text. In Groq mode, that action makes the existing single model request; hint reveals make none.
+
+See [the Stage 3 guide](docs/DETERMINISTIC_ANALYSIS.md) for parsing rules, formulas, limitations, extension steps, and ten learning concepts.
 
 All three hints arrive in one response. Reveal buttons change local state and make no API calls. They are a learning convenience, not a server-side secrecy boundary. Provider failures use safe `{ "detail": { "code": "...", "message": "..." } }` errors: configuration 503, quota 429, timeout 504, invalid output 502, unavailable 503, unexpected internal error 500.
 
@@ -148,7 +184,7 @@ npm.cmd test
 
 Backend tests ignore local .env content, force fake defaults, block external DNS/socket connections, and use httpx.MockTransport for the actual Groq SDK. Browser tests start their own servers with `LLM_PROVIDER=fake` and an empty key, override live settings, and block external page requests. The AI UI branch uses an explicit response fixture rather than live inference. Existing servers are never reused. Installed Microsoft Edge is required; screenshots/traces are ignored under frontend/test-results.
 
-Observed Stage 2 checks: **54 backend tests passed**, **24 desktop/narrow-viewport browser tests passed**, and **frontend production build passed**. The existing Starlette/httpx TestClient deprecation warning and Playwright color-setting warning remain non-failing. See [learning log](docs/LEARNING_LOG.md). Live account access, semantic quality, and Groq's acceptance of the schema remain unverified by a live request.
+Observed Stage 3 checks: **171 backend tests passed**, **40 desktop/narrow-viewport browser tests passed**, and **frontend production build passed**. The existing Starlette/httpx TestClient deprecation warning and Playwright color-setting warning remain non-failing. Tests cover the parser, growth/aggregate formulas, one provider call, safe errors, independent offline endpoint, both result sources, progressive hints, and mobile layouts. See [learning log](docs/LEARNING_LOG.md). Live Groq was not called during this stage; the user's Stage 2 success report is separate from automated evidence.
 
 Manual UI checks: submit a valid statement, inspect Network JSON, verify the mode/provider label, reveal hints in sequence, edit/resubmit to reset them, try invalid lengths, stop the backend to check preserved input/errors, and retry after restarting it. Check keyboard navigation and a narrow viewport.
 
@@ -160,11 +196,15 @@ flowchart LR
     C --> V[FastAPI + Pydantic request validation]
     V --> A[Analyze route]
     A --> S[AnalysisService]
+    S --> D[Local parser + complexity engine]
     S --> P[LLMProvider interface]
     P --> F[Fake: fixed local content]
     P --> G[Groq: one async SDK request]
     F --> J[Pydantic content + server metadata]
     G --> J
+    D --> J
+    V --> O[Offline /assess route]
+    O --> D
     J --> U[JSON / browser runtime checks / React sections]
 ```
 
@@ -180,6 +220,12 @@ Read these files in order:
 | frontend/src/services/api.ts | JSON POST, deadlines, runtime checks and safe errors |
 | backend/app/api/routes/analyze.py | Thin route and dependency injection |
 | backend/app/services/analysis_service.py | Provider selection and trusted metadata |
+| backend/app/services/algorithmic_service.py | Local assessment orchestration and tentative AI discrepancies |
+| backend/app/algorithmic/numbers.py | Narrow numeric grammar and Unicode/source offsets |
+| backend/app/algorithmic/constraints.py | Evidence, contextual roles, scopes, safe conflicts |
+| backend/app/algorithmic/complexity.py | Growth, log-space safety, aggregate upper bounds |
+| backend/app/schemas/algorithmic.py | Explicit unknowns and structured assessment contract |
+| frontend/src/components/AlgorithmicResult.tsx | Deterministic evidence and heuristic tables |
 | backend/app/llm/base.py | Small provider protocol |
 | backend/app/llm/fake_provider.py | Offline fixed teaching example |
 | backend/app/llm/groq_provider.py | Async SDK, strict schema, deadlines, zero retries |
@@ -193,6 +239,8 @@ Then read frontend/src/components/AnalysisResult.tsx and backend/tests/test_prov
 
 LLM output can be incorrect or follow malicious instructions despite prompt precautions. Structural validation and a code-fence rejection are not semantic or solution-disclosure proofs. No account billing status or live output quality was verified here. Input is sent to Groq only in explicitly enabled Groq mode; application code does not persist statements, log request bodies, keys, or raw provider errors. Health checks do not establish Groq readiness.
 
-There is no database, authentication, retrieval, scraping, URL fetching, deterministic complexity engine, embeddings, training, cloud hosting, paid API, or Ollama implementation. Raw LLM constraints and complexity suggestions are preliminary. Nothing was committed or deployed by this task.
+The deterministic parser covers a bounded English/numeric grammar, not arbitrary mathematics or full semantics. Sizes need descriptive evidence; example sections and subsequent text are conservatively excluded. Values above 2^53−1, symbolic formulas, and unsupported syntax are not guessed. Heuristic bands are deliberately rough and do not select the correct algorithm. AI discrepancy detection is limited to explicit positive complexity suggestions. See the guide for precise limits.
 
-Next: complete the manual Stage 2 acceptance/evaluation checklist. After that, the planned Stage 3 is constraint normalization and a deterministic, assumption-aware complexity estimator. Do not start it automatically. See [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [decisions](docs/DECISIONS.md).
+There is no database, authentication, retrieval, scraping, URL fetching, embeddings, training, cloud hosting, paid API, or Ollama implementation. Raw LLM suggestions remain preliminary. Nothing was committed or deployed by this task.
+
+Next, only when requested: Stage 4 hint-quality evaluation and controls. See [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [decisions](docs/DECISIONS.md). Stage 3 stops here.

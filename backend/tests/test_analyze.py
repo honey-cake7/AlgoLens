@@ -22,6 +22,7 @@ def test_valid_analysis_returns_typed_demo(client):
         "complexity_guidance", "possible_techniques", "hints",
         "provider", "model", "objective", "input_summary", "output_summary",
         "important_observations", "uncertainties",
+        "deterministic",
     }
     result = AnalyzeResponse.model_validate(data)
     assert result.analysis_type == "mock"
@@ -61,11 +62,11 @@ def test_malformed_json_is_rejected(client):
     assert response.status_code == 422
 
 
-def test_demo_is_identical_for_different_problems(client):
+def test_provider_demo_is_identical_while_deterministic_results_use_the_input(client):
     first = client.post("/api/v1/analyze", json={"statement": VALID_STATEMENT})
     second = client.post("/api/v1/analyze", json={"statement": "Find a path through a directed graph with weighted edges."})
     assert first.status_code == second.status_code == 200
-    assert first.json() == second.json()
+    assert {key: value for key, value in first.json().items() if key != "deterministic"} == {key: value for key, value in second.json().items() if key != "deterministic"}
 
 
 def test_analysis_cors_preflight_and_actual_response(monkeypatch):

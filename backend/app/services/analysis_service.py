@@ -8,6 +8,7 @@ from app.llm.base import LLMProvider
 from app.llm.fake_provider import DEMO_NOTICE, FakeLLMProvider
 from app.llm.groq_provider import GroqProvider
 from app.schemas.analysis import AnalysisContent, AnalyzeRequest, AnalyzeResponse
+from app.services.algorithmic_service import assess_statement, compare_ai_guidance
 
 
 class AnalysisService:
@@ -16,10 +17,14 @@ class AnalysisService:
 
     async def analyze(self, request: AnalyzeRequest) -> AnalyzeResponse:
         try:
+            deterministic = assess_statement(request.statement)
             content = AnalysisContent.model_validate(await self.provider.analyze(request.statement))
             is_fake = self.provider.name == "fake"
+            if not is_fake:
+                deterministic = compare_ai_guidance(deterministic, content.complexity_guidance)
             return AnalyzeResponse(
                 **content.model_dump(),
+                deterministic=deterministic,
                 analysis_type="mock" if is_fake else "ai",
                 provider=self.provider.name,
                 model=self.provider.model,

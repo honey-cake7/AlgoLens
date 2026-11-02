@@ -1,4 +1,6 @@
 import type { AnalyzeResponse, HealthResponse } from '../types/api'
+import type { AlgorithmicAssessment } from '../types/algorithmic'
+import { isAlgorithmicAssessment } from './algorithmicValidation'
 
 const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000').replace(/\/+$/, '')
 
@@ -37,7 +39,7 @@ function isAnalysis(value: unknown): value is AnalyzeResponse {
   if (!isRecord(value)) return false
   const honestMetadata = (value.analysis_type === 'mock' && value.provider === 'fake' && value.model === null && isText(value.demo_notice)) ||
     (value.analysis_type === 'ai' && value.provider === 'groq' && isText(value.model) && value.demo_notice === null)
-  return honestMetadata && isText(value.simplified_problem) &&
+  return honestMetadata && isAlgorithmicAssessment(value.deterministic) && isText(value.simplified_problem) &&
     isNullableText(value.objective) && isNullableText(value.input_summary) && isNullableText(value.output_summary) &&
     isTextList(value.important_observations) && isTextList(value.uncertainties) &&
     Array.isArray(value.constraints) && value.constraints.every(item =>
@@ -50,12 +52,12 @@ function isAnalysis(value: unknown): value is AnalyzeResponse {
     value.hints.every((item, index) => isRecord(item) && item.level === index + 1 && isText(item.text))
 }
 
-export async function analyzeProblem(statement: string, signal: AbortSignal): Promise<AnalyzeResponse> {
+async function postStatement(statement: string, signal: AbortSignal, endpoint: 'analyze' | 'assess'): Promise<unknown> {
   // Longer than the backend's bounded 30s default (40s configurable maximum).
   const timeout = AbortSignal.timeout(45_000)
   let response: Response
   try {
-    response = await fetch(`${baseUrl}/api/v1/analyze`, {
+    response = await fetch(`${baseUrl}/api/v1/${endpoint}`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json', Accept: 'application/json' },
       body: JSON.stringify({ statement: statement.trim() }),
@@ -97,6 +99,17 @@ export async function analyzeProblem(statement: string, signal: AbortSignal): Pr
     if (timeout.aborted) throw new Error('The analysis request timed out. Please try again.')
     throw new Error('The API returned unreadable JSON. Please try again.')
   }
+  return data
+}
+
+export async function analyzeProblem(statement: string, signal: AbortSignal): Promise<AnalyzeResponse> {
+  const data = await postStatement(statement, signal, 'analyze')
   if (!isAnalysis(data)) throw new Error('The API returned an unexpected analysis format. Please try again.')
+  return data
+}
+
+export async function assessProblem(statement: string, signal: AbortSignal): Promise<AlgorithmicAssessment> {
+  const data = await postStatement(statement, signal, 'assess')
+  if (!isAlgorithmicAssessment(data)) throw new Error('The API returned an unexpected deterministic assessment format. Please try again.')
   return data
 }

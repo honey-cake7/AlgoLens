@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test'
 import type { AnalyzeResponse } from '../src/types/api'
+import type { AlgorithmicAssessment } from '../src/types/algorithmic'
 
 const statement = 'Given an array of integers, answer the queries described in the problem.'
 
@@ -215,4 +216,98 @@ test('inconsistent AI/demo metadata is rejected', async ({ page }) => {
   await page.getByLabel('Problem statement', { exact: true }).fill(statement)
   await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
   await expect(page.getByRole('alert')).toContainText('unexpected analysis format')
+})
+
+const boundedStatement = 'Given an array of n integers, process its elements. 1 <= n <= 200000'
+const aggregateStatement = 'There are t test cases, each with an array of n integers.\n1 <= t <= 10000\n1 <= n <= 1000\nThe sum of n over all test cases does not exceed 2000'
+
+test('combined workflow shows actual deterministic bounds beside the unrelated demo', async ({ page }) => {
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(boundedStatement)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Constraint & Complexity Analysis', exact: true })).toBeVisible()
+  await expect(page.getByText('1 <= n <= 200000', { exact: true })).toBeVisible()
+  const table = page.getByRole('region', { name: 'Per-instance growth', exact: true })
+  const quadratic = table.getByRole('row').filter({ has: page.getByText('O(n^2)', { exact: true }) })
+  await expect(quadratic).toContainText('40,000,000,000')
+  await expect(quadratic).toContainText('Likely infeasible')
+  await expect(page.getByLabel('Mock analysis warning')).toContainText('unrelated to your submission')
+  await expect(page.getByRole('button', { name: 'Reveal Hint 1', exact: true })).toBeVisible()
+})
+
+test('offline assessment uses only the assess endpoint and explains aggregate growth', async ({ page }, testInfo) => {
+  let providerRequests = 0
+  await page.route('**/api/v1/analyze', route => { providerRequests += 1; return route.abort() })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(aggregateStatement)
+  const responsePromise = page.waitForResponse(response => response.url().endsWith('/api/v1/assess'))
+  await page.getByRole('button', { name: 'Assess constraints only', exact: true }).click()
+  const response = await responsePromise
+  const data: AlgorithmicAssessment = await response.json()
+  expect(response.status()).toBe(200)
+  expect(data.source).toBe('deterministic')
+  const linear = data.assessments.find(item => item.complexity === 'O(n)' && item.scope === 'all_test_cases')
+  const quadratic = data.assessments.find(item => item.complexity === 'O(n^2)' && item.scope === 'all_test_cases')
+  expect(linear?.estimated_work).toBe(2000)
+  expect(quadratic?.estimated_work).toBe(2000000)
+  await expect(page.getByText('Offline Assessment', { exact: true })).toBeVisible()
+  await expect(page.getByText('sum(n) <= 2000', { exact: true })).toBeVisible()
+  const totals = page.getByRole('region', { name: 'All test cases: conservative bounds', exact: true })
+  await expect(totals.getByRole('row').filter({ has: page.getByText('O(n^2)', { exact: true }) })).toContainText('2,000,000')
+  await expect(page.getByRole('button', { name: 'Reveal Hint 1', exact: true })).toHaveCount(0)
+  expect(providerRequests).toBe(0)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.screenshot({ path: testInfo.outputPath('offline-aggregate.png'), fullPage: true })
+})
+
+test('provider failure leaves an explicit offline action available without retry', async ({ page }) => {
+  let providerRequests = 0
+  await page.route('**/api/v1/analyze', route => {
+    providerRequests += 1
+    return route.fulfill({ status: 429, json: { detail: { code: 'rate_limit' } } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(boundedStatement)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('free-tier capacity')
+  await page.getByRole('button', { name: 'Assess constraints only', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Constraint & Complexity Analysis', exact: true })).toBeVisible()
+  await expect(page.getByRole('alert')).toHaveCount(0)
+  await expect(page.getByLabel('Problem statement', { exact: true })).toHaveValue(boundedStatement)
+  expect(providerRequests).toBe(1)
+})
+
+for (const scenario of [
+  { name: 'no constraints', input: 'Given an array, solve the task described by the story without numeric limits.' },
+  { name: 'value bounds', input: 'Each element a_i is a signed integer. -10^9 <= a_i <= 10^9' },
+  { name: 'ambiguous sizes', input: 'Given an array of n integers and another array of m integers. 1 <= n, m <= 1000' },
+  { name: 'conflicting bounds', input: 'Given an array of n integers.\nn <= 10\nn >= 20' },
+]) {
+  test(`offline UI handles ${scenario.name} without fabricated estimates`, async ({ page }) => {
+    await page.goto('/')
+    await page.getByLabel('Problem statement', { exact: true }).fill(scenario.input)
+    await page.getByRole('button', { name: 'Assess constraints only', exact: true }).click()
+    await expect(page.getByText('Growth assessment unavailable', { exact: true })).toBeVisible()
+    await expect(page.getByText('Deterministic uncertainties', { exact: true })).toBeVisible()
+    await expect(page.getByRole('region', { name: 'Per-instance growth', exact: true })).toHaveCount(0)
+  })
+}
+
+test('synthetic AI disagreement is shown without replacing either source', async ({ page }) => {
+  await page.route('**/api/v1/analyze', async route => {
+    const response = await route.fetch()
+    const data: AnalyzeResponse = await response.json()
+    await route.fulfill({ json: {
+      ...data, analysis_type: 'ai', provider: 'groq', model: 'openai/gpt-oss-120b', demo_notice: null,
+      complexity_guidance: [{ complexity: 'O(n^2)', assessment: 'Promising AI fixture', explanation: 'This is a controlled UI fixture, not a live model response.' }],
+      deterministic: { ...data.deterministic, discrepancies: ['Potential inconsistency fixture: review the AI suggestion and deterministic growth assumptions.'] },
+    } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(boundedStatement)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByLabel('Potential source discrepancies')).toContainText('Potential inconsistency fixture')
+  await expect(page.getByText('Promising AI fixture', { exact: true })).toBeVisible()
+  await expect(page.getByLabel('AI analysis notice')).toContainText('AI Analysis')
 })

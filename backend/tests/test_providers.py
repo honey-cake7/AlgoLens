@@ -239,7 +239,7 @@ def test_generation_schema_uses_required_closed_objects_and_no_metadata():
             for value in node:
                 check(value)
     check(schema)
-    assert not {"analysis_type", "provider", "model", "demo_notice"} & set(schema["properties"])
+    assert not {"analysis_type", "provider", "model", "demo_notice", "deterministic"} & set(schema["properties"])
     assert "anyOf" in schema["properties"]["objective"]
 
 

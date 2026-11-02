@@ -1,3 +1,5 @@
+import type { AlgorithmicAssessment } from './algorithmic'
+
 export interface HealthResponse {
   status: 'ok'
   service: 'algolens-api'
@@ -31,6 +33,7 @@ export interface Hint {
 }
 
 export interface AnalyzeResponse {
+  deterministic: AlgorithmicAssessment
   analysis_type: 'ai' | 'mock'
   provider: 'groq' | 'fake'
   model: string | null

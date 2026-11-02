@@ -22,7 +22,7 @@ Backend CORS origins come from environment configuration; frontend API location 
 
 ## 006 — Deferred until justified
 
-No database, pgvector, Redis, PyTorch, Sentence Transformers, MLflow, Docker production setup, authentication, billing, scraping, retrieval implementation, or training code. Stage 2 is authorized for provider-based analysis only. Deterministic complexity analysis and Ollama remain future work.
+No database, pgvector, Redis, PyTorch, Sentence Transformers, MLflow, Docker production setup, authentication, billing, scraping, retrieval implementation, or training code. Stage 2 authorized provider-based analysis. Stage 3 separately authorizes the local constraint/growth engine; it does not authorize those other systems or Ollama.
 
 ## 007 — Honest deterministic mock contract
 
@@ -60,4 +60,26 @@ Expose only fixed error codes/messages and never raw provider errors. Keep crede
 
 Backend tests force fake defaults, ignore real .env files, block external network connections, and mock the actual SDK's HTTP transport. Browser tests force fake configuration and empty credentials and block external page requests; AI rendering uses an explicit fixture. No test or build consumes inference quota.
 
-Live schema acceptance, account access, and semantic quality cannot be established by mocks. Record Stage 2 as implemented and verified offline, with live acceptance pending. EVALUATION.md provides a small manual checklist and rubric; no live call is automatically initiated to complete it.
+Live schema acceptance, account access, and semantic quality cannot be established by mocks. Stage 2 was initially recorded as implemented and verified offline, with live acceptance pending. The user's Stage 3 handoff subsequently reports Stage 2 complete and working. Record that provenance separately from automated evidence; do not claim a new live verification or completed semantic benchmark. EVALUATION.md remains a manual rubric; no live call is automatically initiated to complete it.
+
+## 014 — Bounded numeric grammar and traceable extraction
+
+Use standard-library regular expressions and Decimal for a narrow literal/scientific/power/product grammar. Never use eval/exec, arbitrary Python expressions, or a new parser dependency. Normalize Unicode notation with original-character offsets. Bound expression length, factors, exponents, constraint count, and numeric magnitudes; cap integers at 2^53−1 for exact JSON/browser transport. Reject malformed suffixes rather than extracting a misleading numeric prefix.
+
+Keep numbers, meanings, and scope distinct. Descriptive evidence assigns roles; variable letters alone do not establish size. Preserve every accepted source, intersect conjunctive bounds, retain conflicts, and abstain for conditional/disjunctive meanings. Example sections are conservatively excluded. English patterns are intentionally limited and extended through positive/negative labeled tests. Do not describe regex extraction as complete semantic understanding.
+
+## 015 — Abstract growth and conservative aggregate bounds
+
+Evaluate nine representative functions at a reliable contextual cap. Use log10 for huge exponential/factorial values and lgamma for factorials. Expose finite log magnitude and null numeric work above 10^300. A selected profile needs a unique usable primary size; do not pick an arbitrary convenient bound among multiple arrays.
+
+Use transparent growth bands of 10^6 and 10^8 abstract units for promising/possibly-feasible/likely-infeasible guidance. These are rough pedagogical choices, not measured throughput or universal runtime thresholds. Always expose caveats and distinguish per-instance growth from conservative all-test upper bounds. Resource headers remain context; no unsupported runtime or memory-fit prediction is made.
+
+An aggregate sum(n) <= S overrides naive T·max(n) linear totals. With nonnegative n_i <= U, polynomial totals are bounded by S·U^(p−1). Count-dependent profiles require T, possibly derived from S and a positive explicit lower bound. Do not derive a count from a zero lower bound. Missing/conflicting information and aggregate exponential/factorial totals can remain unavailable. Conditional multi-parameter profiles illustrate possible algorithms without identifying one. See DETERMINISTIC_ANALYSIS.md for assumptions and limitations.
+
+## 016 — Server-owned deterministic results and explicit offline access
+
+Add `deterministic` to AnalyzeResponse, not AnalysisContent. The provider's prompt, strict generation schema, SDK adapter, retries, and one-request behavior remain unchanged. AnalysisService runs the local engine before its existing provider call, combines both results, and optionally adds a tentative wording-based discrepancy. Keep original AI guidance; fake examples are unrelated and must not be compared against the submitted statement.
+
+Expose POST `/api/v1/assess` with the same statement validation and no provider/settings dependency. This makes local analysis accessible even when Groq settings are invalid or its request fails. Preserve safe provider errors from `/analyze`; the UI offers **Assess constraints only** explicitly instead of silently switching providers or manufacturing AI content. Both actions share loading protection and stale-result clearing. Source labels distinguish extracted evidence, deterministic heuristics, AI suggestions, and demo examples.
+
+All Stage 3 tests stay offline; no new dependency, model call, environment-file edit, account change, or paid service is needed. Stage 3 ends after implementation, tests, build, and documentation; later milestones require a new request.

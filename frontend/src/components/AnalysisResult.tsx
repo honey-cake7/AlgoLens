@@ -35,6 +35,7 @@ export default function AnalysisResult({ analysis }: { analysis: AnalyzeResponse
 
       <section className="result-section" aria-labelledby="constraints-title">
         <h3 id="constraints-title" className="result-title">Constraints</h3>
+        <p className="mb-3 text-xs text-slate-500">Source: {isDemo ? 'Demo example' : 'AI suggestion'}; compare with the extracted statement bounds above.</p>
         {analysis.constraints.length === 0 && <p className="result-copy">No constraints were reliably extracted. Check uncertainties.</p>}
         <ul className="space-y-3">{analysis.constraints.map((constraint, index) => (
           <li key={index} className="result-copy"><span className="mr-2 rounded bg-slate-100 px-2 py-1 font-mono text-xs text-slate-800">{constraint.variable}</span>{constraint.expression && <span className="mr-2 font-mono text-xs">{constraint.expression}</span>}{constraint.description}</li>
@@ -43,7 +44,7 @@ export default function AnalysisResult({ analysis }: { analysis: AnalyzeResponse
 
       <section className="result-section" aria-labelledby="complexity-title">
         <h3 id="complexity-title" className="result-title">Complexity Guidance</h3>
-        <p className="mb-4 text-xs text-slate-500">Preliminary guidance, not a deterministic feasibility estimate or verdict.</p>
+        <p className="mb-4 text-xs text-slate-500">Source: {isDemo ? 'Demo example' : 'AI suggestion'}. Preliminary guidance; the independent deterministic heuristic appears above.</p>
         {analysis.complexity_guidance.length === 0 && <p className="result-copy">Insufficient evidence for complexity guidance.</p>}
         <div className="space-y-4">{analysis.complexity_guidance.map((item, index) => (
           <div key={index}>

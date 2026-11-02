@@ -1,14 +1,18 @@
 import { useEffect, useRef, useState } from 'react'
 import AnalysisResult from './components/AnalysisResult'
+import AlgorithmicResult from './components/AlgorithmicResult'
 import HealthIndicator from './components/HealthIndicator'
 import ProblemInput from './components/ProblemInput'
-import { analyzeProblem } from './services/api'
+import { analyzeProblem, assessProblem } from './services/api'
 import type { AnalyzeResponse } from './types/api'
+import type { AlgorithmicAssessment } from './types/algorithmic'
 
 export default function App() {
   const [statement, setStatement] = useState('')
   const [analysis, setAnalysis] = useState<AnalyzeResponse | null>(null)
-  const [loading, setLoading] = useState(false)
+  const [assessment, setAssessment] = useState<AlgorithmicAssessment | null>(null)
+  const [operation, setOperation] = useState<'analysis' | 'assessment' | null>(null)
+  const loading = operation !== null
   const [error, setError] = useState<string | null>(null)
   const request = useRef<AbortController | null>(null)
 
@@ -17,20 +21,30 @@ export default function App() {
   function changeStatement(value: string) {
     setStatement(value)
     setAnalysis(null)
+    setAssessment(null)
     setError(null)
   }
 
-  async function handleAnalyze() {
+  async function handleAnalyze(mode: 'analysis' | 'assessment' = 'analysis') {
     // A ref closes the gap before React renders the disabled submit button.
     if (request.current) return
     const controller = new AbortController()
     request.current = controller
-    setLoading(true)
+    setOperation(mode)
     setError(null)
     setAnalysis(null)
+    setAssessment(null)
     try {
-      const result = await analyzeProblem(statement, controller.signal)
-      if (!controller.signal.aborted) setAnalysis(result)
+      if (mode === 'assessment') {
+        const result = await assessProblem(statement, controller.signal)
+        if (!controller.signal.aborted) setAssessment(result)
+      } else {
+        const result = await analyzeProblem(statement, controller.signal)
+        if (!controller.signal.aborted) {
+          setAnalysis(result)
+          setAssessment(result.deterministic)
+        }
+      }
     } catch (failure) {
       if (!controller.signal.aborted) {
         setError(failure instanceof Error ? failure.message : 'The request failed. Please try again.')
@@ -38,7 +52,7 @@ export default function App() {
     } finally {
       if (request.current === controller) {
         request.current = null
-        if (!controller.signal.aborted) setLoading(false)
+        if (!controller.signal.aborted) setOperation(null)
       }
     }
   }
@@ -51,7 +65,7 @@ export default function App() {
             <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-xl bg-teal-800 font-mono text-sm text-white">aL</span>
             <span>AlgoLens <span className="font-normal text-teal-700">AI</span></span>
           </a>
-          <span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600">{analysis ? analysis.analysis_type === 'ai' ? 'AI Analysis' : 'Demo Mode' : 'Stage 2 · Learning workspace'}</span>
+          <span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600">{analysis ? analysis.analysis_type === 'ai' ? 'AI Analysis' : 'Demo Mode' : assessment ? 'Offline Assessment' : 'Stage 3 · Learning workspace'}</span>
         </div>
       </header>
 
@@ -60,16 +74,17 @@ export default function App() {
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-teal-800">A workspace for learning</p>
           <h1 className="text-4xl font-semibold leading-tight tracking-tight text-slate-900 sm:text-5xl">Understand the algorithm behind the story.</h1>
           <p className="mt-5 text-base leading-7 text-slate-600">Paste a competitive programming problem and AlgoLens will help identify its underlying structure, constraints, complexity requirements, and solution direction.</p>
-          <p className="mt-3 text-sm leading-6 text-teal-900">Demo Mode works offline by default. AI Analysis uses Groq only when enabled on the backend. Model suggestions should be checked against the original statement.</p>
+          <p className="mt-3 text-sm leading-6 text-teal-900">Constraint and growth assessment works offline. AI Analysis uses Groq only when enabled on the backend; Demo Mode provides a fixed teaching example. Check all suggestions against the original statement.</p>
         </div>
 
         <div className="grid items-start gap-6 lg:grid-cols-2">
-          <ProblemInput statement={statement} loading={loading} onChange={changeStatement} onAnalyze={handleAnalyze} />
+          <ProblemInput statement={statement} loading={loading} assessing={operation === 'assessment'} onChange={changeStatement} onAnalyze={() => handleAnalyze()} onAssess={() => handleAnalyze('assessment')} />
           <section aria-labelledby="result-title" className="panel min-w-0">
             <div className="mb-6 flex items-center gap-3"><span className="step">02</span><h2 id="result-title" className="text-lg font-semibold">Explore the analysis</h2></div>
-            {loading && <p role="status" className="rounded-xl bg-teal-50 p-6 text-sm text-teal-950">Requesting analysis from the backend…</p>}
-            {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm leading-6 text-red-900"><p className="font-semibold">Analysis request failed</p><p className="mt-1">{error}</p><p className="mt-2">Your statement is preserved. You can retry with Analyze Problem.</p></div>}
-            {!loading && !error && !analysis && <div className="rounded-xl border border-dashed border-teal-800/25 bg-teal-50/60 p-6"><p className="font-medium text-teal-950">Ready when you are</p><p className="mt-3 text-sm leading-6 text-slate-600">Submit a statement to explore its structure, objective, input/output, constraints, technique hypotheses, observations, and uncertainties. Three hints stay hidden until you reveal them. The result identifies whether it came from Demo Mode or AI Analysis.</p></div>}
+            {loading && <p role="status" className="rounded-xl bg-teal-50 p-6 text-sm text-teal-950">{operation === 'assessment' ? 'Assessing constraints offline…' : 'Requesting analysis from the backend…'}</p>}
+            {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm leading-6 text-red-900"><p className="font-semibold">Analysis request failed</p><p className="mt-1">{error}</p><p className="mt-2">Your statement is preserved. Retry, or use Assess constraints only for an offline assessment without an AI request.</p></div>}
+            {!loading && !error && !analysis && !assessment && <div className="rounded-xl border border-dashed border-teal-800/25 bg-teal-50/60 p-6"><p className="font-medium text-teal-950">Ready when you are</p><p className="mt-3 text-sm leading-6 text-slate-600">Describe what each variable counts and include its bounds. Assess constraints only performs local parsing and growth estimates. Analyze Problem also requests the configured provider's educational guidance and three progressively revealed hints.</p></div>}
+            {assessment && <div className="mb-6"><AlgorithmicResult result={assessment} /></div>}
             {analysis && <AnalysisResult analysis={analysis} />}
           </section>
         </div>

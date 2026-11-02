@@ -109,7 +109,43 @@ The first provider-success test failed because its mocked async transport tried 
 
 No key was created/read out through tools, real environment file overwritten, live inference call made, paid account/service introduced, commit created or deployment performed. Package downloads and official documentation lookup were development steps, not inference requests. The root folder remains C:\Coding\AlgoLens.
 
-Completion status: Stage 2 implementation and offline verification are finished. Stage 2 acceptance is not marked complete until the user performs the deliberate free-tier request and review in EVALUATION.md. Next planned development is Stage 3's deterministic constraint/complexity work after that acceptance; it has not begun.
+Status recorded at the end of Stage 2: implementation and offline verification were finished, with live acceptance pending. This historical status is superseded by the user's working-integration report and completed Stage 3 entry below.
+
+## Stage 3 — Offline constraint extraction and growth (2026-11-03)
+
+Goal: add repeatable algorithmic reasoning beyond an LLM wrapper without new dependencies, paid services, or model requests. The user reports Stage 2 complete and working; that status is user-reported, not a new live-provider test performed here.
+
+Implemented a Pydantic evidence/assessment contract, bounded Decimal numeric grammar, Unicode/source-offset normalization, contextual ConstraintParser, and pure-Python ComplexityEngine. AnalysisService attaches actual-statement results beside the unchanged provider schema. An independent `/api/v1/assess` route has no provider/settings dependency. The existing dashboard gains a source-labeled section and **Assess constraints only** action while preserving all provider sections and progressive hints.
+
+Important decisions: no variable-name-only size guesses; nulls for missing facts; retain original evidence and conflicting sources; exclude sample sections conservatively; cap exact integers at 2^53−1; use log-space for giant growth; distinguish aggregate sums from powers; label growth bands as heuristic; retain resource limits without predicting runtime/memory fit; flag possible AI disagreement without adjudicating correctness.
+
+Actual verification on 2026-11-03:
+
+| Check | Observed result |
+| --- | --- |
+| `backend/.venv/Scripts/python.exe -m pytest backend/tests -q` | 171 passed in 2.51s; one existing Starlette/httpx TestClient deprecation warning |
+| `npm.cmd run build` from frontend | Passed TypeScript checking and Vite production build; 36 modules transformed, Vite 1.96s |
+| `npm.cmd test` from frontend | 40 passed in 48.9s at desktop and 390px viewport; existing Playwright color warning only |
+| Numeric/parser cases | ASCII/Unicode/scientific/powers/commas/whitespace/shared bounds; original evidence; values versus sizes; test counts/aggregates; missing/conflicting/conditional evidence; malformed/large input; resource separation; sample exclusion |
+| Engine cases | Nine functions; heuristic labels; finite huge-value serialization; missing/ambiguous parameters; conservative test totals; correct linear/nonlinear aggregate formulas; hypothetical graph dimensions |
+| Integration cases | Existing combined/fake workflow and unchanged hints; exactly one mocked provider call; safe provider failures; independent offline endpoint even under invalid settings; tentative source comparison |
+| Browser/visual cases | Existing workflows plus combined actual evidence, assess-only endpoint, provider-error recovery without retry, insufficient/ambiguous/value-only/conflicting sizes, synthetic discrepancy; desktop/mobile aggregate screenshots inspected; no page horizontal overflow |
+| Live provider / dependencies / environment | No live inference, new dependency, real .env edit, credential readout, paid infrastructure, commit, push, or deployment |
+
+Focused tests initially caught disjunctive bounds being treated as conjunctive conflicts, inline examples being partly consumed, and the phrase `its elements` creating a false size variable. The parser now abstains or excludes these cases, with regression coverage. Final review also found that multiple test-count definitions could stop collecting later sizes; the fixed loop preserves sizes while leaving the count ambiguous. These examples show why nearby negative cases matter as much as happy-path regex tests.
+
+Study and exercises:
+
+- Trace `2 × 10⁵` through offsets, Decimal normalization, ParsedConstraint, and the browser card.
+- Compare bare `n <= 200000` with `an array of n integers`: numbers alone do not define size semantics.
+- Verify 200000² = 40 billion and n·log2(n) ≈ 3.52 million; explain why neither measures seconds.
+- For per-case n <= 1000 and sum(n) <= 2000, derive linear total <= 2000 and quadratic total <= 2 million. Explain why zero-sized cases prevent deriving a test count without a positive lower bound.
+- Compare actual deterministic output in Demo Mode with the fixed provider fixture. Explain why fake content cannot meaningfully disagree with a different input.
+- Add one new supported phrase with positive, malformed, and ambiguous tests before expanding patterns.
+
+The ten learning concepts, mathematical assumptions, source boundaries, parser limits, and extension workflow are in DETERMINISTIC_ANALYSIS.md. README.md contains startup commands and manual offline examples.
+
+Completion status: Stage 3's supported scope and acceptance checks are complete. Stage 4 hint-quality evaluation is the next planned milestone and has not started. Do not start it automatically.
 
 ## Template for future entries
 
