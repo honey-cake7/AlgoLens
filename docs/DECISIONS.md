@@ -2,7 +2,7 @@
 
 ## 001 — One repository, modular monolith
 
-Keep frontend and backend together with separate dependency environments. This makes changes easy to review and avoids network boundaries between backend feature modules. Use the existing NLP workspace as the root rather than nesting another repository. Microservices, queues, and production infrastructure add no value for initialization.
+Keep frontend and backend together with separate dependency environments. This makes changes easy to review and avoids network boundaries between backend feature modules. Use the existing workspace as the root rather than nesting another repository; the root directory is now AlgoLens. Microservices, queues, and production infrastructure add no value for initialization.
 
 ## 002 — FastAPI and Pydantic
 
@@ -22,4 +22,18 @@ Backend CORS origins come from environment configuration; frontend API location 
 
 ## 006 — Deferred until justified
 
-No database, pgvector, Redis, PyTorch, Sentence Transformers, MLflow, Docker production setup, authentication, billing, scraping, retrieval implementation, or training code. There are no generated feature stubs beyond the basic package boundaries. Stage 0 must be understood and verified before Stage 1 begins.
+No database, pgvector, Redis, PyTorch, Sentence Transformers, MLflow, Docker production setup, authentication, billing, scraping, retrieval implementation, or training code. Stage 1 is limited to mock workflow and UI behavior. Stage 2 requires a separate authorized task.
+
+## 007 — Honest deterministic mock contract
+
+Stage 1 accepts a strict statement string of 20–20,000 Unicode code points after trimming. The limit rejects empty or accidental oversized input while allowing full problem statements. The frontend mirrors the limits for immediate guidance; Pydantic remains authoritative. Invalid input and malformed JSON use standard HTTP 422 responses.
+
+Use nested Pydantic schemas and matching TypeScript interfaces. `analysis_type` is literally `mock`, `demo_notice` explains that every request gets the same unrelated example, and confidence scores are absent. The route delegates to a service rather than holding a large response dictionary. No keyword rules are used. This isolates API/UI learning from model costs and variability.
+
+## 008 — Local state and explicit failure states
+
+Use React state for input, loading, errors, results, and sequential hint reveal. Disable editing during a pending request, prevent duplicate submission with an immediate request reference, abort on unmount, and apply a 15-second request timeout. Preserve input on failure. Clear stale results on edits and reset hints on each new response. All demo hints are delivered together; client reveal is not a security guarantee.
+
+## 009 — Real browser workflow checks
+
+Add Playwright only as a development dependency, using the installed Microsoft Edge channel. Its two local servers run the actual application; the main round-trip test verifies a browser POST through CORS to the real FastAPI service. Explicit network interception tests controlled failure cases and delayed responses without adding fake backend modes. Run the same nine scenarios at desktop and narrow viewports. Avoid UI, state-management, routing, or animation libraries.

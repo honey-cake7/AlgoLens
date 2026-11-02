@@ -5,7 +5,7 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "algolens-api"
 version = "0.1.0"
-description = "AlgoLens AI learning assistant API — Stage 0"
+description = "AlgoLens AI learning assistant API — Stage 1 mock workflow"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115,<1.0",

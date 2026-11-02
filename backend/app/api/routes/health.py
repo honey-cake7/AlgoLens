@@ -7,5 +7,5 @@ router = APIRouter()
 
 @router.get("/health", response_model=HealthResponse, tags=["health"])
 def health() -> HealthResponse:
-    """Report process health; no external services exist in Stage 0."""
+    """Report process health; no external services are used."""
     return HealthResponse()

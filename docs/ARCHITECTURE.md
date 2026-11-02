@@ -1,35 +1,48 @@
 # Architecture
 
-AlgoLens uses a modular monolith: one backend application organized by responsibility and one browser client in the same repository. Separate development processes do not imply microservices.
+AlgoLens is a modular monolith: one backend application organized by responsibility and one browser client in the same repository. Separate development processes do not imply microservices. Stage 1 implements a complete request flow with fixed mock data.
 
 ```mermaid
 flowchart LR
-    U[Student browser / React] -->|GET /api/v1/health| A[FastAPI versioned router]
-    A --> H[Health route + Pydantic response]
-    H -->|JSON| U
-    A -. Future analysis endpoint .-> S[Backend analysis service]
-    S -. Stage 2 .-> L[LLM provider API]
-    S -. Validate structured output .-> P[Pydantic analysis schemas]
+    U[React browser] -->|GET /api/v1/health| H[Health route]
+    U -->|POST statement JSON| V[FastAPI + Pydantic validation]
+    V --> A[Analyze route]
+    A --> S[Mock analysis service]
+    S --> P[Pydantic response model]
+    P -->|Validated JSON| C[Browser API client / runtime checks]
+    C --> R[React results / hint reveal state]
+    S -. Stage 2 provider boundary .-> L[LLM provider API]
     S -. Later stages .-> M[Retrieval / ML modules]
 ```
 
-Only solid arrows exist in Stage 0. Analyze changes local page state. The health request uses a configurable backend base URL; the backend explicitly permits the local frontend origins through CORS. Ports 5173 and 8000 make them different origins even on the same machine.
+Solid arrows are implemented. The dashed arrows are future work. Every valid statement returns the same teaching example, never a keyword-based guess or an inferred solution.
 
 ## Boundaries
 
-- `frontend/src/App.tsx`: owns the single page and ephemeral input/submission state. Components hold reusable UI. No feature page folders until there are multiple pages.
-- `frontend/src/services`: owns HTTP and runtime response checks. `types` describes contracts for TypeScript; types alone cannot validate network data.
-- `backend/app/api`: owns version prefixes, HTTP methods, status codes, request parsing, and response contracts. Routes should delegate substantial business logic to services.
-- `backend/app/schemas`: owns runtime contracts through Pydantic. Health has literal status and service values.
-- `backend/app/core`: reads environment configuration. Root .env is optional; process variables take precedence. CORS currently permits GET only; Stage 1 must deliberately add POST when its endpoint exists.
-- `backend/app/services`: the future home of use-case logic; currently only a package marker. No speculative provider framework is implemented.
-- `backend/tests`: checks observable API behavior without starting a real network server.
-- `docs`: holds shared design rationale, milestones, and learning notes.
+- `frontend/src/App.tsx`: owns statement, pending/error/result state and an in-flight request reference. Editing clears stale results. New responses mount a fresh result component, resetting hint state.
+- `frontend/src/components/ProblemInput.tsx`: accessible form, trimmed Unicode character count, matching length limits, loading and Clear controls. Editing is disabled while a request is pending so a result cannot silently apply to a different statement.
+- `frontend/src/components/AnalysisResult.tsx`: renders five structured sections and a persistent mock warning. Reveals the three hints in order. All hints arrive in JSON; this is presentation behavior, not a server-side secrecy boundary.
+- `frontend/src/components/HealthIndicator.tsx`: separate startup health check and manual recheck. API availability does not imply real AI availability.
+- `frontend/src/services/api.ts`: all fetch calls, public backend base URL, JSON serialization, 15-second analysis timeout, controlled error messages, and runtime response checks. The client rejects malformed structures and out-of-order hint levels.
+- `frontend/src/types/api.ts`: TypeScript contracts matching the backend, plus the shared-by-convention 20–20,000 character limits. Types disappear at runtime, so they do not replace response checks.
+- `backend/app/api`: versioned paths and HTTP route handlers. FastAPI validates the request before invoking the analyze handler; the thin handler delegates to the service and declares its response model.
+- `backend/app/schemas/analysis.py`: Pydantic request and nested response contracts. The request must be a strict string and is trimmed before inclusive length validation. Response type is explicitly `mock`. Confidence is omitted rather than invented.
+- `backend/app/services/analysis_service.py`: returns a new typed demo response per call, independently of the request contents. No provider framework or SDK exists yet.
+- `backend/app/core`: optional root .env configuration with process variables taking precedence. Exact allowed origins and GET/POST methods support the local development flow. Ports 5173 and 8000 make browser and backend different origins.
+- `backend/tests`: HTTP contracts, validation and boundaries, mock determinism, and CORS via FastAPI's test client.
+- `frontend/tests`: Playwright workflows in installed Edge at desktop and narrow viewports. Success paths use the actual API; failure cases intentionally intercept requests. Playwright owns both local server processes.
+- `docs`: design rationale, verified milestones, and learning notes.
 
-## Future analysis integration
+## Error and configuration flow
 
-Stage 1 will establish an explicit mock API contract and browser request states. Stage 2 will introduce a backend analysis service and a small provider boundary when a real provider is integrated. Secrets remain in backend environment variables. Provider output must be parsed and validated into Pydantic schemas before returning it; malformed outputs and provider failures must produce controlled errors. Routes handle HTTP details; services handle prompting, provider invocation, and validation orchestration.
+Invalid statements and malformed JSON use FastAPI's standard 422 responses; no custom exception framework is introduced. The frontend distinguishes network/configuration failures, request timeout, validation failure, other HTTP failures, unreadable JSON, and invalid response shape. The textarea remains populated on failure. An immediate request reference plus disabled controls prevents simultaneous submissions. Unmounting aborts the pending request.
 
-Constraint extraction, deterministic complexity estimates, retrieval, and future ML experiments should enter as focused modules only in their milestones. Model research should be evaluated independently of the web UI. Do not couple route handlers to training pipelines, external dataset ingestion, or provider SDK objects. Persistence will be considered when a concrete use case needs it.
+`VITE_API_BASE_URL` is public browser configuration. `CORS_ORIGINS` controls which browser origins can read API responses. CORS is not authentication. No secrets or LLM credentials are needed. Input is sent to the local backend but is not stored or logged by application code; Uvicorn's normal access log records method/path/status.
 
-No server logging of problem statements, storage, authentication, retry framework, database, or deployment infrastructure is introduced now. The API currently exposes only process health and generated API docs.
+## Future LLM integration
+
+Stage 2 will add a small backend provider boundary to generate a story-free representation. Secrets remain server-side. Provider output must be parsed and validated into appropriate Pydantic schemas; malformed output, timeouts, and provider failures must produce controlled errors. Schema validation establishes structure, not semantic correctness, so reviewed evaluation examples are necessary.
+
+The Stage 1 response deliberately permits only `analysis_type="mock"`. Stage 2 must explicitly revise the contracts and UI labeling so real fields, remaining demo fields, and unavailable fields cannot be confused. Do not simply send real outputs through a mock-labeled response.
+
+Constraint extraction, deterministic complexity estimates, generated hints, retrieval, persistence, and ML experiments remain later milestones. Routes should not depend directly on training, dataset ingestion, or provider SDK objects.

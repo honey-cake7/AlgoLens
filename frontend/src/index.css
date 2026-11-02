@@ -8,5 +8,9 @@
 }
 
 @layer components {
+  .panel { @apply rounded-2xl border border-slate-200 bg-white p-6 sm:p-8; }
+  .result-section { @apply border-t border-slate-200 pt-5; }
+  .result-title { @apply mb-3 text-base font-semibold text-slate-900; }
+  .result-copy { @apply text-sm leading-6 text-slate-600; overflow-wrap: anywhere; }
   .step { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: #f1f5f9; font-size: 0.7rem; font-weight: 600; color: #64748b; }
 }

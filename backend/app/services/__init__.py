@@ -1,1 +1,1 @@
-"""Business logic belongs here as features are introduced."""
+"""Use-case implementations, currently a fixed mock analysis service."""
