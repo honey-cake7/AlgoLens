@@ -23,13 +23,25 @@ function isText(value: unknown): value is string {
   return typeof value === 'string' && value.trim().length > 0
 }
 
+function isNullableText(value: unknown): value is string | null {
+  return value === null || isText(value)
+}
+
+function isTextList(value: unknown): value is string[] {
+  return Array.isArray(value) && value.every(isText)
+}
+
 // TypeScript interfaces are compile-time only. Reject malformed network data
 // before React tries to render it, including missing/out-of-order hint levels.
 function isAnalysis(value: unknown): value is AnalyzeResponse {
-  return isRecord(value) && value.analysis_type === 'mock' &&
-    isText(value.demo_notice) && isText(value.simplified_problem) &&
+  if (!isRecord(value)) return false
+  const honestMetadata = (value.analysis_type === 'mock' && value.provider === 'fake' && value.model === null && isText(value.demo_notice)) ||
+    (value.analysis_type === 'ai' && value.provider === 'groq' && isText(value.model) && value.demo_notice === null)
+  return honestMetadata && isText(value.simplified_problem) &&
+    isNullableText(value.objective) && isNullableText(value.input_summary) && isNullableText(value.output_summary) &&
+    isTextList(value.important_observations) && isTextList(value.uncertainties) &&
     Array.isArray(value.constraints) && value.constraints.every(item =>
-      isRecord(item) && isText(item.variable) && isText(item.description)) &&
+      isRecord(item) && isText(item.variable) && isNullableText(item.expression) && isText(item.description)) &&
     Array.isArray(value.complexity_guidance) && value.complexity_guidance.every(item =>
       isRecord(item) && isText(item.complexity) && isText(item.assessment) && isText(item.explanation)) &&
     Array.isArray(value.possible_techniques) && value.possible_techniques.every(item =>
@@ -39,7 +51,8 @@ function isAnalysis(value: unknown): value is AnalyzeResponse {
 }
 
 export async function analyzeProblem(statement: string, signal: AbortSignal): Promise<AnalyzeResponse> {
-  const timeout = AbortSignal.timeout(15_000)
+  // Longer than the backend's bounded 30s default (40s configurable maximum).
+  const timeout = AbortSignal.timeout(45_000)
   let response: Response
   try {
     response = await fetch(`${baseUrl}/api/v1/analyze`, {
@@ -58,13 +71,30 @@ export async function analyzeProblem(statement: string, signal: AbortSignal): Pr
     if (response.status === 422) {
       throw new Error('The backend rejected the statement. Use 20–20,000 characters after trimming surrounding whitespace.')
     }
+    // Show controlled provider messages only; never render raw SDK error bodies.
+    const providerMessages: Record<string, string> = {
+      configuration_error: 'Groq is not configured correctly. Check the backend credentials, model and free-tier access, or switch to Demo Mode.',
+      rate_limit: 'Groq free-tier capacity has been reached. Try again later or switch to Demo Mode. No automatic retry was made.',
+      provider_timeout: 'Groq did not respond in time. Try again later or use Demo Mode.',
+      provider_unavailable: 'Groq is currently unavailable. Try again later or use Demo Mode.',
+      invalid_response: 'The model response could not be validated. No analysis was displayed. Try again later or use Demo Mode.',
+      internal_error: 'Analysis could not be completed because of an internal error.',
+    }
+    let body: unknown
+    try { body = await response.json() } catch { body = null }
+    if (isRecord(body) && isRecord(body.detail) && typeof body.detail.code === 'string' &&
+        Object.hasOwn(providerMessages, body.detail.code)) {
+      throw new Error(providerMessages[body.detail.code])
+    }
     throw new Error(`The API could not complete the request (HTTP ${response.status}). Please try again.`)
   }
 
   let data: unknown
   try {
     data = await response.json()
-  } catch {
+  } catch (error) {
+    if (signal.aborted) throw error
+    if (timeout.aborted) throw new Error('The analysis request timed out. Please try again.')
     throw new Error('The API returned unreadable JSON. Please try again.')
   }
   if (!isAnalysis(data)) throw new Error('The API returned an unexpected analysis format. Please try again.')

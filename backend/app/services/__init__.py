@@ -1,1 +1,1 @@
-"""Use-case implementations, currently a fixed mock analysis service."""
+"""Analysis use case and explicit provider selection."""

@@ -1,52 +1,91 @@
-"""Stage 1 HTTP contracts. Mock data makes no claims about the input."""
+"""Separate model-generated content from server-owned provider metadata."""
 
-from typing import Annotated, Literal
+from typing import Annotated, Literal, Self
 
-from pydantic import BaseModel, Field, StringConstraints
+from pydantic import AfterValidator, BaseModel, ConfigDict, StringConstraints, field_validator, model_validator
 
 MIN_STATEMENT_LENGTH = 20
 MAX_STATEMENT_LENGTH = 20_000
 
 
 class AnalyzeRequest(BaseModel):
-    statement: Annotated[
-        str,
-        StringConstraints(
-            strict=True,
-            strip_whitespace=True,
-            min_length=MIN_STATEMENT_LENGTH,
-            max_length=MAX_STATEMENT_LENGTH,
-        ),
-    ]
+    statement: Annotated[str, StringConstraints(
+        strict=True, strip_whitespace=True,
+        min_length=MIN_STATEMENT_LENGTH, max_length=MAX_STATEMENT_LENGTH,
+    )]
 
 
-class Constraint(BaseModel):
-    variable: str
-    description: str
+def non_blank(value: str) -> str:
+    if not value.strip():
+        raise ValueError("Text must not be blank")
+    if "```" in value:
+        raise ValueError("Analysis must not contain fenced code blocks")
+    return value
 
 
-class ComplexityGuidance(BaseModel):
-    complexity: str
-    assessment: str
-    explanation: str
+# Runtime validators deliberately avoid unsupported JSON Schema string/array
+# limits. The generation schema stays simple; Python still checks all invariants.
+Text = Annotated[str, AfterValidator(non_blank)]
 
 
-class TechniquePrediction(BaseModel):
-    name: str
-    explanation: str
-    # No confidence: this is a fixed teaching example, not a prediction.
+class ContentModel(BaseModel):
+    model_config = ConfigDict(extra="forbid", strict=True, str_strip_whitespace=True)
 
 
-class Hint(BaseModel):
+class Constraint(ContentModel):
+    variable: Text
+    expression: Text | None
+    description: Text
+
+
+class ComplexityGuidance(ContentModel):
+    complexity: Text
+    assessment: Text
+    explanation: Text
+
+
+class TechniquePrediction(ContentModel):
+    name: Text
+    explanation: Text
+    # Hypotheses only: no fabricated confidence percentages.
+
+
+class Hint(ContentModel):
     level: Literal[1, 2, 3]
-    text: str
+    text: Text
 
 
-class AnalyzeResponse(BaseModel):
-    analysis_type: Literal["mock"]
-    demo_notice: str
-    simplified_problem: str
+class AnalysisContent(ContentModel):
+    simplified_problem: Text
+    objective: Text | None
+    input_summary: Text | None
+    output_summary: Text | None
     constraints: list[Constraint]
     complexity_guidance: list[ComplexityGuidance]
     possible_techniques: list[TechniquePrediction]
-    hints: list[Hint] = Field(min_length=3, max_length=3)
+    important_observations: list[Text]
+    hints: list[Hint]
+    uncertainties: list[Text]
+
+    @field_validator("hints")
+    @classmethod
+    def exactly_three_ordered_hints(cls, hints: list[Hint]) -> list[Hint]:
+        if [hint.level for hint in hints] != [1, 2, 3]:
+            raise ValueError("Exactly three hints in levels 1, 2, 3 order are required")
+        return hints
+
+
+class AnalyzeResponse(AnalysisContent):
+    analysis_type: Literal["ai", "mock"]
+    provider: Literal["groq", "fake"]
+    model: Text | None
+    demo_notice: Text | None
+
+    @model_validator(mode="after")
+    def honest_metadata(self) -> Self:
+        if self.provider == "fake":
+            if self.analysis_type != "mock" or self.model is not None or self.demo_notice is None:
+                raise ValueError("Fake output must be labeled as a demo")
+        elif self.analysis_type != "ai" or self.model is None or self.demo_notice is not None:
+            raise ValueError("Groq output must have AI metadata without a demo notice")
+        return self

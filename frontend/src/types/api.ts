@@ -9,6 +9,7 @@ export const MAX_STATEMENT_LENGTH = 20_000
 
 export interface Constraint {
   variable: string
+  expression: string | null
   description: string
 }
 
@@ -30,11 +31,18 @@ export interface Hint {
 }
 
 export interface AnalyzeResponse {
-  analysis_type: 'mock'
-  demo_notice: string
+  analysis_type: 'ai' | 'mock'
+  provider: 'groq' | 'fake'
+  model: string | null
+  demo_notice: string | null
   simplified_problem: string
+  objective: string | null
+  input_summary: string | null
+  output_summary: string | null
   constraints: Constraint[]
   complexity_guidance: ComplexityGuidance[]
   possible_techniques: TechniquePrediction[]
   hints: Hint[]
+  important_observations: string[]
+  uncertainties: string[]
 }

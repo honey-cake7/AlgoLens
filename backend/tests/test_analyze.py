@@ -20,9 +20,12 @@ def test_valid_analysis_returns_typed_demo(client):
     assert set(data) == {
         "analysis_type", "demo_notice", "simplified_problem", "constraints",
         "complexity_guidance", "possible_techniques", "hints",
+        "provider", "model", "objective", "input_summary", "output_summary",
+        "important_observations", "uncertainties",
     }
     result = AnalyzeResponse.model_validate(data)
     assert result.analysis_type == "mock"
+    assert result.provider == "fake" and result.model is None
     assert "unrelated to your submission" in result.demo_notice
     assert result.simplified_problem and result.constraints and result.complexity_guidance
     assert [hint.level for hint in result.hints] == [1, 2, 3]

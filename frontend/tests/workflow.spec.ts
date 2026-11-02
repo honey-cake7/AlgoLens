@@ -3,6 +3,14 @@ import type { AnalyzeResponse } from '../src/types/api'
 
 const statement = 'Given an array of integers, answer the queries described in the problem.'
 
+test.beforeEach(async ({ context }) => {
+  await context.route('**/*', route => {
+    const url = new URL(route.request().url())
+    return url.hostname === '127.0.0.1' || url.hostname === 'localhost'
+      ? route.continue() : route.abort('blockedbyclient')
+  })
+})
+
 test('input enforces trimmed length limits and Clear resets it', async ({ page }) => {
   await page.goto('/')
   const input = page.getByLabel('Problem statement', { exact: true })
@@ -41,7 +49,9 @@ test('real API round trip renders all sections and reveals hints sequentially', 
   const data: AnalyzeResponse = await response.json()
   expect(data.analysis_type).toBe('mock')
   await expect(page.getByLabel('Mock analysis warning')).toContainText('unrelated to your submission')
-  for (const name of ['Problem Essence', 'Constraints', 'Complexity Guidance', 'Possible Techniques', 'Progressive Hints']) {
+  expect(data.provider).toBe('fake')
+  expect(data.model).toBeNull()
+  for (const name of ['Problem Essence', 'Objective', 'Input/Output', 'Constraints', 'Complexity Guidance', 'Possible DSA Techniques', 'Important Observations', 'Progressive Hints', 'Uncertainties']) {
     await expect(page.getByRole('heading', { name, exact: true })).toBeVisible()
   }
   for (const hint of data.hints) await expect(page.getByText(hint.text, { exact: true })).toHaveCount(0)
@@ -83,7 +93,7 @@ test('loading disables editing and prevents duplicate submissions', async ({ pag
     await expect(page.getByRole('button', { name: 'Analyzing…', exact: true })).toBeDisabled()
     await expect(page.getByLabel('Problem statement', { exact: true })).toBeDisabled()
     await expect(page.getByRole('button', { name: 'Clear', exact: true })).toBeDisabled()
-    await expect(page.getByText('Requesting demo analysis from the backend…')).toBeVisible()
+    await expect(page.getByText('Requesting analysis from the backend…')).toBeVisible()
     await page.locator('form').evaluate((form: HTMLFormElement) => form.requestSubmit())
   } finally {
     release()
@@ -151,4 +161,58 @@ test('health indicator recovers after the API is available again', async ({ page
   await page.unroute('**/api/v1/health')
   await page.getByRole('button', { name: 'Recheck', exact: true }).click()
   await expect(page.getByText('Backend connected', { exact: true })).toBeVisible()
+})
+
+test('AI response fixture displays provider, uncertainties and hidden hints', async ({ page }, testInfo) => {
+  // UI branch only: reuse local fake content; no SDK or live Groq request.
+  await page.route('**/api/v1/analyze', async route => {
+    const response = await route.fetch()
+    const data: AnalyzeResponse = await response.json()
+    await route.fulfill({ json: {
+      ...data, analysis_type: 'ai', provider: 'groq', model: 'openai/gpt-oss-120b', demo_notice: null,
+      objective: null, input_summary: null, output_summary: null,
+      constraints: [], complexity_guidance: [], possible_techniques: [], important_observations: [],
+      uncertainties: ['Fixture only: input bounds were not provided.'],
+    } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(statement)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByLabel('AI analysis notice')).toContainText('openai/gpt-oss-120b')
+  await expect(page.getByLabel('AI analysis notice')).toContainText('hypotheses')
+  await expect(page.getByLabel('Mock analysis warning')).toHaveCount(0)
+  await expect(page.getByText('Not reliably determined from the statement.')).toBeVisible()
+  await expect(page.getByText('No constraints were reliably extracted. Check uncertainties.')).toBeVisible()
+  await expect(page.getByText('Fixture only: input bounds were not provided.')).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Reveal Hint 1', exact: true })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Reveal Hint 2', exact: true })).toHaveCount(0)
+  await page.evaluate(() => window.scrollTo(0, 0))
+  await page.screenshot({ path: testInfo.outputPath('ai-fixture.png'), fullPage: true })
+})
+
+test('free-tier limit displays a safe message without automatic retry', async ({ page }) => {
+  let requests = 0
+  await page.route('**/api/v1/analyze', route => {
+    requests += 1
+    return route.fulfill({ status: 429, json: { detail: { code: 'rate_limit', message: 'Raw provider detail must not be rendered' } } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(statement)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('Groq free-tier capacity has been reached')
+  await expect(page.getByRole('alert')).not.toContainText('Raw provider detail')
+  await expect(page.getByLabel('Problem statement', { exact: true })).toHaveValue(statement)
+  expect(requests).toBe(1)
+})
+
+test('inconsistent AI/demo metadata is rejected', async ({ page }) => {
+  await page.route('**/api/v1/analyze', async route => {
+    const response = await route.fetch()
+    const data: AnalyzeResponse = await response.json()
+    await route.fulfill({ json: { ...data, analysis_type: 'ai' } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(statement)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('unexpected analysis format')
 })

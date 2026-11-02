@@ -51,7 +51,7 @@ export default function App() {
             <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-xl bg-teal-800 font-mono text-sm text-white">aL</span>
             <span>AlgoLens <span className="font-normal text-teal-700">AI</span></span>
           </a>
-          <span className="rounded-full border border-amber-200 bg-amber-50 px-3 py-1 text-xs text-amber-900">Stage 1 · Mock analysis</span>
+          <span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600">{analysis ? analysis.analysis_type === 'ai' ? 'AI Analysis' : 'Demo Mode' : 'Stage 2 · Learning workspace'}</span>
         </div>
       </header>
 
@@ -60,16 +60,16 @@ export default function App() {
           <p className="mb-4 text-xs font-semibold uppercase tracking-[0.2em] text-teal-800">A workspace for learning</p>
           <h1 className="text-4xl font-semibold leading-tight tracking-tight text-slate-900 sm:text-5xl">Understand the algorithm behind the story.</h1>
           <p className="mt-5 text-base leading-7 text-slate-600">Paste a competitive programming problem and AlgoLens will help identify its underlying structure, constraints, complexity requirements, and solution direction.</p>
-          <p className="mt-3 text-sm leading-6 text-teal-900">Demo analysis — real AI analysis will be added in the next stage. This preview returns the same illustrative example for every valid statement.</p>
+          <p className="mt-3 text-sm leading-6 text-teal-900">Demo Mode works offline by default. AI Analysis uses Groq only when enabled on the backend. Model suggestions should be checked against the original statement.</p>
         </div>
 
         <div className="grid items-start gap-6 lg:grid-cols-2">
           <ProblemInput statement={statement} loading={loading} onChange={changeStatement} onAnalyze={handleAnalyze} />
           <section aria-labelledby="result-title" className="panel min-w-0">
-            <div className="mb-6 flex items-center gap-3"><span className="step">02</span><h2 id="result-title" className="text-lg font-semibold">Explore the demo analysis</h2></div>
-            {loading && <p role="status" className="rounded-xl bg-teal-50 p-6 text-sm text-teal-950">Requesting demo analysis from the backend…</p>}
+            <div className="mb-6 flex items-center gap-3"><span className="step">02</span><h2 id="result-title" className="text-lg font-semibold">Explore the analysis</h2></div>
+            {loading && <p role="status" className="rounded-xl bg-teal-50 p-6 text-sm text-teal-950">Requesting analysis from the backend…</p>}
             {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm leading-6 text-red-900"><p className="font-semibold">Analysis request failed</p><p className="mt-1">{error}</p><p className="mt-2">Your statement is preserved. You can retry with Analyze Problem.</p></div>}
-            {!loading && !error && !analysis && <div className="rounded-xl border border-dashed border-teal-800/25 bg-teal-50/60 p-6"><p className="font-medium text-teal-950">Ready when you are</p><p className="mt-3 text-sm leading-6 text-slate-600">Add a statement to try the full frontend-to-backend workflow. The response will demonstrate problem essence, constraints, complexity guidance, possible techniques, and three hidden hints.</p></div>}
+            {!loading && !error && !analysis && <div className="rounded-xl border border-dashed border-teal-800/25 bg-teal-50/60 p-6"><p className="font-medium text-teal-950">Ready when you are</p><p className="mt-3 text-sm leading-6 text-slate-600">Submit a statement to explore its structure, objective, input/output, constraints, technique hypotheses, observations, and uncertainties. Three hints stay hidden until you reveal them. The result identifies whether it came from Demo Mode or AI Analysis.</p></div>}
             {analysis && <AnalysisResult analysis={analysis} />}
           </section>
         </div>

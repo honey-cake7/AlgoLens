@@ -26,7 +26,7 @@ export default function ProblemInput({ statement, loading, onChange, onAnalyze }
       <div className="mb-6 flex items-center gap-3"><span className="step">01</span><h2 id="input-title" className="text-lg font-semibold">Start with a problem</h2></div>
       <form onSubmit={submit} aria-busy={loading}>
         <label htmlFor="statement" className="mb-2 block text-sm font-medium">Problem statement</label>
-        <p id="statement-help" className="mb-3 text-sm leading-6 text-slate-500">Include the statement, constraints, and examples. Your text is sent to the local API; the response is a fixed demo, not an analysis of your input.</p>
+        <p id="statement-help" className="mb-3 text-sm leading-6 text-slate-500">Include the statement, constraints, and examples. Your text goes to the backend; in Groq mode it is also sent to Groq. Demo Mode returns a fixed, unrelated example.</p>
         <textarea id="statement" aria-describedby="statement-help statement-count statement-validation" aria-invalid={Boolean(validationMessage)} value={statement} disabled={loading} onChange={event => onChange(event.target.value)} placeholder="Paste a competitive programming problem here…" className="min-h-80 w-full resize-y rounded-xl border border-slate-300 bg-slate-50 p-4 text-sm leading-6 placeholder:text-slate-400 disabled:opacity-70" />
         <p id="statement-count" className="mt-2 text-xs text-slate-500">{count.toLocaleString()} / {MAX_STATEMENT_LENGTH.toLocaleString()} characters · minimum {MIN_STATEMENT_LENGTH}, after trimming</p>
         <p id="statement-validation" className="mt-2 min-h-5 text-sm text-amber-800">{validationMessage}</p>

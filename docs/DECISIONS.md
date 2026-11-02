@@ -14,7 +14,7 @@ React supports incremental components and stateful interactions. TypeScript catc
 
 ## 004 — LLM-first, beginning in Stage 2
 
-Start with an existing model to learn what representations and evaluations the product needs before spending effort training a dedicated model. Stage 1 uses clearly labeled mocks to establish the interface. Stage 2 will add a backend provider boundary and validated output. Do not add an unused SDK or abstraction now.
+Start with an existing model to learn what representations and evaluations the product needs before spending effort training a dedicated model. Stage 1 established the mock interface. Stage 2 adds the provider boundary and structured output with Groq Free, replacing the original paid-OpenAI integration plan to respect the explicit ₹0 budget. No OpenAI API SDK or paid service is integrated.
 
 ## 005 — Explicit configuration and minimal dependencies
 
@@ -22,18 +22,42 @@ Backend CORS origins come from environment configuration; frontend API location 
 
 ## 006 — Deferred until justified
 
-No database, pgvector, Redis, PyTorch, Sentence Transformers, MLflow, Docker production setup, authentication, billing, scraping, retrieval implementation, or training code. Stage 1 is limited to mock workflow and UI behavior. Stage 2 requires a separate authorized task.
+No database, pgvector, Redis, PyTorch, Sentence Transformers, MLflow, Docker production setup, authentication, billing, scraping, retrieval implementation, or training code. Stage 2 is authorized for provider-based analysis only. Deterministic complexity analysis and Ollama remain future work.
 
 ## 007 — Honest deterministic mock contract
 
-Stage 1 accepts a strict statement string of 20–20,000 Unicode code points after trimming. The limit rejects empty or accidental oversized input while allowing full problem statements. The frontend mirrors the limits for immediate guidance; Pydantic remains authoritative. Invalid input and malformed JSON use standard HTTP 422 responses.
+Stage 1 established a strict statement string of 20–20,000 Unicode code points after trimming. Keep those bounds in Stage 2; the frontend mirrors them for guidance while Pydantic remains authoritative. Invalid input and malformed JSON use standard HTTP 422 responses.
 
-Use nested Pydantic schemas and matching TypeScript interfaces. `analysis_type` is literally `mock`, `demo_notice` explains that every request gets the same unrelated example, and confidence scores are absent. The route delegates to a service rather than holding a large response dictionary. No keyword rules are used. This isolates API/UI learning from model costs and variability.
+The original nested mock contract established a clearly unrelated fixed example without confidence scores or keyword rules. Stage 2 extends that contract and keeps honest demo labeling through server-owned metadata.
 
 ## 008 — Local state and explicit failure states
 
-Use React state for input, loading, errors, results, and sequential hint reveal. Disable editing during a pending request, prevent duplicate submission with an immediate request reference, abort on unmount, and apply a 15-second request timeout. Preserve input on failure. Clear stale results on edits and reset hints on each new response. All demo hints are delivered together; client reveal is not a security guarantee.
+Use React state for input, loading, errors, results and sequential hint reveal. Disable editing during a pending request, prevent duplicate submission with an immediate request reference, abort on unmount, and preserve input on failure. Clear stale results on edits and reset hints on each new response. Stage 2 increases the browser deadline to 45 seconds, above the backend's bounded provider deadline. All hints are delivered together; client reveal is not a security guarantee.
 
 ## 009 — Real browser workflow checks
 
-Add Playwright only as a development dependency, using the installed Microsoft Edge channel. Its two local servers run the actual application; the main round-trip test verifies a browser POST through CORS to the real FastAPI service. Explicit network interception tests controlled failure cases and delayed responses without adding fake backend modes. Run the same nine scenarios at desktop and narrow viewports. Avoid UI, state-management, routing, or animation libraries.
+Playwright is development-only and uses installed Microsoft Edge. Its local servers run the actual application; the main round trip verifies browser POST through CORS to FastAPI. Explicit interception tests failures and delayed responses without adding fake backend modes. Stage 2 runs twelve scenarios at desktop and narrow viewports, pins fake mode and empty credentials, and blocks external page requests. No UI, state-management, routing or animation library was introduced.
+
+## 010 — Zero-budget provider selection
+
+Default to FakeLLMProvider, which is deterministic, clearly unrelated to the submitted statement, and works without a key or network. Groq requires explicit backend configuration and an analysis submission. A small Protocol supports later local Ollama inference without provider-specific code in routes or components. No LangChain, LlamaIndex, training library, or orchestration framework is needed.
+
+Use the current official async Groq SDK, with GPT-OSS 120B as default and a deliberate 20B alternative. The known model allowlist avoids silently switching to another model. Model availability and account billing status are not probed at startup; account Free access must be checked manually. If it is unavailable, fake mode keeps the project usable for ₹0.
+
+## 011 — One strict request, then runtime validation
+
+Use Chat Completions with strict JSON Schema. Generate the schema from semantic AnalysisContent, with required closed objects and explicit nullable values. Python validators add text and exact hint-order checks without complex generation-schema constructs. Pydantic validates the returned JSON; truncated or malformed output is rejected without a repair call. Provider metadata is assigned by the server, never the model.
+
+Keep the system policy in its own module and serialize untrusted problem text separately. Explicitly preserve operation counts, contiguity, graph direction and other task semantics. The prompt asks for short educational justifications, not hidden reasoning or complete solutions. Reject fenced code blocks as a limited guard; semantic fidelity and hint restraint still need review.
+
+## 012 — Quota and failure safeguards
+
+One normal submission makes one request. Disable the SDK's default retries, including quota retries. Default completion budget is 3,072 tokens (512–4,096 allowed), low reasoning effort, with a total 30-second deadline (at most 40 configurable) and a 45-second browser deadline. All hint reveal is local. No streaming, tools, browsing, model listing, paid fallback, account upgrade or automatic model change is used.
+
+Expose only fixed error codes/messages and never raw provider errors. Keep credentials in SecretStr and backend-only configuration; pin the official API host rather than accepting an environment redirect. Re-read settings per request so a restart/reconfiguration does not require a cache reset. A root .env is optional; process settings win. Never rewrite a real .env.
+
+## 013 — Offline tests and honest completion status
+
+Backend tests force fake defaults, ignore real .env files, block external network connections, and mock the actual SDK's HTTP transport. Browser tests force fake configuration and empty credentials and block external page requests; AI rendering uses an explicit fixture. No test or build consumes inference quota.
+
+Live schema acceptance, account access, and semantic quality cannot be established by mocks. Record Stage 2 as implemented and verified offline, with live acceptance pending. EVALUATION.md provides a small manual checklist and rubric; no live call is automatically initiated to complete it.

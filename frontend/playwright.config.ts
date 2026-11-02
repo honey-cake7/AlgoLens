@@ -31,6 +31,13 @@ export default defineConfig({
       cwd: backendDirectory,
       url: 'http://127.0.0.1:8000/api/v1/health',
       reuseExistingServer: false,
+      // Ignore live settings/keys in the developer's environment or root .env.
+      env: {
+        LLM_PROVIDER: 'fake', GROQ_API_KEY: '',
+        GROQ_MODEL: 'openai/gpt-oss-120b', GROQ_MAX_OUTPUT_TOKENS: '3072',
+        GROQ_TIMEOUT_SECONDS: '30',
+        CORS_ORIGINS: 'http://localhost:5173,http://127.0.0.1:5173',
+      },
     },
     {
       command: 'npm run dev',

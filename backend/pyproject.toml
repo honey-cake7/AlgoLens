@@ -5,13 +5,14 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "algolens-api"
 version = "0.1.0"
-description = "AlgoLens AI learning assistant API — Stage 1 mock workflow"
+description = "AlgoLens AI — offline demo and optional Groq analysis"
 requires-python = ">=3.11"
 dependencies = [
     "fastapi>=0.115,<1.0",
     "pydantic>=2.10,<3.0",
     "uvicorn>=0.34,<1.0",
     "python-dotenv>=1.0,<2.0",
+    "groq>=1.7,<2.0",
 ]
 
 [project.optional-dependencies]

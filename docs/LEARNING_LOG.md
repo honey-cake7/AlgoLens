@@ -75,6 +75,42 @@ Suggested exercises: submit a custom statement and inspect the Network panel; co
 
 Next authorized milestone: none beyond Stage 1. Stage 2 is the planned next task, adding backend-only LLM problem simplification, explicit real/mock contract changes, and semantic evaluation.
 
+## Stage 2 — Optional Groq and safe offline default (2026-11-02)
+
+Goal: introduce a provider boundary and structured LLM analysis while keeping the project usable for ₹0. The user explicitly replaced the original paid-OpenAI plan with Groq Free and required all automated checks to stay offline.
+
+What changed: FakeLLMProvider is the default; GroqProvider makes one async SDK call only during a submitted, explicitly configured analysis. AnalysisContent contains semantic fields; AnalysisService owns provider/type/model/demo metadata. The frontend preserves its layout and adds objective, I/O, observations and uncertainties, AI/demo labeling, and safe provider errors. Exactly three ordered hints remain hidden initially.
+
+Concepts to study:
+
+- A Protocol specifies behavior without requiring an inheritance framework. Fake and Groq return the same Pydantic content contract; future Ollama can implement it.
+- Async SDK calls avoid blocking the FastAPI event loop; an async context closes connections and a total deadline bounds the request.
+- JSON Schema guides model generation through required closed objects and explicit null unions. Pydantic then validates returned JSON plus runtime invariants that are not generation-schema keywords.
+- Metadata is a trust boundary: the model cannot choose its own provider label, confidence percentages, or demo/AI status.
+- Environment precedence and SecretStr keep machine settings separate from code. The browser bundle is public, so provider keys belong only on the backend.
+- Rate limits are controlled failures. Disable SDK retries to avoid hidden quota use; preserve input and let the user decide whether/when to submit again. Hint reveal makes no extra calls.
+- External socket/DNS guards, fake defaults and mocked SDK HTTP transport make tests independent of keys, network availability and free-tier quotas.
+- Correct JSON is not proof of task equivalence, technique correctness, safe hints, or resistance to prompt injection. Evaluation remains necessary.
+
+Actual verification on 2026-11-02:
+
+| Check | Observed result |
+| --- | --- |
+| Dependency install | Official groq 1.7.0 installed; distro 1.9.0 and sniffio 1.3.1 added transitively; no new frontend dependency |
+| Backend suite | 54 passed in 1.67s; existing Starlette/httpx TestClient deprecation warning |
+| SDK contract/failure tests | Actual SDK with mocked transport: both selected model IDs, strict request schema, one request/no retries, missing key, quota, authentication/model access, total/transport timeouts, connection/server failure, malformed/truncated output, safe errors and metadata |
+| Browser suite | 24 passed in 28.0s across desktop and a 390px viewport; fake forced even if live settings exist; external page requests blocked |
+| Frontend production build | TypeScript and Vite passed; 34 modules transformed, Vite build 1.20s |
+| Visual inspection | Reviewed desktop Demo Mode and narrow synthetic AI result screenshots; AI screenshot is a fixture, not a live result |
+| Environment ignores | Root .env, backend/.env, backend/.env.local, frontend/.env and frontend/.env.local matched ignore rules |
+| Live Groq / semantic evaluation | Not run, as explicitly required; manual account access, schema acceptance and quality review remain pending |
+
+The first provider-success test failed because its mocked async transport tried to prepare fixture content using asyncio.run inside an already running event loop. Preparing that fixture before entering the transport fixed the test; the final suite passes. Playwright's environment color warning remains non-failing.
+
+No key was created/read out through tools, real environment file overwritten, live inference call made, paid account/service introduced, commit created or deployment performed. Package downloads and official documentation lookup were development steps, not inference requests. The root folder remains C:\Coding\AlgoLens.
+
+Completion status: Stage 2 implementation and offline verification are finished. Stage 2 acceptance is not marked complete until the user performs the deliberate free-tier request and review in EVALUATION.md. Next planned development is Stage 3's deterministic constraint/complexity work after that acceptance; it has not begun.
+
 ## Template for future entries
 
 ### Date / stage / feature
