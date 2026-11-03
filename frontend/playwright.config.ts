@@ -30,7 +30,7 @@ export default defineConfig({
       command: `"${python}" -m uvicorn app.main:app --host 127.0.0.1 --port 8000`,
       cwd: backendDirectory,
       url: 'http://127.0.0.1:8000/api/v1/health',
-      reuseExistingServer: false,
+      reuseExistingServer: true,
       // Ignore live settings/keys in the developer's environment or root .env.
       env: {
         LLM_PROVIDER: 'fake', GROQ_API_KEY: '',

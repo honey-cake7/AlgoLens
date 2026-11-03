@@ -1,5 +1,8 @@
 import { useState } from 'react'
 import type { AnalyzeResponse } from '../types/api'
+import { formatAnalysisText } from '../utils/copyText'
+import CopyButton from './CopyButton'
+import TiltCard from './TiltCard'
 
 export default function AnalysisResult({ analysis }: { analysis: AnalyzeResponse }) {
   const [revealed, setRevealed] = useState(0)
@@ -7,7 +10,12 @@ export default function AnalysisResult({ analysis }: { analysis: AnalyzeResponse
   const isDemo = analysis.analysis_type === 'mock'
 
   return (
-    <div className="space-y-5">
+    <div className="stagger space-y-5">
+      <div className="flex flex-wrap items-center justify-between gap-3">
+        <p className="text-xs text-slate-500">Copies the analysis and any hints you have revealed.</p>
+        <CopyButton label="analysis" getText={() => formatAnalysisText(analysis, revealed)} />
+      </div>
+
       <aside className={`rounded-xl border p-5 text-sm leading-6 ${isDemo ? 'border-amber-200 bg-amber-50 text-amber-950' : 'border-teal-200 bg-teal-50 text-teal-950'}`} aria-label={isDemo ? 'Mock analysis warning' : 'AI analysis notice'}>
         <p className="mb-1 font-semibold">{isDemo ? 'Demo Mode · Fixed example' : 'AI Analysis'}</p>
         <p className="mb-2 text-xs">Provider: {analysis.provider}{analysis.model ? ` · Model: ${analysis.model}` : ''}</p>
@@ -73,7 +81,15 @@ export default function AnalysisResult({ analysis }: { analysis: AnalyzeResponse
         <h3 id="hints-title" className="result-title">Progressive Hints</h3>
         <p className="mb-4 text-sm text-slate-500">Reveal one {isDemo ? 'demo ' : ''}hint at a time. Try an observation before continuing.</p>
         <ol className="space-y-3" aria-live="polite">{analysis.hints.slice(0, revealed).map(hint => (
-          <li key={hint.level} className="rounded-lg bg-teal-50 p-4"><p className="mb-1 text-xs font-semibold uppercase tracking-wide text-teal-800">Hint {hint.level}</p><p className="result-copy">{hint.text}</p></li>
+          <li key={hint.level} className="hint-in">
+            <TiltCard className="rounded-lg bg-teal-50 p-4">
+              <div className="mb-1 flex items-center justify-between gap-3">
+                <p className="text-xs font-semibold uppercase tracking-wide text-teal-800">Hint {hint.level}</p>
+                <CopyButton label={`hint ${hint.level}`} getText={() => `Hint ${hint.level}: ${hint.text}`} />
+              </div>
+              <p className="result-copy">{hint.text}</p>
+            </TiltCard>
+          </li>
         ))}</ol>
         {nextHint ? <button className="mt-4 rounded-lg border border-teal-800 px-4 py-2 text-sm font-medium text-teal-900 hover:bg-teal-50" onClick={() => setRevealed(value => value + 1)}>Reveal Hint {nextHint.level}</button> : <p className="mt-4 text-xs text-slate-500">All three {isDemo ? 'demo ' : ''}hints are revealed.</p>}
       </section>

@@ -1,4 +1,6 @@
 import type { AlgorithmicAssessment, ComplexityAssessment, Feasibility } from '../types/algorithmic'
+import { formatAssessmentText } from '../utils/copyText'
+import CopyButton from './CopyButton'
 
 const labels: Record<Feasibility, string> = {
   promising: 'Promising', possibly_feasible: 'Possibly feasible',
@@ -30,9 +32,14 @@ function GrowthTable({ rows, caption }: { rows: ComplexityAssessment[]; caption:
 export default function AlgorithmicResult({ result }: { result: AlgorithmicAssessment }) {
   const { extraction } = result
   const cases = extraction.test_cases
-  return <section aria-labelledby="algorithmic-title" className="rounded-xl border border-teal-200 bg-white p-4 sm:p-5">
-    <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-teal-800">Extracted from statement · Deterministic heuristic</p>
-    <h3 id="algorithmic-title" className="text-lg font-semibold">Constraint &amp; Complexity Analysis</h3>
+  return <section aria-labelledby="algorithmic-title" className="rise rounded-xl border border-teal-200 bg-white p-4 sm:p-5">
+    <div className="flex flex-wrap items-start justify-between gap-3">
+      <div>
+        <p className="mb-2 text-xs font-semibold uppercase tracking-wider text-teal-800">Extracted from statement · Deterministic heuristic</p>
+        <h3 id="algorithmic-title" className="text-lg font-semibold">Constraint &amp; Complexity Analysis</h3>
+      </div>
+      <CopyButton label="constraint analysis" getText={() => formatAssessmentText(result)} />
+    </div>
     <p className="mt-2 text-sm leading-6 text-slate-600">Computed locally from your submitted text in every mode, including Demo Mode. Provider examples and AI suggestions are shown separately. This does not identify the correct algorithm or guarantee a verdict.</p>
 
     <h4 className="mb-3 mt-5 text-sm font-semibold">Extracted numeric constraints</h4>
