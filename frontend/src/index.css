@@ -1,10 +1,41 @@
 @import "tailwindcss";
 
+/* Lets you use `dark:` utilities in future components (class-based, set on <html>). */
+@custom-variant dark (&:where(.dark, .dark *));
+
 @layer base {
+  :root { color-scheme: light; }
   body { margin: 0; background: #f6f8f7; color: #1e293b; font-family: Inter, ui-sans-serif, system-ui, sans-serif; }
   button, a, textarea { outline-offset: 4px; }
   :focus-visible { outline: 2px solid #0f766e; }
   button:not(:disabled), a { cursor: pointer; }
+
+  /* Dark theme: re-map the palette steps the app already uses, so every component
+     (including ones with plain light classes) follows the theme automatically. */
+  :root.dark {
+    color-scheme: dark;
+    --color-slate-50: #172220;
+    --color-slate-100: #1d2c2a;
+    --color-slate-200: #2b3d3a;
+    --color-slate-300: #3b4f4b;
+    --color-slate-400: #7f938f;
+    --color-slate-500: #98aaa6;
+    --color-slate-600: #b5c4c0;
+    --color-slate-700: #ccd7d4;
+    --color-slate-800: #dde6e4;
+    --color-slate-900: #eef4f3;
+    --color-slate-950: #f8fbfa;
+    --color-teal-50: #0f2624;
+    --color-teal-100: #133430;
+    --color-teal-200: #1d4f49;
+    --color-amber-50: #2a2210;
+    --color-amber-100: #3a2f14;
+    --color-amber-200: #5c4a14;
+    --color-red-50: #2d1618;
+    --color-red-200: #6e2a2e;
+  }
+  :root.dark body { background: #0b1413; color: #dbe5e2; }
+  :root.dark :focus-visible { outline-color: #2dd4bf; }
 }
 
 @layer components {
@@ -13,4 +44,163 @@
   .result-title { @apply mb-3 text-base font-semibold text-slate-900; }
   .result-copy { @apply text-sm leading-6 text-slate-600; overflow-wrap: anywhere; }
   .step { display: grid; place-items: center; width: 1.75rem; height: 1.75rem; border-radius: 50%; background: #f1f5f9; font-size: 0.7rem; font-weight: 600; color: #64748b; }
+
+  /* ---------- Small icon / copy buttons ---------- */
+  .icon-btn {
+    display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem;
+    border: 1px solid #cbd5e1; background: #fff; color: #475569; border-radius: 0.6rem;
+    padding: 0.3rem 0.65rem; font-size: 0.75rem; font-weight: 500; line-height: 1.25rem;
+    transition: border-color 0.2s, color 0.2s, background-color 0.2s, transform 0.15s;
+  }
+  .icon-btn:hover { border-color: #0f766e; color: #0f766e; background: #f0fdfa; }
+  .icon-btn:active { transform: scale(0.96); }
+  .icon-btn[data-state='copied'] { border-color: #0f766e; background: #ccfbf1; color: #115e59; }
+  .icon-btn[data-state='failed'] { border-color: #be123c; background: #fff1f2; color: #9f1239; }
+
+  /* ---------- Theme toggle (icons swap with a small 3D-ish spin) ---------- */
+  .theme-btn { position: relative; width: 2.25rem; height: 2.25rem; padding: 0; border-radius: 999px; }
+  .theme-btn svg { position: absolute; width: 1.1rem; height: 1.1rem; transition: transform 0.5s cubic-bezier(0.2, 0.8, 0.2, 1), opacity 0.3s; }
+  .theme-btn .moon { transform: rotate(-120deg) scale(0.3); opacity: 0; }
+  :root.dark .theme-btn .sun { transform: rotate(120deg) scale(0.3); opacity: 0; }
+  :root.dark .theme-btn .moon { transform: none; opacity: 1; }
+
+  /* ---------- Motion ---------- */
+  @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
+  @keyframes flip-in {
+    from { opacity: 0; transform: perspective(900px) rotateX(-75deg) translateY(-10px); }
+    to { opacity: 1; transform: perspective(900px) rotateX(0deg) translateY(0); }
+  }
+  @keyframes cube-spin {
+    from { transform: rotateX(-22deg) rotateY(0deg); }
+    to { transform: rotateX(-22deg) rotateY(360deg); }
+  }
+  @keyframes ring-spin {
+    from { transform: rotateX(74deg) rotateZ(0deg); }
+    to { transform: rotateX(74deg) rotateZ(360deg); }
+  }
+  @keyframes drift {
+    0%, 100% { transform: translate3d(0, 0, 0) scale(1); }
+    50% { transform: translate3d(4vw, 3vh, 0) scale(1.1); }
+  }
+  @keyframes bar { 0%, 100% { height: 0.5rem; } 50% { height: 1.75rem; } }
+
+  /* One-time page-load sequence for the hero copy. */
+  .reveal { animation: rise 0.7s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+  .reveal-1 { animation-delay: 0.05s; }
+  .reveal-2 { animation-delay: 0.15s; }
+  .reveal-3 { animation-delay: 0.25s; }
+  .reveal-4 { animation-delay: 0.35s; }
+
+  /* Entrance for things that appear in response to an action. */
+  .rise { animation: rise 0.45s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+
+  /* Result sections arrive one after another after Analyze. */
+  .stagger > * { animation: rise 0.5s cubic-bezier(0.2, 0.7, 0.2, 1) backwards; }
+  .stagger > :nth-child(2) { animation-delay: 55ms; }
+  .stagger > :nth-child(3) { animation-delay: 110ms; }
+  .stagger > :nth-child(4) { animation-delay: 165ms; }
+  .stagger > :nth-child(5) { animation-delay: 220ms; }
+  .stagger > :nth-child(6) { animation-delay: 275ms; }
+  .stagger > :nth-child(7) { animation-delay: 330ms; }
+  .stagger > :nth-child(8) { animation-delay: 385ms; }
+  .stagger > :nth-child(9) { animation-delay: 440ms; }
+  .stagger > :nth-child(10) { animation-delay: 495ms; }
+  .stagger > :nth-child(n + 11) { animation-delay: 550ms; }
+
+  /* Hints flip in like a card being turned over. */
+  .hint-in { animation: flip-in 0.65s cubic-bezier(0.2, 0.8, 0.2, 1) backwards; transform-origin: 50% 0; }
+
+  /* Pointer-follow tilt card. */
+  .tilt-card {
+    position: relative;
+    transform: perspective(900px) rotateX(var(--tilt-x, 0deg)) rotateY(var(--tilt-y, 0deg));
+    transition: transform 0.2s ease-out, box-shadow 0.2s ease-out;
+  }
+  .tilt-card::after {
+    content: ''; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; opacity: 0;
+    background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(255, 255, 255, 0.6), transparent 55%);
+    transition: opacity 0.2s;
+  }
+  @media (hover: hover) {
+    .tilt-card:hover { box-shadow: 0 14px 30px -14px rgba(15, 118, 110, 0.5); }
+    .tilt-card:hover::after { opacity: 1; }
+  }
+
+  /* Logo tile spins when you hover the brand link. */
+  .logo-3d { transition: transform 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); transform-style: preserve-3d; }
+  .logo-link:hover .logo-3d { transform: perspective(300px) rotateY(360deg); }
+
+  /* Loading: bars that "sort" themselves. */
+  .sort-bars { display: inline-flex; align-items: flex-end; gap: 0.2rem; height: 1.75rem; flex-shrink: 0; }
+  .sort-bars > span { display: block; width: 0.3rem; height: 0.75rem; border-radius: 999px; background: #0f766e; animation: bar 1s ease-in-out infinite; }
+  .sort-bars > span:nth-child(2) { animation-delay: 0.1s; }
+  .sort-bars > span:nth-child(3) { animation-delay: 0.2s; }
+  .sort-bars > span:nth-child(4) { animation-delay: 0.3s; }
+  .sort-bars > span:nth-child(5) { animation-delay: 0.4s; }
+
+  /* Ambient background blobs. */
+  .ambient { position: fixed; inset: 0; overflow: hidden; pointer-events: none; z-index: -1; }
+  .ambient > span { position: absolute; border-radius: 50%; filter: blur(80px); animation: drift 26s ease-in-out infinite; }
+  .ambient > span:nth-child(1) { top: -8rem; right: -6rem; width: 30rem; height: 30rem; background: rgba(20, 184, 166, 0.28); }
+  .ambient > span:nth-child(2) { bottom: -10rem; left: -8rem; width: 28rem; height: 28rem; background: rgba(56, 189, 248, 0.2); animation-delay: -13s; }
+
+  /* Complexity cube (hero, decorative). Face text comes from data-label so it is not page text. */
+  .cube-scene { --s: 8.5rem; position: relative; width: var(--s); height: var(--s); perspective: 800px; margin: 3.5rem; }
+  .cube-tilt, .cube { position: absolute; inset: 0; transform-style: preserve-3d; }
+  .cube-tilt { transform: rotateX(var(--py, 0deg)) rotateY(var(--px, 0deg)); transition: transform 0.4s ease-out; }
+  .cube { transform: rotateX(-22deg) rotateY(-35deg); animation: cube-spin 24s linear infinite; }
+  .cube-ring {
+    position: absolute; inset: -2rem; border-radius: 50%; border: 2px solid rgba(15, 118, 110, 0.35);
+    transform: rotateX(74deg); animation: ring-spin 16s linear infinite;
+  }
+  .cube-face {
+    position: absolute; inset: 0; display: grid; place-items: center;
+    border: 1.5px solid rgba(15, 118, 110, 0.55); background: rgba(240, 253, 250, 0.6);
+    color: #0f766e; font: 600 1rem ui-monospace, SFMono-Regular, Menlo, monospace;
+  }
+  .cube-face::before { content: attr(data-label); }
+  .face-1 { transform: translateZ(calc(var(--s) / 2)); }
+  .face-2 { transform: rotateY(180deg) translateZ(calc(var(--s) / 2)); }
+  .face-3 { transform: rotateY(90deg) translateZ(calc(var(--s) / 2)); }
+  .face-4 { transform: rotateY(-90deg) translateZ(calc(var(--s) / 2)); }
+  .face-5 { transform: rotateX(90deg) translateZ(calc(var(--s) / 2)); }
+  .face-6 { transform: rotateX(-90deg) translateZ(calc(var(--s) / 2)); }
+
+  /* Smooth colour change while the theme switches. */
+  :root.theme-fade, :root.theme-fade *, :root.theme-fade *::before, :root.theme-fade *::after {
+    transition: background-color 0.35s ease, border-color 0.35s ease, color 0.35s ease !important;
+  }
+}
+
+/* ---------- Dark overrides (unlayered so they win over utilities) ---------- */
+:root.dark .bg-white,
+:root.dark .panel { background-color: #121d1b; }
+:root.dark .step { background: #1d2c2a; color: #98aaa6; }
+:root.dark .text-teal-700,
+:root.dark .text-teal-800 { color: #5eead4; }
+:root.dark .text-teal-900,
+:root.dark .text-teal-950 { color: #ccfbf1; }
+:root.dark .text-amber-900 { color: #fcd34d; }
+:root.dark .text-amber-950 { color: #fde68a; }
+:root.dark .text-red-900 { color: #fecaca; }
+:root.dark .text-rose-800 { color: #fda4af; }
+:root.dark .border-teal-800 { border-color: #2dd4bf; }
+
+:root.dark .icon-btn { border-color: #3b4f4b; background: #172220; color: #b5c4c0; }
+:root.dark .icon-btn:hover { border-color: #5eead4; color: #5eead4; background: #0f2624; }
+:root.dark .icon-btn[data-state='copied'] { border-color: #2dd4bf; background: #123a35; color: #99f6e4; }
+:root.dark .icon-btn[data-state='failed'] { border-color: #fb7185; background: #2d1618; color: #fda4af; }
+:root.dark .sort-bars > span { background: #5eead4; }
+:root.dark .tilt-card::after { background: radial-gradient(circle at var(--glare-x, 50%) var(--glare-y, 50%), rgba(94, 234, 212, 0.16), transparent 55%); }
+:root.dark .tilt-card:hover { box-shadow: 0 14px 30px -14px rgba(0, 0, 0, 0.8); }
+:root.dark .ambient > span:nth-child(1) { background: rgba(20, 184, 166, 0.16); }
+:root.dark .ambient > span:nth-child(2) { background: rgba(56, 189, 248, 0.1); }
+:root.dark .cube-ring { border-color: rgba(94, 234, 212, 0.35); }
+:root.dark .cube-face { border-color: rgba(94, 234, 212, 0.5); background: rgba(18, 45, 42, 0.65); color: #5eead4; }
+
+/* ---------- Respect "reduce motion" ---------- */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+  .tilt-card { transform: none !important; }
+  .cube-tilt { transform: none !important; }
 }
