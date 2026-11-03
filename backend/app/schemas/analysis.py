@@ -2,19 +2,14 @@
 
 from typing import Annotated, Literal, Self
 
-from pydantic import AfterValidator, BaseModel, ConfigDict, StringConstraints, field_validator, model_validator
+from pydantic import AfterValidator, BaseModel, ConfigDict, field_validator, model_validator
 
 from app.schemas.algorithmic import AlgorithmicAssessment
+from app.schemas.analysis_input import MAX_STATEMENT_LENGTH, MIN_STATEMENT_LENGTH, StatementRequest
+from app.schemas.retrieval import SimilarResponse
 
-MIN_STATEMENT_LENGTH = 20
-MAX_STATEMENT_LENGTH = 20_000
-
-
-class AnalyzeRequest(BaseModel):
-    statement: Annotated[str, StringConstraints(
-        strict=True, strip_whitespace=True,
-        min_length=MIN_STATEMENT_LENGTH, max_length=MAX_STATEMENT_LENGTH,
-    )]
+class AnalyzeRequest(StatementRequest):
+    pass
 
 
 def non_blank(value: str) -> str:
@@ -79,6 +74,8 @@ class AnalysisContent(ContentModel):
 
 class AnalyzeResponse(AnalysisContent):
     deterministic: AlgorithmicAssessment
+    similar_problems: SimilarResponse | None = None
+    retrieval_warning: str | None = None
     analysis_type: Literal["ai", "mock"]
     provider: Literal["groq", "fake"]
     model: Text | None

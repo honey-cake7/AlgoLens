@@ -2,12 +2,13 @@
 
 AlgoLens helps students understand competitive programming statements without immediately revealing complete solutions. It separates the underlying task from narrative and presents objectives, input/output requirements, raw constraints, technique hypotheses, preliminary complexity guidance, observations, uncertainties, and three progressive hints.
 
-**Status:** Stages 0–3 are complete. The user reports Stage 2's Groq workflow working. Stage 3 adds offline constraint extraction and cautious complexity assessment; backend tests, browser tests, and the production build pass. No live inference was performed during Stage 3 development or testing. Stage 4 has not started.
+**Status:** Stages 0–4 are implemented and verified. Stage 4 adds local similar-problem retrieval, a 36-record original practice catalog, and measured TF-IDF/MiniLM comparisons. Evaluation labels remain provisional for the user's later review. Groq, deterministic assessment, progressive hints, and mathematical paste guidance are preserved. No live Groq calls were made during Stage 4. Stage 5 has not started.
 
 ## ₹0 workflow
 
 - `LLM_PROVIDER=fake` is the default: an explicitly labeled fixed example, no key, internet connection, model download, GPU, or API quota required after dependencies are installed.
 - **Assess constraints only** works locally with either provider configured, including when Groq is unavailable. It analyzes your actual statement and uses zero AI quota.
+- **Find similar problems** searches the local original practice catalog with zero AI quota. TF-IDF is the default; optional MiniLM embeddings use CPU and a deliberately downloaded local model.
 - `LLM_PROVIDER=groq` enables one live request only when a user submits Analyze Problem. Use a Groq **Free** account; do not add payment information or upgrade to a paid plan for this project.
 - Groq free-tier availability and limits depend on the account and can change. If free access is unavailable, keep fake mode. The application cannot determine an account's billing plan from a key.
 - No OpenAI API, paid provider, paid fallback, automatic model switch, or automatic retry exists. The `openai/gpt-oss-*` names identify open-weight models hosted by Groq; they do not invoke OpenAI's paid API.
@@ -26,10 +27,12 @@ Groq currently documents both requested GPT-OSS models in its [model catalog](ht
 - Local CORS configuration, backend tests, and desktop/narrow-viewport browser tests.
 - Original constraint evidence, normalized numeric bounds, contextual size roles, test-case/aggregate scopes, explicit ambiguity, and separate time/memory limits.
 - Nine growth profiles from constant through factorial, plus conditional two-parameter profiles when meanings and bounds are known. All estimates are heuristics, not runtime or verdict predictions.
+- `POST /api/v1/similar` returns up to K original practice examples (default 5, maximum 20). The dashboard shows at most five, with method, score, provenance, and limitations. Integrated recommendations start collapsed because they include technique tags.
+- Cached TF-IDF and local-only Sentence Transformers retrieval share solution-free task representations. Missing semantic setup falls back visibly to TF-IDF. Retrieval adds no Groq calls and its failure does not discard a successful analysis.
 
 ## Stack and folders
 
-Frontend: React, TypeScript, Vite, Tailwind CSS. Backend: Python 3.11+, FastAPI, Pydantic, Uvicorn, python-dotenv, official Groq SDK. Testing: pytest/httpx and development-only Playwright using installed Microsoft Edge. No database or orchestration framework.
+Frontend: React, TypeScript, Vite, Tailwind CSS. Backend: Python 3.11+, FastAPI, Pydantic, Uvicorn, python-dotenv, official Groq SDK, scikit-learn. Optional semantic extra: Sentence Transformers and CPU PyTorch. Testing: pytest/httpx and development-only Playwright using installed Microsoft Edge. No database or orchestration framework.
 
 ```text
 AlgoLens/
@@ -45,6 +48,8 @@ AlgoLens/
 │   ├── app/
 │   │   ├── api/routes/    # thin HTTP handlers
 │   │   ├── algorithmic/   # safe numbers, constraint parser, growth engine
+│   │   ├── data/          # original practice catalog and separate query labels
+│   │   ├── retrieval/     # lexical/semantic indexes, cache, setup, evaluation
 │   │   ├── core/          # settings and safe public errors
 │   │   ├── llm/           # provider protocol, fake, Groq, system prompt
 │   │   ├── schemas/       # content + request/response validation
@@ -74,7 +79,7 @@ if (-not (Test-Path .env)) { Copy-Item .env.example .env }
 if (-not (Test-Path frontend/.env)) { Copy-Item frontend/.env.example frontend/.env }
 ```
 
-Stage 3 adds no dependencies. Existing Stage 2 environments can run it directly. If the directory is renamed, refresh the editable install using the new path; recreate backend/.venv if other tools still contain old absolute paths.
+Stage 3 added no dependencies. Stage 4 requires refreshing the backend editable install above to add scikit-learn; the neural extra remains optional. If the directory is renamed, refresh the editable install using the new path; recreate backend/.venv if other tools still contain old absolute paths.
 
 Run backend in terminal 1:
 
@@ -135,8 +140,9 @@ The combined response preserves Stage 2's fields and adds a required server-owne
 | `important_observations`, `uncertainties` | Lists of text; evidence lists may be empty |
 | `hints` | Exactly three entries in level 1, 2, 3 order, each with text |
 | `deterministic` | `source=deterministic`, extraction, selected parameter or null, growth assessments, uncertainties, discrepancies, caveats |
+| `similar_problems`, `retrieval_warning` | Optional server-owned local recommendations, or a safe warning while analysis/hints remain available |
 
-All generation fields are required; nullable semantic values use explicit null unions. All generation objects forbid extra properties. Pydantic rejects invalid types, blank text, fenced code blocks, missing fields, and wrong hint counts/order. The generation schema excludes both provider metadata and deterministic results; the model cannot populate these fields. The browser checks response shape, finite numeric bounds, and metadata consistency before rendering.
+All generation fields are required; nullable semantic values use explicit null unions. All generation objects forbid extra properties. Pydantic rejects invalid types, blank text, fenced code blocks, missing fields, and wrong hint counts/order. The generation schema excludes provider metadata, deterministic results, and retrieval; the model cannot populate these fields. The browser checks response shape, finite numeric bounds, and metadata consistency before rendering.
 
 `POST /api/v1/assess` takes the identical validated request and returns the `AlgorithmicAssessment` object directly, without an AI/demo wrapper. Combined analysis preserves provider errors; it does not silently return partial success. The UI exposes an explicit offline action after failure. Both endpoints appear in `/docs`.
 
@@ -172,6 +178,51 @@ Copy/paste notation: `2.10^5`, `2 . 10^5`, `2⋅10^5`, and `2·10⁵` now all pr
 
 All three hints arrive in one response. Reveal buttons change local state and make no API calls. They are a learning convenience, not a server-side secrecy boundary. Provider failures use safe `{ "detail": { "code": "...", "message": "..." } }` errors: configuration 503, quota 429, timeout 504, invalid output 502, unavailable 503, unexpected internal error 500.
 
+## Stage 4: local similar-problem retrieval
+
+Click **Find similar problems** for standalone local search, or **Analyze Problem** to include recommendations beside the existing analysis. Fake mode searches your actual input, never its unrelated demo simplification. AI mode reuses its existing simplification only when the provider reports no uncertainties; this is a heuristic, not independent verification. The response records which query was used.
+
+Try: `Find inclusive interval sums for many queries on a fixed signed array.` Expect **Static ledger totals** near the top. Every record is labeled **AlgoLens practice example** and has no external link. A cosine score is a ranking signal, not a probability of needing the same algorithm.
+
+`POST /api/v1/similar` accepts `{"statement":"problem statement...","k":5}` with the existing 20–20,000-character validation and optional integer K from 1 to 20. It works without a key, even if LLM configuration is invalid. Blank/invalid input returns 422; queries with no lexical overlap have explicit empty results. Invalid retrieval setup/catalog produces a safe 503; semantic model failures fall back to correctly labeled TF-IDF.
+
+| Setting | Default | Purpose |
+| --- | --- | --- |
+| `RETRIEVAL_METHOD` | `tfidf` | Choose `tfidf` or local `semantic` |
+| `RETRIEVAL_TOP_K` | `5` | API default K, 1–20; UI displays at most five |
+| `EMBEDDING_MODEL` | `sentence-transformers/all-MiniLM-L6-v2` | Supported free encoder |
+| `EMBEDDING_CACHE_DIR` | `.cache/models/all-MiniLM-L6-v2` | Local model directory, relative to repository root |
+
+TF-IDF needs only the standard backend install. Semantic setup is optional and requires a one-time internet download: primary model files occupy about 90 MB (observed cache **87.3 MiB**); allow several GB of dependency disk space and roughly 1–2 GB RAM as a planning estimate. CPU-only PyTorch avoids a GPU requirement. No weights are committed. Before installing/downloading on another machine, check these resource requirements.
+
+```powershell
+Set-Location C:\Coding\AlgoLens
+backend/.venv/Scripts/python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cpu
+backend/.venv/Scripts/python.exe -m pip install -e './backend[semantic]'
+backend/.venv/Scripts/python.exe -m app.retrieval.setup_model --download
+```
+
+The model has already been explicitly downloaded and verified locally in this workspace. To enable semantic mode, add `RETRIEVAL_METHOD=semantic` to your root .env or backend process environment and restart the backend. TF-IDF remains the default and current settings were not rewritten. Imports, startup, normal searches, builds, and automated tests never initiate downloads. Runtime uses CPU, `local_files_only=True`, and `trust_remote_code=False`. The setup command is the sole download path. A first semantic load can be slow: combined analysis waits at most three seconds for optional retrieval before returning its analysis/hints with a warning; a standalone search can warm the cache.
+
+Run the comparison entirely offline after setup:
+
+```powershell
+$env:HF_HUB_OFFLINE = '1'
+$env:TRANSFORMERS_OFFLINE = '1'
+backend/.venv/Scripts/python.exe -m app.retrieval.evaluate --output docs/retrieval_results.json
+```
+
+Measured on 14 queries with **provisional relevance labels**, including one query with no relevant catalog entry:
+
+| Query representation | Method | Precision@5 | Recall@5 | MRR |
+| --- | --- | --- | --- | --- |
+| Raw | TF-IDF | 0.229 | 0.731 | 0.647 |
+| Raw | MiniLM | 0.271 | 0.808 | 0.753 |
+| Normalized | TF-IDF | 0.300 | 0.923 | 0.885 |
+| Normalized | MiniLM | 0.329 | 0.974 | 1.000 |
+
+These small, author-curated results are exploratory. They do not prove general superiority or algorithmic equivalence. Normalized queries are separately authored task descriptions, not automatic production rewrites; no ground-truth technique tags are added to either query or corpus representation. The no-relevance query contributes P@5=0 and is excluded from undefined recall/MRR. See [the retrieval guide](docs/RETRIEVAL.md) for formulas, failure cases, label review, caching, resources, and teaching examples. Full per-query results and model revision are in [the measured report](docs/retrieval_results.json).
+
 ## Tests and build — no model requests
 
 Stop manually started frontend/backend servers before browser tests so ports 5173 and 8000 are free. Tests require installed dependencies but no keys or external connection.
@@ -186,7 +237,9 @@ npm.cmd test
 
 Backend tests ignore local .env content, force fake defaults, block external DNS/socket connections, and use httpx.MockTransport for the actual Groq SDK. Browser tests start their own servers with `LLM_PROVIDER=fake` and an empty key, override live settings, and block external page requests. The AI UI branch uses an explicit response fixture rather than live inference. Existing servers are never reused. Installed Microsoft Edge is required; screenshots/traces are ignored under frontend/test-results.
 
-Observed Stage 3 checks: **171 backend tests passed**, **40 desktop/narrow-viewport browser tests passed**, and **frontend production build passed**. The existing Starlette/httpx TestClient deprecation warning and Playwright color-setting warning remain non-failing. Tests cover the parser, growth/aggregate formulas, one provider call, safe errors, independent offline endpoint, both result sources, progressive hints, and mobile layouts. See [learning log](docs/LEARNING_LOG.md). Live Groq was not called during this stage; the user's Stage 2 success report is separate from automated evidence.
+Stage 4 checks: **248 backend tests passed**, frontend production build passed, and the final complete browser run passed **52 desktop/mobile tests** in 1.2 minutes. Tests cover existing parsing/growth/provider/hint behavior plus catalog validation, TF-IDF, mock semantic vectors, safe fallback, cache invalidation, metrics, no startup neural imports/downloads, standalone search, and integration failure isolation. A separate manual smoke check uses the real cached neural model offline; automated tests always use fake encoders. See [learning log](docs/LEARNING_LOG.md).
+
+If your servers are already running, tests can own alternate ports without stopping them: set `ALGOLENS_TEST_FRONTEND_PORT=5174` and `ALGOLENS_TEST_BACKEND_PORT=8001` in the test process environment before `npm.cmd test`. The same fake/TF-IDF settings and exact test CORS origins are enforced.
 
 Manual UI checks: submit a valid statement, inspect Network JSON, verify the mode/provider label, reveal hints in sequence, edit/resubmit to reset them, try invalid lengths, stop the backend to check preserved input/errors, and retry after restarting it. Check keyboard navigation and a narrow viewport.
 
@@ -243,6 +296,6 @@ LLM output can be incorrect or follow malicious instructions despite prompt prec
 
 The deterministic parser covers a bounded English/numeric grammar, not arbitrary mathematics or full semantics. Sizes need descriptive evidence; example sections and subsequent text are conservatively excluded. Values above 2^53−1, symbolic formulas, and unsupported syntax are not guessed. Heuristic bands are deliberately rough and do not select the correct algorithm. AI discrepancy detection is limited to explicit positive complexity suggestions. See the guide for precise limits.
 
-There is no database, authentication, retrieval, scraping, URL fetching, embeddings, training, cloud hosting, paid API, or Ollama implementation. Raw LLM suggestions remain preliminary. Nothing was committed or deployed by this task.
+Retrieval uses a small original catalog and a general-purpose encoder. It can confuse similar stories with different algorithms, omit valid related tasks, and return weak neighbors for out-of-catalog queries. MiniLM truncates long input at 256 word pieces; no calibrated relevance cutoff is claimed. Labels await your review. Raw LLM suggestions remain preliminary. No database, authentication, scraping, URL import, training, cloud hosting, paid API, or Ollama was added. Nothing was committed or deployed by this task.
 
-Next, only when requested: Stage 4 hint-quality evaluation and controls. See [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [decisions](docs/DECISIONS.md). Stage 3 stops here.
+Next, only when requested: Stage 5 may add algorithm-aware retrieval features and stronger evaluation. The user's Stage 4 retrieval specification supersedes the earlier hint-quality milestone ordering. See [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [decisions](docs/DECISIONS.md). Stop after Stage 4.

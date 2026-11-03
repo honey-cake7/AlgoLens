@@ -34,6 +34,8 @@ For each case, record whether task semantics, objective/I/O, copied constraints,
 | --- | --- | --- | --- | --- | --- |
 | User report at Stage 3 handoff | Integration working | Not independently scored | Not independently scored | Not independently scored | No new live inference performed during Stage 3 |
 
-Do not infer live acceptance or semantic quality from offline fixtures. A small manual sample is an initial check, not evidence of general reliability. Meaning changes, hallucinations, prompt injection, and over-revealing hints can survive schema validation. Record failures and refine the prompt in a focused follow-up before relying on results. Stage 4's dedicated hint-quality work has not started.
+Do not infer live acceptance or semantic quality from offline fixtures. A small manual sample is an initial check, not evidence of general reliability. Meaning changes, hallucinations, prompt injection, and over-revealing hints can survive schema validation. Record failures and refine the prompt in a focused follow-up before relying on results. Dedicated hint-quality refinement remains deferred; the user's Stage 4 specification instead implements local similar-problem retrieval.
 
 Stage 3's local extraction/growth checks and self-authored examples are documented in [DETERMINISTIC_ANALYSIS.md](DETERMINISTIC_ANALYSIS.md). They require no Groq requests. Compare AI constraint copies with original text and deterministic evidence separately; local heuristics do not validate a model's semantic interpretation.
+
+Stage 4 retrieval evaluation is documented separately in [RETRIEVAL.md](RETRIEVAL.md), with actual per-query results in retrieval_results.json. Its relevance labels are provisional for later user review; this does not constitute a completed human-labeled benchmark or replace the hint review above.

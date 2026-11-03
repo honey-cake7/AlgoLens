@@ -145,7 +145,7 @@ Study and exercises:
 
 The ten learning concepts, mathematical assumptions, source boundaries, parser limits, and extension workflow are in DETERMINISTIC_ANALYSIS.md. README.md contains startup commands and manual offline examples.
 
-Completion status: Stage 3's supported scope and acceptance checks are complete. Stage 4 hint-quality evaluation is the next planned milestone and has not started. Do not start it automatically.
+Status at the end of Stage 3: its supported scope and acceptance checks were complete. The originally proposed next hint-quality milestone was later superseded by the user's Stage 4 retrieval specification below.
 
 ## Stage 3 follow-up — Copied multiplication dots (2026-11-03)
 
@@ -154,6 +154,39 @@ The user reported bounds such as `2.10^5` being treated as just `2`. Reproductio
 The fix normalizes `⋅`/`·` as multiplication and interprets an ASCII period before an explicit power of ten as multiplication, preserving original-character offsets. It records that period convention in uncertainties. Numeric-continuation guards reject unsupported dotted tails instead of accepting only their coefficient. Decimal/scientific cases such as `2.10e5 = 210000` remain unchanged; lost exponent formatting is not guessed.
 
 Added 26 regression cases for notation variants, decimals, malformed suffixes, reverse/shared/aggregate bounds, source evidence, sentence punctuation, and offline API growth. The targeted pre-fix run reproduced 21 failures. The complete post-fix offline backend suite passed: **197 tests in 3.48s**, with the existing TestClient deprecation warning. API tests confirm the normalized n cap is 200000 and quadratic growth is 40 billion. No frontend, schema, dependency, provider prompt, or credential changes were required; no live Groq calls were made.
+
+## Stage 4 — Local lexical/semantic retrieval (2026-11-03)
+
+Goal: retrieve algorithmically related original practice tasks without new Groq calls, paid APIs, scraped content, vector infrastructure, or GPU requirements. The user's Stage 4 request superseded the earlier roadmap's hint-quality ordering. The user explicitly chose to keep relevance labels provisional for later human review.
+
+Created a 36-record original JSON catalog, Pydantic provenance/response models, cached scikit-learn TF-IDF baseline, optional local-only MiniLM encoder, independent SimilarProblemService and /similar endpoint, and optional combined-analysis results. Existing fake/Groq providers, prompt, hints, deterministic arithmetic, and paste guidance remain intact. Query provenance prevents fake demo content from becoming a search interpretation. CPU search runs in worker threads; optional integrated search has a three-second wait budget. Missing semantic setup visibly falls back to TF-IDF, and retrieval failure cannot discard successful analysis/hints.
+
+Data/evaluation: 14 separate authored query records include three story pairs, mismatches, six-relevant-record and no-strong-match cases. Both methods search the same solution-free normalized corpus without technique labels. The evaluation script compares raw and separately authored normalized queries, calculates correct P@5/R@5/MRR, records undefined-denominator policy and full per-query results, and never substitutes fallback numbers for missing semantic results.
+
+Actual checks and setup:
+
+| Check | Observed result |
+| --- | --- |
+| Base dependency install | Added scikit-learn 1.9.1 and dependencies. First scipy download timed out and hit a Windows temporary-file lock; retry with 180-second timeout succeeded |
+| Optional CPU dependencies | Explicitly announced/installed torch 2.15.0+cpu, sentence-transformers 5.7.0, transformers 5.22.1; no GPU or paid service |
+| Explicit model setup | Selected files downloaded once to ignored .cache; 87.3 MiB observed cache; CPU embedding shape (1,384); model revision 1110a243fdf4706b3f48f1d95db1a4f5529b4d41 |
+| Backend pytest | 248 passed in 13.67s, offline; real dotenv ignored, fake encoder tests, external connections blocked. Optional dependencies brought httpx2, resolving the earlier TestClient warning in this run |
+| Frontend production build | TypeScript/Vite passed; 38 modules, Vite 2.81s |
+| Browser tests | Final complete run: 52 passed in 1.2 minutes. Earlier run: 50 passed plus two new paste-tip locator failures; corrected targeted rerun passed both in 16.0s. Original workflow/hints remain covered |
+| Browser isolation/visual QA | Test servers used 5174/8001 while user's 5173/8000 servers remained running; real search screenshots reviewed at desktop/390px, no page overflow |
+| Real neural API smoke | Separate manual offline check with external socket connections blocked: HTTP 200, actual method semantic, ledger_ranges first; no Groq request |
+| Neural/lexical evaluation | Both methods measured with HF_HUB_OFFLINE and TRANSFORMERS_OFFLINE; results/provenance saved in docs/retrieval_results.json |
+| Secrets/budget | No real .env edit, credential readout, live Groq request, hosted embedding API, paid infrastructure, commit, push, or deployment |
+
+Raw P@5/R@5/MRR: TF-IDF 0.2286/0.7308/0.6468; MiniLM 0.2714/0.8077/0.7532. Normalized: TF-IDF 0.3000/0.9231/0.8846; MiniLM 0.3286/0.9744/1.0000. All are provisional judgments on a tiny authored set, not general performance claims. MiniLM missed the raw rainfall static-range-sum match; both methods suggested irrelevant neighbors for the absent geometry task. Full failures and story-pair overlap remain in the report/guide.
+
+The initial existing-suite failures were expected contract assertions that lacked new optional fields and compared actual-input retrieval across different fake submissions. Those assertions now compare provider-owned fields separately. A new browser assertion initially targeted only the bold Paste tip label; targeting its paragraph fixed it. A Windows npm filter containing spaces was split into unintended positional arguments; using a single-word filter ran the intended cases. These are recorded test/setup issues, not hidden successes.
+
+Study app/retrieval/catalog.py, retrievers.py, cache.py, setup_model.py, evaluate.py, schemas/retrieval.py, and services/similar_problem_service.py. The twelve learning concepts, formulas, resources, limitations, and extension workflow are in RETRIEVAL.md. Exercise: explain why P@5 can be low while MRR is 1, compare raw rainfall results by method, and review proposed labels without optimizing them to favor either retriever.
+
+Final provenance-only follow-up adds query-set revision hashing and ties report metadata to the shared representation version. All 30 retrieval unit tests passed in 5.21s after that change; the evaluation artifact was regenerated offline. Final complete browser verification after the integrated search deadline change passed all 52 tests.
+
+Stage 4 engineering is complete, including verified local neural operation. Human relevance review remains explicitly provisional as requested. Stage 5 is not started.
 
 ## Template for future entries
 

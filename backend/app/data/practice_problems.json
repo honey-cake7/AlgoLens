@@ -1,0 +1,506 @@
+[
+  {
+    "id": "capacity_manifest",
+    "title": "Smallest freight capacity",
+    "short_description": "A barge carries crates in their given order over D voyages. Each voyage takes a consecutive run of crates. Find the smallest load capacity that finishes all crates in at most D voyages.",
+    "normalized_description": "Given positive ordered weights and a group limit D, minimize capacity so the sequence can be partitioned into at most D contiguous groups, each with sum at most capacity.",
+    "main_technique": "binary_search_answer",
+    "secondary_tags": [
+      "contiguous_partition"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "split_workload",
+    "title": "Balanced workshop shifts",
+    "short_description": "Jobs with fixed durations must remain in order. Assign every job to exactly K nonempty consecutive shifts and minimize the duration of the busiest shift.",
+    "normalized_description": "Partition a positive duration array into exactly K nonempty contiguous groups and minimize the maximum group sum, where K does not exceed the array length.",
+    "main_technique": "binary_search_answer",
+    "secondary_tags": [
+      "contiguous_partition"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "bounded_positive_segment",
+    "title": "Longest affordable visit streak",
+    "short_description": "Daily admission prices are positive. Choose consecutive days whose total price is within a budget and maximize the number of chosen days.",
+    "normalized_description": "Given positive array values and a budget, find the maximum length contiguous subarray with sum at most the budget.",
+    "main_technique": "sliding_window",
+    "secondary_tags": [
+      "positive_values"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "distinct_badges",
+    "title": "Shortest complete badge run",
+    "short_description": "An exhibition logs badge colors in arrival order. Find the shortest consecutive log fragment containing every color required by a supplied set.",
+    "normalized_description": "Find a minimum length contiguous sequence segment containing at least one occurrence of each required symbol; irrelevant and repeated symbols are allowed.",
+    "main_technique": "sliding_window",
+    "secondary_tags": [
+      "frequency_counting"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "pair_budget",
+    "title": "Closest gift pair",
+    "short_description": "Gift prices are already sorted. Pick two different gifts whose total price is at most a budget and as large as possible.",
+    "normalized_description": "Given sorted positive values, maximize the sum of two distinct positions subject to an upper sum limit.",
+    "main_technique": "two_pointers",
+    "secondary_tags": [
+      "sorted_array"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "merge_streams",
+    "title": "Merge timestamp feeds",
+    "short_description": "Two sensors provide nondecreasing timestamp lists. Output their combined sorted list, keeping repeated timestamps.",
+    "normalized_description": "Merge two sorted sequences into a single nondecreasing sequence retaining all multiplicities.",
+    "main_technique": "two_pointers",
+    "secondary_tags": [
+      "sorted_array"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "ledger_ranges",
+    "title": "Static ledger totals",
+    "short_description": "Account entries may be positive or negative and never change. Answer many inclusive interval-total requests.",
+    "normalized_description": "Given an immutable signed integer array, answer many sum queries over inclusive contiguous index ranges.",
+    "main_technique": "prefix_sums",
+    "secondary_tags": [
+      "static_queries"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "rectangle_totals",
+    "title": "Garden rectangle totals",
+    "short_description": "A grid records crop counts in each plot. Counts stay fixed. Report the sum inside each requested axis-aligned rectangle.",
+    "normalized_description": "Given a fixed numeric matrix, answer many rectangle sum queries using inclusive row and column boundaries.",
+    "main_technique": "prefix_sums",
+    "secondary_tags": [
+      "matrix"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "field_increments",
+    "title": "Batch irrigation increments",
+    "short_description": "Each irrigation instruction adds an amount to every plot in an inclusive consecutive range. After all instructions, output every plot's final water amount.",
+    "normalized_description": "Apply many additive interval updates to an initially zero array and report the complete array only after all updates; no intermediate queries occur.",
+    "main_technique": "difference_array",
+    "secondary_tags": [
+      "offline_updates"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "seat_reservations",
+    "title": "Route occupancy",
+    "short_description": "Each booking occupies one seat from its boarding stop until just before its exit stop. Calculate occupancy on every segment after all bookings are known.",
+    "normalized_description": "Given half-open integer intervals, count how many intervals cover each adjacent-position segment after processing all intervals.",
+    "main_technique": "difference_array",
+    "secondary_tags": [
+      "offline_updates"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "zero_sum_segments",
+    "title": "Count balanced ledger fragments",
+    "short_description": "Signed ledger entries arrive in a fixed order. Count all nonempty consecutive fragments whose entries sum to zero.",
+    "normalized_description": "Count the number of nonempty contiguous subarrays with sum zero in a signed integer array.",
+    "main_technique": "frequency_counting",
+    "secondary_tags": [
+      "prefix_sums"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "matching_inventory",
+    "title": "Count shared inventory codes",
+    "short_description": "Two warehouses list item codes with duplicates. For each code, pair items across warehouses without reusing an item and report the total number of pairs.",
+    "normalized_description": "Given two multisets of symbols, compute the sum of the minimum of their occurrence counts for every symbol.",
+    "main_technique": "frequency_counting",
+    "secondary_tags": [
+      "hash_map"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "station_refills",
+    "title": "Fewest supply stops",
+    "short_description": "A rover follows a fixed route with sorted supply stations. Its tank has a fixed range and every stop fully refills it. Minimize refills or report impossibility.",
+    "normalized_description": "Given a destination, ordered station positions, and fixed travel range per full tank, minimize full-refill stops along the line.",
+    "main_technique": "greedy",
+    "secondary_tags": [
+      "ordered_positions"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "deadline_jobs",
+    "title": "One-slot deadline jobs",
+    "short_description": "Each job lasts one time slot and earns one reward if completed before its integer deadline. Choose a feasible subset with greatest total reward.",
+    "normalized_description": "Select unit-duration jobs with deadlines and nonnegative profits to maximize reward while scheduling at most one job in each time slot.",
+    "main_technique": "greedy",
+    "secondary_tags": [
+      "scheduling"
+    ],
+    "difficulty": "hard",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "meeting_schedule",
+    "title": "Largest meeting selection",
+    "short_description": "A room receives meeting requests with start and finish times. Choose as many meetings as possible; a meeting may start when another finishes.",
+    "normalized_description": "Select a maximum cardinality subset of half-open intervals with no overlapping interiors.",
+    "main_technique": "sorting_intervals",
+    "secondary_tags": [
+      "greedy"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "merge_coverage",
+    "title": "Compact painted coverage",
+    "short_description": "Several closed intervals on a number line are painted. Output disjoint merged intervals describing exactly the painted set.",
+    "normalized_description": "Given closed intervals, merge all intersecting intervals and output their union as sorted disjoint intervals.",
+    "main_technique": "sorting_intervals",
+    "secondary_tags": [
+      "interval_union"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "maze_steps",
+    "title": "Fewest maze moves",
+    "short_description": "A rectangular maze has blocked cells. From a start cell, reach a target using unit-cost horizontal or vertical moves, or report unreachable.",
+    "normalized_description": "Find the shortest path length between two cells of a grid with obstacles and four unit-cost movement directions.",
+    "main_technique": "bfs",
+    "secondary_tags": [
+      "unweighted_shortest_path"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "word_transform",
+    "title": "Smallest spelling journey",
+    "short_description": "A dictionary permits replacing one character at a time, provided each intermediate word is in the dictionary. Minimize replacements from one word to another.",
+    "normalized_description": "Find a minimum number of edges between two vertices in an implicit unweighted graph where equal-length dictionary words are adjacent if one character differs.",
+    "main_technique": "bfs",
+    "secondary_tags": [
+      "implicit_graph"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "toll_routes",
+    "title": "Cheapest road journey",
+    "short_description": "Cities are connected by directed roads with nonnegative tolls. Find the cheapest journey from a supplied origin to a target.",
+    "normalized_description": "Find a minimum total edge weight path from one source to a target in a directed graph with nonnegative weights.",
+    "main_technique": "dijkstra",
+    "secondary_tags": [
+      "weighted_shortest_path"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "delivery_distances",
+    "title": "Courier travel times",
+    "short_description": "A depot serves a network of roads with nonnegative travel times. Compute the minimum travel time from the depot to every junction.",
+    "normalized_description": "Find shortest distances from one source to all vertices in a graph with nonnegative edge weights; mark unreachable vertices.",
+    "main_technique": "dijkstra",
+    "secondary_tags": [
+      "weighted_shortest_path"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "friend_components",
+    "title": "Online friendship groups",
+    "short_description": "People start alone. Friendship links are added over time. After each addition, report how many connected groups remain.",
+    "normalized_description": "Maintain the number of connected components of an undirected graph under edge insertions only, starting with isolated vertices.",
+    "main_technique": "disjoint_set_union",
+    "secondary_tags": [
+      "connectivity"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "road_redundancy",
+    "title": "Redundant cable count",
+    "short_description": "Install undirected cables one by one between computers. Count cables whose endpoints were already connected before installation.",
+    "normalized_description": "For each inserted undirected edge, determine whether its endpoints were in the same connected component before insertion; count redundant edges.",
+    "main_technique": "disjoint_set_union",
+    "secondary_tags": [
+      "cycle_detection"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "stair_cost",
+    "title": "Cheapest stair ascent",
+    "short_description": "Every stair has a nonnegative landing fee. Starting below the first stair, move one or two stairs at a time and reach the final stair with minimum total fee.",
+    "normalized_description": "Find a minimum cost path through ordered positions when each move advances one or two positions and each visited position contributes its given cost.",
+    "main_technique": "dynamic_programming",
+    "secondary_tags": [
+      "ordered_states"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "edit_sequence",
+    "title": "Fewest text edits",
+    "short_description": "Convert one string into another using single-character insertion, deletion, or substitution. Each operation costs one.",
+    "normalized_description": "Compute the minimum number of unit-cost insertions, deletions, and substitutions transforming one finite character sequence into another.",
+    "main_technique": "dynamic_programming",
+    "secondary_tags": [
+      "strings"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "rucksack_value",
+    "title": "Best expedition load",
+    "short_description": "Every piece of equipment has a weight and benefit. Each item may be packed at most once. Maximize benefit within the carrying capacity.",
+    "normalized_description": "Choose a subset of indivisible items with integer weights and values to maximize total value subject to an upper total weight limit.",
+    "main_technique": "knapsack",
+    "secondary_tags": [
+      "dynamic_programming"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "coin_combinations",
+    "title": "Unordered fare payments",
+    "short_description": "A fare can be paid using unlimited coins from distinct positive denominations. Count unordered combinations reaching exactly the fare.",
+    "normalized_description": "Count multisets of positive coin denominations whose weighted sum equals a target, with unlimited copies of each denomination and order ignored.",
+    "main_technique": "knapsack",
+    "secondary_tags": [
+      "counting_dp"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "rising_readings",
+    "title": "Longest rising readings",
+    "short_description": "Readings appear chronologically. Keep as many readings as possible in their original order with each kept value strictly greater than the previous one.",
+    "normalized_description": "Find the maximum length strictly increasing subsequence of a numeric sequence; chosen positions need not be contiguous.",
+    "main_technique": "longest_increasing_subsequence",
+    "secondary_tags": [
+      "ordered_sequence"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "envelope_chain",
+    "title": "Longest nesting chain",
+    "short_description": "Envelopes have width and height and cannot be rotated. Find the longest chain where each next envelope is strictly larger in both dimensions.",
+    "normalized_description": "Find a longest chain of two-dimensional pairs with both coordinates strictly increasing; equal coordinates cannot nest.",
+    "main_technique": "longest_increasing_subsequence",
+    "secondary_tags": [
+      "sorting"
+    ],
+    "difficulty": "hard",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "next_warmer",
+    "title": "Wait for a warmer reading",
+    "short_description": "For each day's temperature, report how many later days pass before the first strictly warmer day, or zero if none exists.",
+    "normalized_description": "For each sequence position, find the nearest later position with a strictly greater value and report the index distance.",
+    "main_technique": "monotonic_stack",
+    "secondary_tags": [
+      "next_greater"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "skyline_rectangle",
+    "title": "Largest skyline rectangle",
+    "short_description": "Adjacent skyline bars all have unit width. Find the largest axis-aligned rectangle lying completely beneath the bars.",
+    "normalized_description": "Given nonnegative heights of adjacent unit-width histogram bars, maximize rectangle area contained under consecutive bars.",
+    "main_technique": "monotonic_stack",
+    "secondary_tags": [
+      "histogram"
+    ],
+    "difficulty": "hard",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "subtree_totals",
+    "title": "Department team totals",
+    "short_description": "A rooted company tree assigns a value to each employee. Compute the sum for each employee's entire descendant team, including that employee.",
+    "normalized_description": "For every vertex of a rooted tree with signed vertex values, calculate the sum of all values in its subtree.",
+    "main_technique": "tree_traversal",
+    "secondary_tags": [
+      "subtree_aggregation"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "tree_distances",
+    "title": "Distances from the root",
+    "short_description": "A connected undirected tree has positive edge lengths. Report each vertex's distance from a chosen root.",
+    "normalized_description": "Given a weighted tree and one root, compute the sum of edge lengths along the unique path from the root to every vertex.",
+    "main_technique": "tree_traversal",
+    "secondary_tags": [
+      "unique_paths"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "build_order",
+    "title": "Valid build order",
+    "short_description": "Build targets depend on other targets. Output an ordering in which all prerequisites precede their users, or report a dependency cycle.",
+    "normalized_description": "Given a directed prerequisite graph, produce a vertex ordering respecting every edge or report that no such ordering exists.",
+    "main_technique": "topological_sorting",
+    "secondary_tags": [
+      "directed_acyclic_graph"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "course_layers",
+    "title": "Minimum parallel semesters",
+    "short_description": "Every course lasts one semester and there is no enrollment cap. Prerequisites must be finished in earlier semesters. Find the minimum semesters or report a cycle.",
+    "normalized_description": "Given directed prerequisite edges and unit-duration vertices executable in parallel, minimize completion layers with prerequisites strictly earlier; detect cycles.",
+    "main_technique": "topological_sorting",
+    "secondary_tags": [
+      "dynamic_programming"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "vacation_choices",
+    "title": "Best activity calendar",
+    "short_description": "On each day choose one of three activities with different rewards. The same activity cannot be chosen on consecutive days. Maximize total reward.",
+    "normalized_description": "Select one state per day from three reward options, forbid equal states on adjacent days, and maximize the total reward.",
+    "main_technique": "dynamic_programming",
+    "secondary_tags": [
+      "finite_states"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "grid_rewards",
+    "title": "Best one-way grid walk",
+    "short_description": "A robot starts in the top-left corner of a reward grid. It can move only right or down. Maximize collected reward when reaching the bottom-right corner.",
+    "normalized_description": "Find a maximum weight path across a numeric matrix from top-left to bottom-right using only right and down steps, including endpoint values.",
+    "main_technique": "dynamic_programming",
+    "secondary_tags": [
+      "grid"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  }
+]

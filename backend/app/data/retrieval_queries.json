@@ -1,0 +1,180 @@
+[
+  {
+    "id": "capacity_timetables",
+    "query": "A publisher must bind a sequence of manuscript volumes in order across at most seven daily batches. Volumes cannot be split and every daily batch is consecutive. What is the least daily page allowance that suffices?",
+    "normalized_query": "Minimize the maximum sum of at most seven contiguous groups of a positive page-count sequence.",
+    "relevant_ids": [
+      "capacity_manifest",
+      "split_workload"
+    ],
+    "category": "same_algorithm_different_story",
+    "notes": "Both records optimize the largest contiguous-group load with positive entries; exactly K and at-most K are related under K <= n.",
+    "story_pair": "partition",
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "capacity_music",
+    "query": "An album is divided into ordered tracks with different lengths. Put the tracks onto no more than K discs, preserving order, without breaking tracks. Determine the smallest disc duration that fits the whole album.",
+    "normalized_query": "Minimize capacity for partitioning ordered positive lengths into at most K consecutive groups.",
+    "relevant_ids": [
+      "capacity_manifest",
+      "split_workload"
+    ],
+    "category": "story_invariance",
+    "notes": "Same positive contiguous partition objective as the publisher query; labels concern structure, not vocabulary.",
+    "story_pair": "partition",
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "rainfall_intervals",
+    "query": "A meteorologist stores signed daily rainfall corrections once and receives many questions about their total between two dates inclusive. Corrections are never updated.",
+    "normalized_query": "Answer many inclusive interval sums on a fixed signed numeric sequence.",
+    "relevant_ids": [
+      "ledger_ranges"
+    ],
+    "category": "same_algorithm_different_story",
+    "notes": "Static one-dimensional range sums, rather than dynamic interval updates.",
+    "story_pair": "range_sum",
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "audio_intervals",
+    "query": "A fixed sound recording is represented by signed samples. For each requested consecutive sample slice, return the sum of its samples. There are many requests and the recording stays unchanged.",
+    "normalized_query": "Compute inclusive contiguous-range totals repeatedly on an immutable signed array.",
+    "relevant_ids": [
+      "ledger_ranges"
+    ],
+    "category": "story_invariance",
+    "notes": "Rephrases the same fixed-array range-sum task without copying the catalog text.",
+    "story_pair": "range_sum",
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "battery_paths",
+    "query": "A robot travels through directed tunnels with nonnegative energy costs. From its base, find the least total energy needed to reach every chamber.",
+    "normalized_query": "Compute minimum nonnegative weighted directed-graph path costs from one source to all vertices.",
+    "relevant_ids": [
+      "toll_routes",
+      "delivery_distances"
+    ],
+    "category": "same_structure_different_objective",
+    "notes": "Weighted cheapest paths are related; unweighted maze steps and connectivity-only tasks are not primary matches.",
+    "story_pair": "weighted_paths",
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "currency_paths",
+    "query": "Each permitted currency conversion carries a nonnegative processing fee independent of amount. Find the minimum accumulated fees along conversions from a starting currency to all currencies.",
+    "normalized_query": "Find single-source shortest total-cost paths in a directed graph with nonnegative edge weights.",
+    "relevant_ids": [
+      "toll_routes",
+      "delivery_distances"
+    ],
+    "category": "story_invariance",
+    "notes": "Same nonnegative weighted shortest-path task as battery paths, in a different narrative.",
+    "story_pair": "weighted_paths",
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "signed_balance",
+    "query": "For a list of signed gains and losses, count every consecutive block with net change exactly zero, including overlapping blocks.",
+    "normalized_query": "Count nonempty zero-sum contiguous subarrays of a signed array.",
+    "relevant_ids": [
+      "zero_sum_segments"
+    ],
+    "category": "similar_story_different_algorithm",
+    "notes": "An array total appears, but the goal is counting zero-sum intervals rather than answering supplied range requests.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "room_choices",
+    "query": "A studio has one room and receives start/end reservations. It can reject requests. Find the largest number it can accept without overlapping interiors.",
+    "normalized_query": "Choose as many pairwise nonoverlapping half-open time intervals as possible.",
+    "relevant_ids": [
+      "meeting_schedule"
+    ],
+    "category": "similar_story_different_algorithm",
+    "notes": "Reservation vocabulary overlaps occupancy counting, but here a maximum subset is selected.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "rising_noncontiguous",
+    "query": "From measurements written in their original order, delete any number so that what remains strictly increases. Maximize how many are kept.",
+    "normalized_query": "Find a longest strictly increasing subsequence, permitting gaps between selected positions.",
+    "relevant_ids": [
+      "rising_readings",
+      "envelope_chain"
+    ],
+    "category": "same_data_structure_different_objective",
+    "notes": "Rising readings is direct; envelope nesting is a structurally related extension with an extra coordinate, a subjective broader relevance judgment.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "prerequisites",
+    "query": "Some manufacturing steps require other steps first. List all steps in a valid execution order, or say that circular requirements make this impossible.",
+    "normalized_query": "Find a vertex order respecting directed prerequisite edges, or detect a cycle.",
+    "relevant_ids": [
+      "build_order",
+      "course_layers"
+    ],
+    "category": "multiple_relevant",
+    "notes": "Both use dependency ordering and cycle detection; layer minimization is a related extension.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "one_use_equipment",
+    "query": "A diver has a weight allowance and indivisible tools with weights and usefulness scores. Each tool exists once. Maximize usefulness within the weight allowance.",
+    "normalized_query": "Choose each weighted, valued item at most once to maximize total value under a capacity cap.",
+    "relevant_ids": [
+      "rucksack_value"
+    ],
+    "category": "same_data_structure_different_objective",
+    "notes": "One-use optimization differs from unlimited coin combination counting.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "batch_changes",
+    "query": "A lighting controller receives many commands adding brightness to every lamp in an index interval. Report all final brightness values only after the commands finish.",
+    "normalized_query": "Apply offline additive interval updates and output final values at all positions.",
+    "relevant_ids": [
+      "field_increments",
+      "seat_reservations"
+    ],
+    "category": "multiple_relevant",
+    "notes": "Direct interval increments plus the related interval occupancy accumulation pattern.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "stateful_choices",
+    "query": "I want practice with optimal or counted choices: paying landing fees while moving one or two positions, editing one string into another, selecting single-use weighted items, making unordered payments with unlimited coins, choosing daily activities without adjacent repeats, or maximizing rewards on right/down grid paths.",
+    "normalized_query": "Find practice tasks about optimal or counted sequences of choices over positions, edits, weighted items, coin multiplicities, activity days, or one-way grid routes.",
+    "relevant_ids": [
+      "stair_cost",
+      "edit_sequence",
+      "rucksack_value",
+      "coin_combinations",
+      "vacation_choices",
+      "grid_rewards"
+    ],
+    "category": "multiple_relevant",
+    "notes": "Deliberately broad practice request with six relevant records; recall denominator must be six, not five. Not an algorithm identification query.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  },
+  {
+    "id": "circle_geometry",
+    "query": "Find the radius of the smallest circle enclosing all points in a two-dimensional plane, with real-valued coordinates.",
+    "normalized_query": "Compute a minimum enclosing circle for arbitrary planar points.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "No computational-geometry record is present. Textual neighbors must not be treated as known algorithmic matches.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment"
+  }
+]

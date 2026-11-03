@@ -1,0 +1,1157 @@
+{
+  "experiments": [
+    {
+      "method": "tfidf",
+      "representation": "raw",
+      "catalog_revision": "a50a6c0bbe14d476",
+      "evaluation_revision": "47f25b7074ba96a4",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.2285714285714286,
+      "recall_at_5": 0.7307692307692307,
+      "mrr": 0.6467948717948718,
+      "story_pair_top5_jaccard": {
+        "partition": 0.1111111111111111,
+        "range_sum": 0.42857142857142855,
+        "weighted_paths": 0.25
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "skyline_rectangle",
+            "coin_combinations",
+            "merge_streams",
+            "rising_readings",
+            "next_warmer"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.125
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "road_redundancy",
+            "tree_distances",
+            "coin_combinations",
+            "stair_cost",
+            "capacity_manifest"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "rucksack_value",
+            "rectangle_totals",
+            "zero_sum_segments",
+            "toll_routes"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "rectangle_totals",
+            "subtree_totals",
+            "ledger_ranges",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "rucksack_value",
+            "build_order",
+            "vacation_choices",
+            "delivery_distances"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "friend_components",
+            "seat_reservations",
+            "delivery_distances",
+            "matching_inventory"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "meeting_schedule",
+            "grid_rewards",
+            "skyline_rectangle",
+            "split_workload"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "meeting_schedule",
+            "zero_sum_segments",
+            "friend_components",
+            "edit_sequence",
+            "word_transform"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "coin_combinations",
+            "zero_sum_segments",
+            "rising_readings",
+            "friend_components",
+            "envelope_chain"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "toll_routes",
+            "grid_rewards",
+            "build_order",
+            "delivery_distances"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "next_warmer",
+            "field_increments",
+            "subtree_totals",
+            "ledger_ranges",
+            "build_order"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "coin_combinations",
+            "grid_rewards",
+            "merge_streams",
+            "maze_steps",
+            "stair_cost"
+          ],
+          "precision_at_5": 0.6,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "envelope_chain"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "semantic",
+      "representation": "raw",
+      "catalog_revision": "a50a6c0bbe14d476",
+      "evaluation_revision": "47f25b7074ba96a4",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1",
+        "model": "sentence-transformers/all-MiniLM-L6-v2",
+        "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "sentence_transformers_version": "5.7.0",
+        "torch_version": "2.15.0+cpu"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.27142857142857146,
+      "recall_at_5": 0.8076923076923077,
+      "mrr": 0.7532051282051282,
+      "story_pair_top5_jaccard": {
+        "partition": 0.1111111111111111,
+        "range_sum": 0.25,
+        "weighted_paths": 0.42857142857142855
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "capacity_manifest",
+            "station_refills",
+            "vacation_choices",
+            "deadline_jobs",
+            "edit_sequence"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "split_workload",
+            "distinct_badges",
+            "capacity_manifest",
+            "stair_cost",
+            "rising_readings"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "field_increments",
+            "merge_coverage",
+            "subtree_totals",
+            "vacation_choices",
+            "seat_reservations"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.125
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "coin_combinations",
+            "seat_reservations",
+            "ledger_ranges",
+            "subtree_totals",
+            "road_redundancy"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "stair_cost",
+            "toll_routes",
+            "maze_steps",
+            "grid_rewards",
+            "delivery_distances"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "stair_cost",
+            "toll_routes",
+            "edit_sequence",
+            "delivery_distances",
+            "matching_inventory"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "road_redundancy",
+            "coin_combinations",
+            "field_increments",
+            "subtree_totals"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "meeting_schedule",
+            "seat_reservations",
+            "station_refills",
+            "bounded_positive_segment",
+            "pair_budget"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "pair_budget",
+            "rucksack_value",
+            "rising_readings",
+            "station_refills",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "build_order",
+            "course_layers",
+            "stair_cost",
+            "merge_streams",
+            "road_redundancy"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "grid_rewards",
+            "deadline_jobs",
+            "toll_routes",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "field_increments",
+            "seat_reservations",
+            "road_redundancy",
+            "course_layers",
+            "deadline_jobs"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "stair_cost",
+            "vacation_choices",
+            "rucksack_value",
+            "station_refills",
+            "deadline_jobs"
+          ],
+          "precision_at_5": 0.6,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "envelope_chain",
+            "maze_steps",
+            "next_warmer",
+            "stair_cost",
+            "delivery_distances"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "tfidf",
+      "representation": "normalized",
+      "catalog_revision": "a50a6c0bbe14d476",
+      "evaluation_revision": "47f25b7074ba96a4",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.3,
+      "recall_at_5": 0.9230769230769231,
+      "mrr": 0.8846153846153846,
+      "story_pair_top5_jaccard": {
+        "partition": 0.25,
+        "range_sum": 0.25,
+        "weighted_paths": 0.25
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "split_workload",
+            "capacity_manifest",
+            "bounded_positive_segment",
+            "rising_readings",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "capacity_manifest",
+            "split_workload",
+            "station_refills",
+            "tree_distances",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "rectangle_totals",
+            "ledger_ranges",
+            "rising_readings",
+            "field_increments",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "zero_sum_segments",
+            "split_workload",
+            "bounded_positive_segment",
+            "station_refills"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "delivery_distances",
+            "edit_sequence",
+            "tree_distances",
+            "word_transform"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "delivery_distances",
+            "toll_routes",
+            "build_order",
+            "maze_steps",
+            "rucksack_value"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "split_workload",
+            "ledger_ranges",
+            "field_increments",
+            "bounded_positive_segment"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "seat_reservations",
+            "meeting_schedule",
+            "merge_coverage",
+            "deadline_jobs",
+            "rucksack_value"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "rising_readings",
+            "envelope_chain",
+            "stair_cost",
+            "pair_budget",
+            "next_warmer"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "course_layers",
+            "build_order",
+            "subtree_totals",
+            "coin_combinations",
+            "toll_routes"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "vacation_choices",
+            "capacity_manifest",
+            "next_warmer",
+            "tree_distances"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "field_increments",
+            "pair_budget",
+            "merge_coverage",
+            "stair_cost",
+            "subtree_totals"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "merge_streams",
+            "coin_combinations",
+            "maze_steps",
+            "stair_cost",
+            "vacation_choices"
+          ],
+          "precision_at_5": 0.6,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "edit_sequence",
+            "matching_inventory",
+            "tree_distances",
+            "toll_routes",
+            "stair_cost"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "semantic",
+      "representation": "normalized",
+      "catalog_revision": "a50a6c0bbe14d476",
+      "evaluation_revision": "47f25b7074ba96a4",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1",
+        "model": "sentence-transformers/all-MiniLM-L6-v2",
+        "model_revision": "1110a243fdf4706b3f48f1d95db1a4f5529b4d41",
+        "sentence_transformers_version": "5.7.0",
+        "torch_version": "2.15.0+cpu"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.3285714285714286,
+      "recall_at_5": 0.9743589743589743,
+      "mrr": 1.0,
+      "story_pair_top5_jaccard": {
+        "partition": 0.6666666666666666,
+        "range_sum": 0.25,
+        "weighted_paths": 0.6666666666666666
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "capacity_manifest",
+            "split_workload",
+            "pair_budget",
+            "rising_readings",
+            "bounded_positive_segment"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "split_workload",
+            "capacity_manifest",
+            "distinct_badges",
+            "rising_readings",
+            "bounded_positive_segment"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "zero_sum_segments",
+            "rectangle_totals",
+            "pair_budget",
+            "seat_reservations"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "zero_sum_segments",
+            "split_workload",
+            "bounded_positive_segment",
+            "field_increments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "delivery_distances",
+            "stair_cost",
+            "grid_rewards",
+            "build_order"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "delivery_distances",
+            "stair_cost",
+            "tree_distances",
+            "build_order"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "ledger_ranges",
+            "bounded_positive_segment",
+            "field_increments",
+            "split_workload"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "meeting_schedule",
+            "seat_reservations",
+            "merge_coverage",
+            "field_increments",
+            "split_workload"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "rising_readings",
+            "next_warmer",
+            "distinct_badges",
+            "envelope_chain",
+            "meeting_schedule"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "build_order",
+            "course_layers",
+            "toll_routes",
+            "road_redundancy",
+            "friend_components"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "pair_budget",
+            "capacity_manifest",
+            "coin_combinations",
+            "vacation_choices"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "field_increments",
+            "merge_coverage",
+            "seat_reservations",
+            "station_refills",
+            "meeting_schedule"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "stair_cost",
+            "deadline_jobs",
+            "vacation_choices",
+            "rucksack_value",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.8,
+          "recall_at_5": 0.6666666666666666,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "course_layers",
+            "toll_routes",
+            "distinct_badges",
+            "stair_cost",
+            "grid_rewards"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    }
+  ]
+}

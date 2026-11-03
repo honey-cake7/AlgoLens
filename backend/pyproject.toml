@@ -13,10 +13,15 @@ dependencies = [
     "uvicorn>=0.34,<1.0",
     "python-dotenv>=1.0,<2.0",
     "groq>=1.7,<2.0",
+    "scikit-learn>=1.6,<2.0",
 ]
 
 [project.optional-dependencies]
 dev = ["pytest>=8,<10", "httpx>=0.28,<1.0"]
+semantic = ["sentence-transformers>=5,<6"]
+
+[tool.setuptools.package-data]
+app = ["data/*.json"]
 
 [tool.setuptools.packages.find]
 include = ["app*"]

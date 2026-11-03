@@ -1,4 +1,5 @@
 import type { AlgorithmicAssessment } from './algorithmic'
+import type { SimilarResponse } from './retrieval'
 
 export interface HealthResponse {
   status: 'ok'
@@ -33,6 +34,8 @@ export interface Hint {
 }
 
 export interface AnalyzeResponse {
+  similar_problems?: SimilarResponse | null
+  retrieval_warning?: string | null
   deterministic: AlgorithmicAssessment
   analysis_type: 'ai' | 'mock'
   provider: 'groq' | 'fake'

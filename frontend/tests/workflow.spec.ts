@@ -311,3 +311,91 @@ test('synthetic AI disagreement is shown without replacing either source', async
   await expect(page.getByText('Promising AI fixture', { exact: true })).toBeVisible()
   await expect(page.getByLabel('AI analysis notice')).toContainText('AI Analysis')
 })
+
+const retrievalQuery = 'Find inclusive interval sums for many queries on a fixed signed array.'
+
+test('standalone practice search uses only local retrieval and preserves paste guidance', async ({ page }, testInfo) => {
+  let analyses = 0
+  await page.route('**/api/v1/analyze', route => { analyses += 1; return route.abort() })
+  await page.goto('/')
+  await expect(page.locator('#statement-paste-tip')).toContainText('Preserve mathematical expressions')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  const pending = page.waitForResponse(response => response.url().endsWith('/api/v1/similar'))
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  const response = await pending
+  expect(response.status()).toBe(200)
+  const data = await response.json()
+  expect(data.query).toBe(retrievalQuery)
+  expect(data.retrieval_method).toBe('tfidf')
+  const section = page.getByRole('region', { name: 'Similar practice problems', exact: true })
+  await expect(section.getByRole('heading', { name: 'Static ledger totals', exact: true })).toBeVisible()
+  await expect(section.getByText('AlgoLens practice example', { exact: false })).toHaveCount(5)
+  await expect(section).toContainText('not confidence probabilities')
+  await expect(section.getByRole('link')).toHaveCount(0)
+  expect(analyses).toBe(0)
+  expect(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth)).toBe(true)
+  await page.screenshot({ path: testInfo.outputPath('similar-problems.png'), fullPage: true })
+  await page.getByLabel('Problem statement', { exact: true }).fill('A different statement to reset results.')
+  await expect(section).toHaveCount(0)
+})
+
+test('combined recommendations use real input and stay collapsed beside demo hints', async ({ page }) => {
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Similar Problems', exact: true })).toBeVisible()
+  await expect(page.getByRole('heading', { name: 'Static ledger totals', exact: true })).toBeHidden()
+  await page.getByText('Show practice recommendations (5) · includes technique tags', { exact: true }).click()
+  await expect(page.getByRole('heading', { name: 'Static ledger totals', exact: true })).toBeVisible()
+  await page.getByRole('button', { name: 'Reveal Hint 1', exact: true }).click()
+  await expect(page.getByRole('button', { name: 'Reveal Hint 2', exact: true })).toBeVisible()
+})
+
+test('visible semantic fallback never mislabels lexical matches', async ({ page }) => {
+  await page.route('**/api/v1/similar', async route => {
+    const data = await (await route.fetch()).json()
+    await route.fulfill({ json: { ...data, requested_method: 'semantic', warnings: [...data.warnings, 'Semantic model is missing. Using TF-IDF; no download was made.'] } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  const section = page.getByRole('region', { name: 'Similar practice problems', exact: true })
+  await expect(section).toContainText('Semantic model is missing. Using TF-IDF')
+  await expect(section).toContainText('TF-IDF')
+  await expect(section).not.toContainText('Local semantic')
+})
+
+test('local search has an explicit empty state', async ({ page }) => {
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill('zzzzxyz qqqxyz zzzzxyz qqqxyz')
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  await expect(page.getByText('No practice matches available.', { exact: false })).toBeVisible()
+})
+
+test('invalid retrieval data does not destroy a successful analysis or hints', async ({ page }) => {
+  await page.route('**/api/v1/analyze', async route => {
+    const data = await (await route.fetch()).json()
+    data.similar_problems.matches[0].similarity_score = 7
+    await route.fulfill({ json: data })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByText('Practice recommendations could not be validated', { exact: false })).toBeVisible()
+  await expect(page.getByRole('button', { name: 'Reveal Hint 1', exact: true })).toBeVisible()
+  await expect(page.getByRole('alert')).toHaveCount(0)
+})
+
+test('semantic fixture displays honest local method and cosine score', async ({ page }) => {
+  await page.route('**/api/v1/similar', async route => {
+    const data = await (await route.fetch()).json()
+    await route.fulfill({ json: { ...data, requested_method: 'semantic', retrieval_method: 'semantic', matches: data.matches.map((item: Record<string, unknown>) => ({ ...item, retrieval_method: 'semantic', similarity_score: 0.82, explanation: 'Fixture: local embedding cosine similarity.' })) } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  const section = page.getByRole('region', { name: 'Similar practice problems', exact: true })
+  await expect(section).toContainText('Local semantic')
+  await expect(section).toContainText('Cosine score: 0.820')
+  await expect(section).not.toContainText('82%')
+})

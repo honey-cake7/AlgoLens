@@ -3,7 +3,9 @@ import AnalysisResult from './components/AnalysisResult'
 import AlgorithmicResult from './components/AlgorithmicResult'
 import HealthIndicator from './components/HealthIndicator'
 import ProblemInput from './components/ProblemInput'
-import { analyzeProblem, assessProblem } from './services/api'
+import SimilarProblems from './components/SimilarProblems'
+import { analyzeProblem, assessProblem, findSimilarProblems } from './services/api'
+import type { SimilarResponse } from './types/retrieval'
 import type { AnalyzeResponse } from './types/api'
 import type { AlgorithmicAssessment } from './types/algorithmic'
 
@@ -11,7 +13,8 @@ export default function App() {
   const [statement, setStatement] = useState('')
   const [analysis, setAnalysis] = useState<AnalyzeResponse | null>(null)
   const [assessment, setAssessment] = useState<AlgorithmicAssessment | null>(null)
-  const [operation, setOperation] = useState<'analysis' | 'assessment' | null>(null)
+  const [similar, setSimilar] = useState<SimilarResponse | null>(null)
+  const [operation, setOperation] = useState<'analysis' | 'assessment' | 'similar' | null>(null)
   const loading = operation !== null
   const [error, setError] = useState<string | null>(null)
   const request = useRef<AbortController | null>(null)
@@ -22,10 +25,11 @@ export default function App() {
     setStatement(value)
     setAnalysis(null)
     setAssessment(null)
+    setSimilar(null)
     setError(null)
   }
 
-  async function handleAnalyze(mode: 'analysis' | 'assessment' = 'analysis') {
+  async function handleAnalyze(mode: 'analysis' | 'assessment' | 'similar' = 'analysis') {
     // A ref closes the gap before React renders the disabled submit button.
     if (request.current) return
     const controller = new AbortController()
@@ -34,15 +38,20 @@ export default function App() {
     setError(null)
     setAnalysis(null)
     setAssessment(null)
+    setSimilar(null)
     try {
       if (mode === 'assessment') {
         const result = await assessProblem(statement, controller.signal)
         if (!controller.signal.aborted) setAssessment(result)
+      } else if (mode === 'similar') {
+        const result = await findSimilarProblems(statement, controller.signal)
+        if (!controller.signal.aborted) setSimilar(result)
       } else {
         const result = await analyzeProblem(statement, controller.signal)
         if (!controller.signal.aborted) {
           setAnalysis(result)
           setAssessment(result.deterministic)
+          setSimilar(result.similar_problems ?? null)
         }
       }
     } catch (failure) {
@@ -65,7 +74,7 @@ export default function App() {
             <span aria-hidden="true" className="grid h-9 w-9 place-items-center rounded-xl bg-teal-800 font-mono text-sm text-white">aL</span>
             <span>AlgoLens <span className="font-normal text-teal-700">AI</span></span>
           </a>
-          <span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600">{analysis ? analysis.analysis_type === 'ai' ? 'AI Analysis' : 'Demo Mode' : assessment ? 'Offline Assessment' : 'Stage 3 · Learning workspace'}</span>
+          <span className="rounded-full border border-slate-200 px-3 py-1 text-xs text-slate-600">{analysis ? analysis.analysis_type === 'ai' ? 'AI Analysis' : 'Demo Mode' : assessment ? 'Offline Assessment' : similar ? 'Local Practice Search' : 'Stage 4 · Learning workspace'}</span>
         </div>
       </header>
 
@@ -78,14 +87,16 @@ export default function App() {
         </div>
 
         <div className="grid items-start gap-6 lg:grid-cols-2">
-          <ProblemInput statement={statement} loading={loading} assessing={operation === 'assessment'} onChange={changeStatement} onAnalyze={() => handleAnalyze()} onAssess={() => handleAnalyze('assessment')} />
+          <ProblemInput statement={statement} loading={loading} assessing={operation === 'assessment'} searching={operation === 'similar'} onChange={changeStatement} onAnalyze={() => handleAnalyze()} onAssess={() => handleAnalyze('assessment')} onSimilar={() => handleAnalyze('similar')} />
           <section aria-labelledby="result-title" className="panel min-w-0">
             <div className="mb-6 flex items-center gap-3"><span className="step">02</span><h2 id="result-title" className="text-lg font-semibold">Explore the analysis</h2></div>
-            {loading && <p role="status" className="rounded-xl bg-teal-50 p-6 text-sm text-teal-950">{operation === 'assessment' ? 'Assessing constraints offline…' : 'Requesting analysis from the backend…'}</p>}
+            {loading && <p role="status" className="rounded-xl bg-teal-50 p-6 text-sm text-teal-950">{operation === 'assessment' ? 'Assessing constraints offline…' : operation === 'similar' ? 'Searching local practice problems…' : 'Requesting analysis from the backend…'}</p>}
             {error && <div role="alert" className="rounded-xl border border-red-200 bg-red-50 p-5 text-sm leading-6 text-red-900"><p className="font-semibold">Analysis request failed</p><p className="mt-1">{error}</p><p className="mt-2">Your statement is preserved. Retry, or use Assess constraints only for an offline assessment without an AI request.</p></div>}
-            {!loading && !error && !analysis && !assessment && <div className="rounded-xl border border-dashed border-teal-800/25 bg-teal-50/60 p-6"><p className="font-medium text-teal-950">Ready when you are</p><p className="mt-3 text-sm leading-6 text-slate-600">Describe what each variable counts and include its bounds. Assess constraints only performs local parsing and growth estimates. Analyze Problem also requests the configured provider's educational guidance and three progressively revealed hints.</p></div>}
+            {!loading && !error && !analysis && !assessment && !similar && <div className="rounded-xl border border-dashed border-teal-800/25 bg-teal-50/60 p-6"><p className="font-medium text-teal-950">Ready when you are</p><p className="mt-3 text-sm leading-6 text-slate-600">Describe what each variable counts and include its bounds. Assess constraints only performs local parsing and growth estimates. Analyze Problem also requests the configured provider's educational guidance and three progressively revealed hints.</p></div>}
             {assessment && <div className="mb-6"><AlgorithmicResult result={assessment} /></div>}
             {analysis && <AnalysisResult analysis={analysis} />}
+            {analysis?.retrieval_warning && <p role="status" className="mt-4 rounded-lg bg-amber-50 p-3 text-sm text-amber-950">{analysis.retrieval_warning}</p>}
+            {similar && <SimilarProblems key={similar.query} result={similar} collapsed={Boolean(analysis)} />}
           </section>
         </div>
         <footer className="mt-8 flex flex-wrap items-center justify-between gap-4 text-xs text-slate-500">

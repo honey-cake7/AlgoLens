@@ -5,12 +5,14 @@ interface ProblemInputProps {
   statement: string
   loading: boolean
   assessing: boolean
+  searching: boolean
   onChange: (statement: string) => void
   onAnalyze: () => void
   onAssess: () => void
+  onSimilar: () => void
 }
 
-export default function ProblemInput({ statement, loading, assessing, onChange, onAnalyze, onAssess }: ProblemInputProps) {
+export default function ProblemInput({ statement, loading, assessing, searching, onChange, onAnalyze, onAssess, onSimilar }: ProblemInputProps) {
   // Count Unicode code points, as Python does, rather than UTF-16 code units.
   const count = Array.from(statement.trim()).length
   const valid = count >= MIN_STATEMENT_LENGTH && count <= MAX_STATEMENT_LENGTH
@@ -35,10 +37,12 @@ export default function ProblemInput({ statement, loading, assessing, onChange, 
         <p id="statement-validation" className="mt-2 min-h-5 text-sm text-amber-800">{validationMessage}</p>
         <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
           <button type="button" disabled={!statement || loading} onClick={() => onChange('')} className="rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">Clear</button>
-          <button type="submit" disabled={!valid || loading} className="rounded-lg bg-teal-800 px-5 py-3 text-sm font-medium text-white hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-40">{loading && !assessing ? 'Analyzing…' : 'Analyze Problem'}</button>
+          <button type="submit" disabled={!valid || loading} className="rounded-lg bg-teal-800 px-5 py-3 text-sm font-medium text-white hover:bg-teal-900 disabled:cursor-not-allowed disabled:opacity-40">{loading && !assessing && !searching ? 'Analyzing…' : 'Analyze Problem'}</button>
         </div>
         <button type="button" disabled={!valid || loading} onClick={onAssess} className="mt-3 w-full rounded-lg border border-teal-800 px-4 py-3 text-sm font-medium text-teal-900 hover:bg-teal-50 disabled:cursor-not-allowed disabled:opacity-40">{loading && assessing ? 'Assessing…' : 'Assess constraints only'}</button>
         <p className="mt-2 text-xs text-slate-500">Constraint-only assessment is offline and uses no AI quota.</p>
+        <button type="button" disabled={!valid || loading} onClick={onSimilar} className="mt-3 w-full rounded-lg border border-slate-300 px-4 py-3 text-sm font-medium text-slate-700 hover:bg-slate-50 disabled:cursor-not-allowed disabled:opacity-40">{searching ? 'Searching…' : 'Find similar problems'}</button>
+        <p className="mt-2 text-xs text-slate-500">Search original practice examples locally, without an AI request.</p>
       </form>
     </section>
   )

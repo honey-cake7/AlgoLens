@@ -22,7 +22,7 @@ Backend CORS origins come from environment configuration; frontend API location 
 
 ## 006 — Deferred until justified
 
-No database, pgvector, Redis, PyTorch, Sentence Transformers, MLflow, Docker production setup, authentication, billing, scraping, retrieval implementation, or training code. Stage 2 authorized provider-based analysis. Stage 3 separately authorizes the local constraint/growth engine; it does not authorize those other systems or Ollama.
+No database, pgvector, Redis, MLflow, Docker production setup, authentication, billing, scraping, or training code. Stage 2 authorized provider analysis; Stage 3 authorized local constraint/growth analysis. The user's Stage 4 request now authorizes scikit-learn retrieval and optional CPU Sentence Transformers/PyTorch, with explicit local setup and no paid services. Ollama and larger infrastructure remain deferred.
 
 ## 007 — Honest deterministic mock contract
 
@@ -83,3 +83,21 @@ Add `deterministic` to AnalyzeResponse, not AnalysisContent. The provider's prom
 Expose POST `/api/v1/assess` with the same statement validation and no provider/settings dependency. This makes local analysis accessible even when Groq settings are invalid or its request fails. Preserve safe provider errors from `/analyze`; the UI offers **Assess constraints only** explicitly instead of silently switching providers or manufacturing AI content. Both actions share loading protection and stale-result clearing. Source labels distinguish extracted evidence, deterministic heuristics, AI suggestions, and demo examples.
 
 All Stage 3 tests stay offline; no new dependency, model call, environment-file edit, account change, or paid service is needed. Stage 3 ends after implementation, tests, build, and documentation; later milestones require a new request.
+
+## 017 — Original catalog and local retrieval without provider calls
+
+The user explicitly authorizes Stage 4 semantic similar-problem retrieval, superseding older deferred-retrieval and hint-quality ordering. Keep the modular monolith and original provider/deterministic paths. Add 36 original practice records with no external URLs and a Pydantic provenance contract. Share input validation through a small independent module to avoid output-schema cycles. Exclude technique labels/titles/difficulty from retrieval text; both methods search the same solution-free normalized task descriptions.
+
+Use scikit-learn TF-IDF as default and optional Sentence Transformers MiniLM on CPU. Cosine scores are ranking values, not probabilities or algorithm proofs. Stable ID ties and explicit no-match behavior keep the baseline deterministic. No vector database, hosted embeddings, scraping, paid API, or new Groq request is justified for 36 records.
+
+Only the explicit setup command may download selected model files. Runtime requires a local identity marker and uses local-files-only loading, CPU, and no remote code. Missing/invalid semantic setup visibly falls back to TF-IDF with actual-method labels. Corpus representation/catalog and local model fingerprints invalidate bounded in-memory caches. Keep one encoder loaded and reuse corpus vectors; worker threads keep synchronous CPU work off the event loop.
+
+Standalone /similar has no provider dependency. Combined analysis uses the actual statement in fake mode; a real AI simplification is reused only when it reports no uncertainty, with an explicit unverified-provenance caveat. Optional retrieval has a three-second wait budget and cannot discard successful analysis/hints. A worker may finish cache warm-up after timeout. The frontend also isolates malformed optional retrieval data, preserves paste guidance, and collapses integrated recommendations because tags may reveal technique clues.
+
+## 018 — Measured, provisional retrieval evaluation
+
+Keep 14 authored benchmark queries separate from the catalog, including narrative changes, algorithm mismatches, multiple relevant answers, and no strong catalog match. The user selected provisional relevance labels for later human review. Record that status explicitly; never claim independent human ground truth. Do not inject technique labels or hints into query representations.
+
+Compare TF-IDF and real cached MiniLM on identical raw and separately authored normalized queries. Measure Precision@5 with denominator five, Recall@5 with each query's full relevance set, and MRR over all returned positive-score candidates. No-relevance queries contribute P@5=0 and are excluded from undefined recall/MRR. Retain full per-query output, model/library/corpus provenance, story-pair overlap, and failure cases. Missing semantic setup means not evaluated, never disguised fallback metrics.
+
+Optional dependencies and weights were explicitly announced and installed/downloaded for separate offline neural verification. Automated tests still use fake encoders, offline flags, ignored real dotenv contents, and blocked networks. Stage 4 ends here; algorithm-aware features, training, reranking, and larger infrastructure remain later work only on request.
