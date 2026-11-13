@@ -1,0 +1,80 @@
+# Offline checks on every push/PR. No secrets are used: tests force fake mode,
+# block external network access, and never download embedding models.
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  backend:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python-version: ["3.11", "3.13"]
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+          cache-dependency-path: backend/pyproject.toml
+      - run: python -m pip install -e ".[dev]"
+      - run: python -m pytest tests -q
+      - name: Catalog quality (duplicates, leakage, provenance)
+        run: python -m app.retrieval.catalog_check --strict
+
+  frontend:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run build
+
+  browser:
+    # Playwright is configured for Microsoft Edge, which Windows runners include.
+    runs-on: windows-latest
+    needs: [backend, frontend]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - name: Backend environment expected by playwright.config.ts
+        run: |
+          python -m venv backend/.venv
+          backend/.venv/Scripts/python.exe -m pip install -e "./backend[dev]"
+      - working-directory: frontend
+        run: |
+          npm ci
+          npm test
+      - if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-results
+          path: frontend/test-results
+          retention-days: 7

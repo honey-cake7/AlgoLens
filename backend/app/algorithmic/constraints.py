@@ -1,5 +1,6 @@
 """Conservative English/inequality patterns with traceable original evidence."""
 
+import bisect
 import re
 from collections import defaultdict
 
@@ -16,6 +17,9 @@ CMP = r"(?:<=|>=|<|>|=)"
 SIZE_ROLES = {"array_length", "sequence_length", "size", "vertices", "edges", "queries"}
 RESERVED = {"the", "and", "or", "of", "all", "in", "cases", "case", "limit", "time", "memory", "exceed", "most", "than", "its", "their", "these", "those", "some", "any", "many", "several", "each", "every", "both", "one", "two", "three", "an", "a", "positive", "negative", "signed", "nonnegative"}
 MAX_CONSTRAINTS = 128
+# Compiled once and matched at an offset, so no per-match string copies are needed.
+_CONTINUATION = re.compile(r"[ \t]*(?:[+*/^]|-(?=[ \t]*\d)|,\d|\.(?=[ \t]*[\d.+*/^]))")
+_EXAMPLE_WORD = re.compile(r"\b(?:example|sample)\b|e\.g\.", re.I)
 
 CHAIN = re.compile(rf"(?<![\w.])(?P<left>{NUMBER})\s*(?P<op1>{CMP})\s*(?P<vars>{VARS})\s*(?P<op2>{CMP})\s*(?P<right>{NUMBER})")
 FORWARD = re.compile(rf"(?<![\w.])(?P<vars>{VARS})\s*(?P<op>{CMP})\s*(?P<number>{NUMBER})")
@@ -64,12 +68,17 @@ class ConstraintParser:
             return original[offsets[start]:offsets[end - 1] + 1]
 
         meanings: dict[str, dict[str, str]] = defaultdict(dict)
+        has_math_evidence: dict[str, bool] = {}
 
         def record(variable: str, role: str, start: int, end: int):
             # English modifiers such as 'its elements' are not variable bindings.
             # Long alphabetic identifiers need mathematical evidence as well.
-            if len(variable) > 1 and variable.isalpha() and not re.search(rf"(?<!\w){re.escape(variable)}\s*{CMP}|{CMP}\s*{re.escape(variable)}(?!\w)", text):
-                return
+            # Memoized: a repeated word would otherwise rescan the whole text each time.
+            if len(variable) > 1 and variable.isalpha():
+                if variable not in has_math_evidence:
+                    has_math_evidence[variable] = bool(re.search(rf"(?<!\w){re.escape(variable)}\s*{CMP}|{CMP}\s*{re.escape(variable)}(?!\w)", text))
+                if not has_math_evidence[variable]:
+                    return
             if variable.lower() not in RESERVED:
                 meanings[variable][role] = raw(start, end)
 
@@ -104,6 +113,9 @@ class ConstraintParser:
         multiple = bool(re.search(r"\btest\s+cases\b|\b(?:each|every)\s+(?:test\s+)?case\b", text, re.I))
         result.test_cases.present = multiple
         used: list[tuple[int, int]] = []
+        used_sorted: list[tuple[int, int]] = []  # same spans, ordered for bisect overlap checks
+        example_spans = [(hit.start(), hit.end()) for hit in _EXAMPLE_WORD.finditer(text)]
+        conditional_lines: dict[tuple[int, int], bool] = {}  # context span -> contains or/either/if
         disjunctive_variables: set[str] = set()
 
         def meaning(variable: str) -> tuple[str, str | None, str]:
@@ -120,23 +132,43 @@ class ConstraintParser:
                 return "element_value", "Indexed-variable syntax; excluded from size selection.", "contextual"
             return "unknown", None, "ambiguous"
 
+        def overlaps_used(start: int, end: int) -> bool:
+            # Accepted spans never overlap each other, so only the neighbours
+            # around the insertion point can overlap a new span.
+            index = bisect.bisect_left(used_sorted, (start, end))
+            return any(left < end and right > start for left, right in used_sorted[max(0, index - 1):index + 1])
+
         def valid_fragment(match: re.Match) -> bool:
-            if any(match.start() < end and match.end() > start for start, end in used):
+            # Every check looks only near the match, without copying the line
+            # prefix or text suffix, so long one-line inputs stay linear.
+            start, end = match.span()
+            if overlaps_used(start, end):
                 return False
-            prefix = text[:match.start()].rsplit("\n", 1)[-1].rstrip(" \t")
-            if prefix and prefix[-1] in "+-*/^" and prefix.strip() not in {"-", "*"}:
-                return False
-            if re.search(r"\d(?:,|\s*\.)$", prefix):
-                return False
-            suffix = text[match.end():]
-            if suffix and (suffix[0].isalnum() or suffix.startswith("_")):
+            line_start = text.rfind("\n", 0, start) + 1
+            last = start - 1  # last non-space/tab character of the line prefix
+            while last >= line_start and text[last] in " \t":
+                last -= 1
+            if last >= line_start:
+                if text[last] in "+-*/^" and text[line_start:last + 1].strip() not in {"-", "*"}:
+                    return False
+                # Same rule as before: a digit followed by ',' or by optional whitespace and '.'.
+                if text[last] == "," and last - 1 >= line_start and text[last - 1].isdigit():
+                    return False
+                if text[last] == ".":
+                    before = last - 1
+                    while before >= line_start and text[before].isspace():
+                        before -= 1
+                    if before >= line_start and text[before].isdigit():
+                        return False
+            if end < len(text) and (text[end].isalnum() or text[end] == "_"):
                 return False
             # A numeric/operator continuation cannot be silently discarded.
             # A terminal sentence period ("n <= 2. Process...") is allowed.
-            if re.match(r"[ \t]*(?:[+*/^]|-(?=[ \t]*\d)|,\d|\.(?=[ \t]*[\d.+*/^]))", suffix):
+            if _CONTINUATION.match(text, end):
                 return False
-            # Do not use a comparison from a local example sentence.
-            if re.search(r"\b(?:example|sample)\b|e\.g\.", prefix + " " + text[match.start():match.end()], re.I):
+            # Do not use a comparison from a local example sentence (same line, up to the match end).
+            index = bisect.bisect_left(example_spans, (line_start, line_start))
+            if index < len(example_spans) and example_spans[index][0] < end and example_spans[index][1] <= end:
                 return False
             return True
 
@@ -149,8 +181,10 @@ class ConstraintParser:
             source = raw(match.start(), match.end())
             line_start = text.rfind("\n", 0, match.start()) + 1
             line_end = text.find("\n", match.end())
-            context = text[line_start:line_end if line_end >= 0 else len(text)]
-            conditional = bool(re.search(r"\b(?:or|either|if)\b", context, re.I))
+            span = (line_start, line_end if line_end >= 0 else len(text))
+            if span not in conditional_lines:
+                conditional_lines[span] = bool(re.search(r"\b(?:or|either|if)\b", text[span[0]:span[1]], re.I))
+            conditional = conditional_lines[span]
             for variable in re.split(r"\s*,\s*", match["vars"]):
                 if variable.lower() in RESERVED:
                     continue
@@ -169,6 +203,7 @@ class ConstraintParser:
                     scope=scope, role=role, reliability=reliability, meaning_evidence=evidence,
                 ))
             used.append(match.span())
+            bisect.insort(used_sorted, match.span())
 
         for match in AGGREGATE.finditer(text):
             try:

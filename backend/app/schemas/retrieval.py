@@ -1,8 +1,10 @@
 """Catalog provenance and server-owned retrieval results; never LLM fields."""
 
+import re
+from datetime import date
 from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator
+from pydantic import BaseModel, ConfigDict, Field, StringConstraints, field_validator, model_validator
 
 from app.schemas.analysis_input import StatementRequest
 
@@ -24,16 +26,26 @@ class PracticeProblem(RetrievalModel):
     secondary_tags: list[Tag]
     difficulty: Literal["easy", "medium", "hard"]
     constraints_summary: Text | None = None
-    source_type: Literal["original_practice"] = "original_practice"
+    # Stage 6: "external_curated" records are allowed only with full provenance
+    # that a person verified by opening the page. Never generate or guess URLs.
+    source_type: Literal["original_practice", "external_curated"] = "original_practice"
     source_url: str | None = None
+    source_name: Text | None = None
+    license_note: Text | None = None
+    verified_on: date | None = None
 
-    @field_validator("source_url")
-    @classmethod
-    def original_records_have_no_external_url(cls, value):
-        # All records in this stage are ours, not verified hosted contest tasks.
-        if value is not None:
-            raise ValueError("Original practice records must not claim external URLs")
-        return value
+    @model_validator(mode="after")
+    def provenance_matches_source_type(self):
+        provenance = (self.source_url, self.source_name, self.license_note, self.verified_on)
+        if self.source_type == "original_practice":
+            if any(value is not None for value in provenance):
+                raise ValueError("Original practice records must not claim external URLs or provenance")
+        else:
+            if any(value is None for value in provenance):
+                raise ValueError("External records need source_url, source_name, license_note and verified_on")
+            if not re.fullmatch(r"https://[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?:/[^\s<>\"']*)?", self.source_url):
+                raise ValueError("External source URLs must be plain https links")
+        return self
 
     @field_validator("secondary_tags")
     @classmethod
@@ -56,8 +68,15 @@ class SimilarMatch(RetrievalModel):
     similarity_score: float = Field(ge=-1, le=1)
     retrieval_method: Method
     explanation: Text
-    source_type: Literal["original_practice"] = "original_practice"
-    source_url: None = None
+    source_type: Literal["original_practice", "external_curated"] = "original_practice"
+    source_url: str | None = None
+    source_name: str | None = None
+
+    @model_validator(mode="after")
+    def link_only_for_external(self):
+        if (self.source_type == "original_practice") != (self.source_url is None):
+            raise ValueError("Only external curated matches carry a source URL")
+        return self
 
 
 class SimilarResponse(RetrievalModel):
@@ -66,5 +85,6 @@ class SimilarResponse(RetrievalModel):
     requested_method: Method
     retrieval_method: Method
     catalog_revision: Text
+    reranking: Literal["none", "task_cues"] = "none"
     matches: list[SimilarMatch] = Field(default_factory=list)
     warnings: list[Text] = Field(default_factory=list)

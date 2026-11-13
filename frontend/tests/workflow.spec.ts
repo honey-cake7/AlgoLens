@@ -206,6 +206,16 @@ test('free-tier limit displays a safe message without automatic retry', async ({
   expect(requests).toBe(1)
 })
 
+test('local live-analysis cap shows its own safe message', async ({ page }) => {
+  await page.route('**/api/v1/analyze', route => route.fulfill({ status: 429, json: { detail: { code: 'local_rate_limit', message: 'server text' } } }))
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(statement)
+  await page.getByRole('button', { name: 'Analyze Problem', exact: true }).click()
+  await expect(page.getByRole('alert')).toContainText('Too many live analyses this minute')
+  await expect(page.getByRole('alert')).not.toContainText('server text')
+  await expect(page.getByLabel('Problem statement', { exact: true })).toHaveValue(statement)
+})
+
 test('inconsistent AI/demo metadata is rejected', async ({ page }) => {
   await page.route('**/api/v1/analyze', async route => {
     const response = await route.fetch()
@@ -327,8 +337,12 @@ test('standalone practice search uses only local retrieval and preserves paste g
   const data = await response.json()
   expect(data.query).toBe(retrievalQuery)
   expect(data.retrieval_method).toBe('tfidf')
+  expect(data.reranking).toBe('task_cues')
   const section = page.getByRole('region', { name: 'Similar practice problems', exact: true })
   await expect(section.getByRole('heading', { name: 'Static ledger totals', exact: true })).toBeVisible()
+  await expect(section).toContainText('TF-IDF + task cues')
+  await expect(section).toContainText('Blended score:')
+  await expect(section).toContainText('Shared task cues:')
   await expect(section.getByText('AlgoLens practice example', { exact: false })).toHaveCount(5)
   await expect(section).toContainText('not confidence probabilities')
   await expect(section.getByRole('link')).toHaveCount(0)
@@ -389,7 +403,7 @@ test('invalid retrieval data does not destroy a successful analysis or hints', a
 test('semantic fixture displays honest local method and cosine score', async ({ page }) => {
   await page.route('**/api/v1/similar', async route => {
     const data = await (await route.fetch()).json()
-    await route.fulfill({ json: { ...data, requested_method: 'semantic', retrieval_method: 'semantic', matches: data.matches.map((item: Record<string, unknown>) => ({ ...item, retrieval_method: 'semantic', similarity_score: 0.82, explanation: 'Fixture: local embedding cosine similarity.' })) } })
+    await route.fulfill({ json: { ...data, requested_method: 'semantic', retrieval_method: 'semantic', reranking: 'none', matches: data.matches.map((item: Record<string, unknown>) => ({ ...item, retrieval_method: 'semantic', similarity_score: 0.82, explanation: 'Fixture: local embedding cosine similarity.' })) } })
   })
   await page.goto('/')
   await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
@@ -398,4 +412,52 @@ test('semantic fixture displays honest local method and cosine score', async ({ 
   await expect(section).toContainText('Local semantic')
   await expect(section).toContainText('Cosine score: 0.820')
   await expect(section).not.toContainText('82%')
+  await expect(section).not.toContainText('+ task cues')
+  await expect(section).not.toContainText('Blended score')
+})
+
+test('external curated fixture renders a safe provenance link', async ({ page }) => {
+  await page.route('**/api/v1/similar', async route => {
+    const data = await (await route.fetch()).json()
+    const first = { ...data.matches[0], title: 'Fixture external record', source_type: 'external_curated', source_url: 'https://example.org/fixture-problem', source_name: 'Example fixture archive' }
+    await route.fulfill({ json: { ...data, matches: [first, ...data.matches.slice(1)] } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  const section = page.getByRole('region', { name: 'Similar practice problems', exact: true })
+  await expect(section).toContainText('External source · Example fixture archive')
+  const link = section.getByRole('link', { name: 'Open original problem (external site)' })
+  await expect(link).toHaveCount(1)
+  await expect(link).toHaveAttribute('href', 'https://example.org/fixture-problem')
+  await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
+  await expect(section.getByText('AlgoLens practice example', { exact: false })).toHaveCount(4)
+})
+
+for (const [label, url] of [['javascript', 'javascript:alert(1)'], ['plain http', 'http://example.org/x'], ['original with link', null]] as const) {
+  test(`unsafe provenance is rejected: ${label}`, async ({ page }) => {
+    await page.route('**/api/v1/similar', async route => {
+      const data = await (await route.fetch()).json()
+      const bad = url === null ? { ...data.matches[0], source_url: 'https://example.org/x' } : { ...data.matches[0], source_type: 'external_curated', source_url: url, source_name: 'Fixture' }
+      await route.fulfill({ json: { ...data, matches: [bad, ...data.matches.slice(1)] } })
+    })
+    await page.goto('/')
+    await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+    await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+    await expect(page.getByText('unexpected practice search format', { exact: false })).toBeVisible()
+    await expect(page.getByRole('link', { name: 'Open original problem (external site)' })).toHaveCount(0)
+  })
+}
+
+test('unknown reranking value is rejected safely', async ({ page }) => {
+  await page.route('**/api/v1/similar', async route => {
+    const data = await (await route.fetch()).json()
+    await route.fulfill({ json: { ...data, reranking: 'secret_reranker' } })
+  })
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  await expect(page.getByText('unexpected practice search format', { exact: false })).toBeVisible()
+  await expect(page.getByRole('region', { name: 'Similar practice problems', exact: true })).toHaveCount(0)
+  await expect(page.getByLabel('Problem statement', { exact: true })).toHaveValue(retrievalQuery)
 })

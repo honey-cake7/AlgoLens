@@ -15,7 +15,7 @@ def offline_environment(monkeypatch, tmp_path):
         "GROQ_MODEL": "openai/gpt-oss-120b", "GROQ_MAX_OUTPUT_TOKENS": "3072",
         "GROQ_TIMEOUT_SECONDS": "30",
         "CORS_ORIGINS": "http://localhost:5173,http://127.0.0.1:5173",
-        "RETRIEVAL_METHOD": "tfidf", "RETRIEVAL_TOP_K": "5",
+        "RETRIEVAL_METHOD": "tfidf", "RETRIEVAL_TOP_K": "5", "RETRIEVAL_RERANK": "cues",
         "EMBEDDING_MODEL": "sentence-transformers/all-MiniLM-L6-v2",
         "EMBEDDING_CACHE_DIR": str(tmp_path / "absent-model"),
         "HF_HUB_OFFLINE": "1", "TRANSFORMERS_OFFLINE": "1",

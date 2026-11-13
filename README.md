@@ -2,7 +2,7 @@
 
 AlgoLens helps students understand competitive programming statements without immediately revealing complete solutions. It separates the underlying task from narrative and presents objectives, input/output requirements, raw constraints, technique hypotheses, preliminary complexity guidance, observations, uncertainties, and three progressive hints.
 
-**Status:** Stages 0–4 are implemented and verified. Stage 4 adds local similar-problem retrieval, a 36-record original practice catalog, and measured TF-IDF/MiniLM comparisons. Evaluation labels remain provisional for the user's later review. Groq, deterministic assessment, progressive hints, and mathematical paste guidance are preserved. No live Groq calls were made during Stage 4. Stage 5 has not started.
+**Status:** Stages 0–5 are implemented and verified. Stage 5 adds 14 original hard-negative catalog records (50 total), a held-out test split (36 queries: 14 dev, 22 test), and deterministic task-cue reranking that is on by default. Evaluation labels remain provisional for the user's later review. Groq, deterministic assessment, progressive hints, and mathematical paste guidance are preserved. No live Groq calls were made during Stages 4–5. Stage 6 provenance groundwork and the local part of Stage 8 (security hardening, request logs, CI) are also complete; Stage 7 (trained models) is gated. See [the security audit](docs/SECURITY.md).
 
 ## ₹0 workflow
 
@@ -64,10 +64,12 @@ AlgoLens/
 
 ## Windows PowerShell setup
 
+Commands below use `C:\path\to\AlgoLens`; replace it with the folder where you cloned the repository.
+
 Prerequisites: Python 3.11+, Node.js at least 22.12, Git, and Microsoft Edge for browser tests. Tested here with Python 3.13.5 and Node 24.18.0. Initial package installation needs internet access; test execution does not need external services. Human commands below do not require rtk. Use `npm.cmd` to avoid PowerShell blocking npm.ps1; invoking the virtual environment's Python directly avoids activation-policy changes.
 
 ```powershell
-Set-Location C:\Coding\AlgoLens
+Set-Location C:\path\to\AlgoLens
 python -m venv backend/.venv
 backend/.venv/Scripts/python.exe -m pip install -e './backend[dev]'
 Set-Location frontend
@@ -84,14 +86,14 @@ Stage 3 added no dependencies. Stage 4 requires refreshing the backend editable 
 Run backend in terminal 1:
 
 ```powershell
-Set-Location C:\Coding\AlgoLens\backend
+Set-Location C:\path\to\AlgoLens\backend
 .venv/Scripts/python.exe -m uvicorn app.main:app --reload --host 127.0.0.1 --port 8000
 ```
 
 Run frontend in terminal 2:
 
 ```powershell
-Set-Location C:\Coding\AlgoLens\frontend
+Set-Location C:\path\to\AlgoLens\frontend
 npm.cmd run dev
 ```
 
@@ -107,6 +109,7 @@ The backend reads the **repository-root `.env`**, independently of the working d
 | `GROQ_API_KEY` | empty | Required only for live Groq; server-side secret |
 | `GROQ_MODEL` | `openai/gpt-oss-120b` | Explicit alternative: `openai/gpt-oss-20b`; no automatic switch |
 | `GROQ_MAX_OUTPUT_TOKENS` | `3072` | Output budget, allowed 512–4096; low reasoning effort |
+| `GROQ_REQUESTS_PER_MINUTE` | `10` | Local cap on live Groq calls, 1–60; excess returns 429 before any provider request; fake mode is unlimited |
 | `GROQ_TIMEOUT_SECONDS` | `30` | Total provider deadline, greater than 0 and at most 40 seconds |
 | `CORS_ORIGINS` | localhost/127.0.0.1:5173 | Comma-separated exact allowed browser origins |
 
@@ -176,7 +179,7 @@ See [the Stage 3 guide](docs/DETERMINISTIC_ANALYSIS.md) for parsing rules, formu
 
 Copy/paste notation: `2.10^5`, `2 . 10^5`, `2⋅10^5`, and `2·10⁵` now all produce 200000. An ASCII period is treated as multiplication only before an explicit power of ten, with a visible interpretation note. Ordinary decimals/scientific notation remain unchanged. Unsupported dotted bounds are not silently truncated to `2`. After updating the code, restart the backend if it is not running with `--reload`.
 
-All three hints arrive in one response. Reveal buttons change local state and make no API calls. They are a learning convenience, not a server-side secrecy boundary. Provider failures use safe `{ "detail": { "code": "...", "message": "..." } }` errors: configuration 503, quota 429, timeout 504, invalid output 502, unavailable 503, unexpected internal error 500.
+All three hints arrive in one response. Reveal buttons change local state and make no API calls. They are a learning convenience, not a server-side secrecy boundary. Provider failures use safe `{ "detail": { "code": "...", "message": "..." } }` errors: configuration 503, quota 429, timeout 504, invalid output 502, unavailable 503, unexpected internal error 500. Request-level protections add `local_rate_limit` 429 (Groq mode only) and `request_too_large` 413 (bodies over 256 KiB).
 
 ## Stage 4: local similar-problem retrieval
 
@@ -190,13 +193,14 @@ Try: `Find inclusive interval sums for many queries on a fixed signed array.` Ex
 | --- | --- | --- |
 | `RETRIEVAL_METHOD` | `tfidf` | Choose `tfidf` or local `semantic` |
 | `RETRIEVAL_TOP_K` | `5` | API default K, 1–20; UI displays at most five |
+| `RETRIEVAL_RERANK` | `cues` | Stage 5 task-cue blending; `none` restores Stage 4 text-only ranking |
 | `EMBEDDING_MODEL` | `sentence-transformers/all-MiniLM-L6-v2` | Supported free encoder |
 | `EMBEDDING_CACHE_DIR` | `.cache/models/all-MiniLM-L6-v2` | Local model directory, relative to repository root |
 
 TF-IDF needs only the standard backend install. Semantic setup is optional and requires a one-time internet download: primary model files occupy about 90 MB (observed cache **87.3 MiB**); allow several GB of dependency disk space and roughly 1–2 GB RAM as a planning estimate. CPU-only PyTorch avoids a GPU requirement. No weights are committed. Before installing/downloading on another machine, check these resource requirements.
 
 ```powershell
-Set-Location C:\Coding\AlgoLens
+Set-Location C:\path\to\AlgoLens
 backend/.venv/Scripts/python.exe -m pip install torch --index-url https://download.pytorch.org/whl/cpu
 backend/.venv/Scripts/python.exe -m pip install -e './backend[semantic]'
 backend/.venv/Scripts/python.exe -m app.retrieval.setup_model --download
@@ -223,12 +227,33 @@ Measured on 14 queries with **provisional relevance labels**, including one quer
 
 These small, author-curated results are exploratory. They do not prove general superiority or algorithmic equivalence. Normalized queries are separately authored task descriptions, not automatic production rewrites; no ground-truth technique tags are added to either query or corpus representation. The no-relevance query contributes P@5=0 and is excluded from undefined recall/MRR. See [the retrieval guide](docs/RETRIEVAL.md) for formulas, failure cases, label review, caching, resources, and teaching examples. Full per-query results and model revision are in [the measured report](docs/retrieval_results.json).
 
+## Stage 5: task-cue reranking
+
+Text similarity alone confuses tasks that share words but need different algorithms, such as a fixed array versus one with updates. Stage 5 extracts small regex **task cues** from the solution-free task text (fixed data vs. updates, contiguous vs. gaps, negative vs. nonnegative edge weights, minimize-max vs. maximize-min, graph/tree/grid, and similar). It blends them into the cosine score: `0.8 · text + 0.2 · cues`. Opposite cues lower the score. The UI shows "TF-IDF + task cues", a blended score, and the shared cues for each match. No training, dependency, download, or Groq call is involved.
+
+The weight was chosen only on the original 14 queries (dev). Measured on 22 held-out test queries written before the cue rules (TF-IDF, raw text):
+
+| Ranking | P@5 | R@5 | MRR |
+| --- | --- | --- | --- |
+| TF-IDF | 0.145 | 0.714 | 0.467 |
+| TF-IDF + task cues | 0.182 | 0.857 | 0.699 |
+
+This is a small, author-labeled benchmark: treat it as exploratory. Remaining failures, dev results, normalized queries, and limitations are in [the retrieval guide](docs/RETRIEVAL.md#stage-5-task-cue-reranking-hard-negatives-and-a-held-out-split) and [the Stage 5 report](docs/retrieval_results_stage5.json). MiniLM + cues was not measured.
+
+## Hardening, catalog checks, and CI (Stages 6 and 8)
+
+- **Audit:** [docs/SECURITY.md](docs/SECURITY.md) lists each loophole found, the evidence, the fix, and the test that guards it. The main fixes are: maximum-length statements are now parsed in about 0.3 s instead of up to 11 s, parsing no longer blocks the server, oversized bodies are rejected early, live Groq calls are rate limited, every error is JSON, responses carry security headers, and each request gets a request-id log line that never includes the statement.
+- **Catalog quality:** run `backend/.venv/Scripts/python.exe -m app.retrieval.catalog_check` from `backend/` after editing the catalog or queries. It reports near duplicates, techniques with a single record, unknown relevance IDs, and query/catalog leakage. `--strict` exits non-zero on blocking problems.
+- **External records (Stage 6):** the catalog can now hold `external_curated` records, but only with `source_url` (https), `source_name`, `license_note`, and `verified_on`, verified by a person. None are included. Never paste unverified or generated links.
+- **CI:** [.github/workflows/ci.yml](.github/workflows/ci.yml) runs backend tests, the strict catalog check, the frontend build, and Edge browser tests on GitHub's free runners when pushed. It uses no secrets.
+- **Not done:** Stage 7 model training (gated, see the roadmap), deployment, and authentication.
+
 ## Tests and build — no model requests
 
 Stop manually started frontend/backend servers before browser tests so ports 5173 and 8000 are free. Tests require installed dependencies but no keys or external connection.
 
 ```powershell
-Set-Location C:\Coding\AlgoLens
+Set-Location C:\path\to\AlgoLens
 backend/.venv/Scripts/python.exe -m pytest backend/tests -q
 Set-Location frontend
 npm.cmd run build
@@ -237,7 +262,7 @@ npm.cmd test
 
 Backend tests ignore local .env content, force fake defaults, block external DNS/socket connections, and use httpx.MockTransport for the actual Groq SDK. Browser tests start their own servers with `LLM_PROVIDER=fake` and an empty key, override live settings, and block external page requests. The AI UI branch uses an explicit response fixture rather than live inference. Existing servers are never reused. Installed Microsoft Edge is required; screenshots/traces are ignored under frontend/test-results.
 
-Stage 4 checks: **248 backend tests passed**, frontend production build passed, and the final complete browser run passed **52 desktop/mobile tests** in 1.2 minutes. Tests cover existing parsing/growth/provider/hint behavior plus catalog validation, TF-IDF, mock semantic vectors, safe fallback, cache invalidation, metrics, no startup neural imports/downloads, standalone search, and integration failure isolation. A separate manual smoke check uses the real cached neural model offline; automated tests always use fake encoders. See [learning log](docs/LEARNING_LOG.md).
+Current checks: **310 backend tests passed**, frontend production build passed, and **64 desktop/mobile browser tests** passed. Stage 5 checks: 274 backend and 54 browser tests. Stage 4 checks: **248 backend tests passed**, frontend production build passed, and the final complete browser run passed **52 desktop/mobile tests** in 1.2 minutes. Tests cover existing parsing/growth/provider/hint behavior plus catalog validation, TF-IDF, mock semantic vectors, safe fallback, cache invalidation, metrics, no startup neural imports/downloads, standalone search, and integration failure isolation. A separate manual smoke check uses the real cached neural model offline; automated tests always use fake encoders. See [learning log](docs/LEARNING_LOG.md).
 
 If your servers are already running, tests can own alternate ports without stopping them: set `ALGOLENS_TEST_FRONTEND_PORT=5174` and `ALGOLENS_TEST_BACKEND_PORT=8001` in the test process environment before `npm.cmd test`. The same fake/TF-IDF settings and exact test CORS origins are enforced.
 
@@ -298,4 +323,4 @@ The deterministic parser covers a bounded English/numeric grammar, not arbitrary
 
 Retrieval uses a small original catalog and a general-purpose encoder. It can confuse similar stories with different algorithms, omit valid related tasks, and return weak neighbors for out-of-catalog queries. MiniLM truncates long input at 256 word pieces; no calibrated relevance cutoff is claimed. Labels await your review. Raw LLM suggestions remain preliminary. No database, authentication, scraping, URL import, training, cloud hosting, paid API, or Ollama was added. Nothing was committed or deployed by this task.
 
-Next, only when requested: Stage 5 may add algorithm-aware retrieval features and stronger evaluation. The user's Stage 4 retrieval specification supersedes the earlier hint-quality milestone ordering. See [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [decisions](docs/DECISIONS.md). Stop after Stage 4.
+Next, only when requested: review the provisional relevance labels, measure MiniLM + cues where the optional model is installed, and consider out-of-domain abstention. Stage 6 (curated external data with provenance) requires a new request. See [roadmap](docs/ROADMAP.md), [architecture](docs/ARCHITECTURE.md), and [decisions](docs/DECISIONS.md). Stop after Stage 5.

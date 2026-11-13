@@ -7,8 +7,10 @@ export interface SimilarMatch {
   similarity_score: number
   retrieval_method: 'tfidf' | 'semantic'
   explanation: string
-  source_type: 'original_practice'
-  source_url: null
+  source_type: 'original_practice' | 'external_curated'
+  /** Only external curated records (human-verified provenance) carry a link. */
+  source_url: string | null
+  source_name?: string | null
 }
 
 export interface SimilarResponse {
@@ -17,6 +19,8 @@ export interface SimilarResponse {
   requested_method: 'tfidf' | 'semantic'
   retrieval_method: 'tfidf' | 'semantic'
   catalog_revision: string
+  /** Absent from pre-Stage-5 servers; treated as 'none'. */
+  reranking?: 'none' | 'task_cues'
   matches: SimilarMatch[]
   warnings: string[]
 }

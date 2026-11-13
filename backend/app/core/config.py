@@ -20,6 +20,8 @@ class Settings(BaseModel):
     groq_model: str = "openai/gpt-oss-120b"
     groq_max_output_tokens: int = Field(default=3072, ge=512, le=4096)
     groq_timeout_seconds: float = Field(default=30, gt=0, le=40)
+    # Local safeguard on live provider calls per minute (fake mode is unlimited).
+    groq_requests_per_minute: int = Field(default=10, ge=1, le=60)
 
     @field_validator("groq_api_key", mode="before")
     @classmethod
@@ -40,6 +42,7 @@ def get_settings() -> Settings:
         "groq_model": "GROQ_MODEL",
         "groq_max_output_tokens": "GROQ_MAX_OUTPUT_TOKENS",
         "groq_timeout_seconds": "GROQ_TIMEOUT_SECONDS",
+        "groq_requests_per_minute": "GROQ_REQUESTS_PER_MINUTE",
     }
     try:
         return Settings(**{field: values[name] for field, name in names.items() if name in values})

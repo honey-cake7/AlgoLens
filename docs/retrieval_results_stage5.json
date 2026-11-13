@@ -1,0 +1,2897 @@
+{
+  "experiments": [
+    {
+      "method": "tfidf",
+      "representation": "raw",
+      "split": "dev",
+      "cue_weight": null,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 0.6538461538461539,
+      "mrr": 0.5737179487179487,
+      "story_pair_top5_jaccard": {
+        "partition": 0.1111111111111111,
+        "range_sum": 0.25,
+        "weighted_paths": 0.25
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "coin_combinations",
+            "skyline_rectangle",
+            "merge_streams",
+            "rising_readings",
+            "next_warmer"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.125
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "road_redundancy",
+            "tree_distances",
+            "coin_combinations",
+            "stair_cost",
+            "station_refills"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.16666666666666666
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "sensor_adjustments",
+            "rucksack_value",
+            "lowest_reading_queries",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "rectangle_totals",
+            "zero_sum_segments",
+            "ledger_ranges",
+            "subtree_totals",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "rebate_routes",
+            "paid_bookings",
+            "rucksack_value",
+            "free_and_paid_links"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "friend_components",
+            "toll_routes",
+            "seat_reservations",
+            "delivery_distances",
+            "paid_bookings"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "meeting_schedule",
+            "grid_rewards",
+            "free_and_paid_links",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "meeting_schedule",
+            "zero_sum_segments",
+            "friend_components",
+            "edit_sequence",
+            "word_transform"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "coin_combinations",
+            "zero_sum_segments",
+            "rising_readings",
+            "friend_components",
+            "envelope_chain"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "toll_routes",
+            "rebate_routes",
+            "free_and_paid_links",
+            "build_order"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "next_warmer",
+            "field_increments",
+            "ledger_ranges",
+            "subtree_totals",
+            "build_order"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "spread_out_towers",
+            "grid_rewards",
+            "coin_combinations",
+            "island_count",
+            "rucksack_value"
+          ],
+          "precision_at_5": 0.6,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "envelope_chain",
+            "spread_out_towers"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "tfidf",
+      "representation": "raw",
+      "split": "dev",
+      "cue_weight": 0.2,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.2571428571428572,
+      "recall_at_5": 0.8076923076923077,
+      "mrr": 0.9038461538461539,
+      "story_pair_top5_jaccard": {
+        "partition": 0.1111111111111111,
+        "range_sum": 0.42857142857142855,
+        "weighted_paths": 0.42857142857142855
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "skyline_rectangle",
+            "distinct_badges",
+            "bounded_positive_segment",
+            "capacity_manifest",
+            "fresh_letters"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "capacity_manifest",
+            "split_workload",
+            "road_redundancy",
+            "tree_distances",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "lowest_reading_queries",
+            "rectangle_totals",
+            "sensor_adjustments",
+            "rucksack_value"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "rectangle_totals",
+            "skyline_rectangle",
+            "zero_sum_segments",
+            "lowest_reading_queries"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "rebate_routes",
+            "free_and_paid_links",
+            "build_order",
+            "delivery_distances"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "delivery_distances",
+            "free_and_paid_links",
+            "friend_components",
+            "cable_network"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "skyline_rectangle",
+            "seat_reservations",
+            "split_workload",
+            "bounded_positive_segment"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "meeting_schedule",
+            "deadline_jobs",
+            "paid_bookings",
+            "merge_coverage",
+            "field_increments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "rising_readings",
+            "coin_combinations",
+            "matching_inventory",
+            "shared_melody",
+            "island_count"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "course_layers",
+            "rebate_routes",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "exact_weight_check",
+            "toll_routes",
+            "rebate_routes",
+            "free_and_paid_links"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "field_increments",
+            "next_warmer",
+            "sensor_adjustments",
+            "subtree_totals",
+            "build_order"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "island_count",
+            "coin_combinations",
+            "rucksack_value",
+            "maze_steps"
+          ],
+          "precision_at_5": 0.6,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "envelope_chain",
+            "spread_out_towers"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "semantic",
+      "representation": "raw",
+      "split": "dev",
+      "cue_weight": null,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    },
+    {
+      "method": "semantic",
+      "representation": "raw",
+      "split": "dev",
+      "cue_weight": 0.2,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    },
+    {
+      "method": "tfidf",
+      "representation": "normalized",
+      "split": "dev",
+      "cue_weight": null,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.2857142857142857,
+      "recall_at_5": 0.9102564102564104,
+      "mrr": 0.7756410256410257,
+      "story_pair_top5_jaccard": {
+        "partition": 0.25,
+        "range_sum": 0.42857142857142855,
+        "weighted_paths": 0.6666666666666666
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "split_workload",
+            "capacity_manifest",
+            "bounded_positive_segment",
+            "rising_readings",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "capacity_manifest",
+            "split_workload",
+            "station_refills",
+            "tree_distances",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "rectangle_totals",
+            "rising_readings",
+            "ledger_ranges",
+            "sensor_adjustments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "ledger_ranges",
+            "sensor_adjustments",
+            "zero_sum_segments",
+            "shared_melody"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "rebate_routes",
+            "toll_routes",
+            "free_and_paid_links",
+            "delivery_distances",
+            "cable_network"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "delivery_distances",
+            "toll_routes",
+            "rebate_routes",
+            "free_and_paid_links",
+            "maze_steps"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "sensor_adjustments",
+            "split_workload",
+            "ledger_ranges",
+            "field_increments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "paid_bookings",
+            "seat_reservations",
+            "meeting_schedule",
+            "merge_coverage",
+            "deadline_jobs"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "rising_readings",
+            "envelope_chain",
+            "shared_melody",
+            "paid_bookings",
+            "spread_out_towers"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "course_layers",
+            "build_order",
+            "rebate_routes",
+            "subtree_totals",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "paid_bookings",
+            "vacation_choices",
+            "capacity_manifest",
+            "cable_network"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "field_increments",
+            "merge_coverage",
+            "matching_receipts",
+            "pair_budget",
+            "spread_out_towers"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "merge_streams",
+            "coin_combinations",
+            "shared_melody",
+            "island_count",
+            "vacation_choices"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 0.3333333333333333,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "edit_sequence",
+            "spread_out_towers",
+            "matching_inventory",
+            "rebate_routes",
+            "shared_melody"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "tfidf",
+      "representation": "normalized",
+      "split": "dev",
+      "cue_weight": 0.2,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 14,
+      "positive_query_count": 13,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.2857142857142857,
+      "recall_at_5": 0.9102564102564104,
+      "mrr": 0.8333333333333334,
+      "story_pair_top5_jaccard": {
+        "partition": 0.6666666666666666,
+        "range_sum": 0.42857142857142855,
+        "weighted_paths": 0.6666666666666666
+      },
+      "queries": [
+        {
+          "id": "capacity_timetables",
+          "category": "same_algorithm_different_story",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "split_workload",
+            "capacity_manifest",
+            "zero_sum_segments",
+            "bounded_positive_segment",
+            "distinct_badges"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "capacity_music",
+          "category": "story_invariance",
+          "story_pair": "partition",
+          "relevant_ids": [
+            "capacity_manifest",
+            "split_workload"
+          ],
+          "top_5": [
+            "capacity_manifest",
+            "split_workload",
+            "skyline_rectangle",
+            "bounded_positive_segment",
+            "distinct_badges"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rainfall_intervals",
+          "category": "same_algorithm_different_story",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "rectangle_totals",
+            "ledger_ranges",
+            "rising_readings",
+            "sensor_adjustments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "audio_intervals",
+          "category": "story_invariance",
+          "story_pair": "range_sum",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "ledger_ranges",
+            "sensor_adjustments",
+            "zero_sum_segments",
+            "bounded_positive_segment"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "battery_paths",
+          "category": "same_structure_different_objective",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "rebate_routes",
+            "toll_routes",
+            "free_and_paid_links",
+            "delivery_distances",
+            "tree_distances"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "currency_paths",
+          "category": "story_invariance",
+          "story_pair": "weighted_paths",
+          "relevant_ids": [
+            "toll_routes",
+            "delivery_distances"
+          ],
+          "top_5": [
+            "toll_routes",
+            "delivery_distances",
+            "rebate_routes",
+            "free_and_paid_links",
+            "build_order"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "signed_balance",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "zero_sum_segments"
+          ],
+          "top_5": [
+            "zero_sum_segments",
+            "sensor_adjustments",
+            "split_workload",
+            "bounded_positive_segment",
+            "seat_reservations"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "room_choices",
+          "category": "similar_story_different_algorithm",
+          "story_pair": null,
+          "relevant_ids": [
+            "meeting_schedule"
+          ],
+          "top_5": [
+            "paid_bookings",
+            "meeting_schedule",
+            "seat_reservations",
+            "deadline_jobs",
+            "merge_coverage"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "rising_noncontiguous",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rising_readings",
+            "envelope_chain"
+          ],
+          "top_5": [
+            "rising_readings",
+            "shared_melody",
+            "envelope_chain",
+            "field_increments",
+            "rectangle_totals"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "prerequisites",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "build_order",
+            "course_layers"
+          ],
+          "top_5": [
+            "course_layers",
+            "build_order",
+            "rebate_routes",
+            "free_and_paid_links",
+            "subtree_totals"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "one_use_equipment",
+          "category": "same_data_structure_different_objective",
+          "story_pair": null,
+          "relevant_ids": [
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "paid_bookings",
+            "exact_weight_check",
+            "vacation_choices",
+            "capacity_manifest"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "batch_changes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "field_increments",
+            "seat_reservations"
+          ],
+          "top_5": [
+            "field_increments",
+            "sensor_adjustments",
+            "merge_coverage",
+            "matching_receipts",
+            "pair_budget"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "stateful_choices",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "stair_cost",
+            "edit_sequence",
+            "rucksack_value",
+            "coin_combinations",
+            "vacation_choices",
+            "grid_rewards"
+          ],
+          "top_5": [
+            "coin_combinations",
+            "island_count",
+            "merge_streams",
+            "rucksack_value",
+            "maze_steps"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 0.3333333333333333,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "circle_geometry",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "edit_sequence",
+            "spread_out_towers",
+            "matching_inventory",
+            "rebate_routes",
+            "shared_melody"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "semantic",
+      "representation": "normalized",
+      "split": "dev",
+      "cue_weight": null,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    },
+    {
+      "method": "semantic",
+      "representation": "normalized",
+      "split": "dev",
+      "cue_weight": 0.2,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    },
+    {
+      "method": "tfidf",
+      "representation": "raw",
+      "split": "test",
+      "cue_weight": null,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 22,
+      "positive_query_count": 21,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.14545454545454548,
+      "recall_at_5": 0.7142857142857143,
+      "mrr": 0.46746031746031746,
+      "story_pair_top5_jaccard": {
+        "test_static_sums": 0.125
+      },
+      "queries": [
+        {
+          "id": "mixing_desk_levels",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "sensor_adjustments"
+          ],
+          "top_5": [
+            "rectangle_totals",
+            "seat_reservations",
+            "word_transform",
+            "vacation_choices",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "frozen_price_totals",
+          "category": "hard_negative",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "sensor_adjustments",
+            "next_warmer",
+            "ledger_ranges",
+            "rectangle_totals",
+            "lowest_reading_queries"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "archive_page_sums",
+          "category": "story_invariance",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "matching_inventory",
+            "word_transform",
+            "rectangle_totals",
+            "station_refills"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "cheapest_day_lookup",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "lowest_reading_queries"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "vacation_choices",
+            "lowest_reading_queries",
+            "station_refills",
+            "sensor_adjustments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "lecture_fees",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "paid_bookings"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "toll_routes",
+            "cable_network",
+            "paid_bookings",
+            "vacation_choices"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "lake_regions",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "island_count"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "island_count",
+            "maze_steps"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "token_corridors",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "free_and_paid_links"
+          ],
+          "top_5": [
+            "edit_sequence",
+            "word_transform",
+            "stair_cost",
+            "free_and_paid_links",
+            "station_refills"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "rebate_loop",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "rebate_routes"
+          ],
+          "top_5": [
+            "rebate_routes",
+            "course_layers",
+            "cable_network",
+            "rucksack_value",
+            "stair_cost"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "pipeline_layout",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "cable_network"
+          ],
+          "top_5": [
+            "stair_cost",
+            "island_count",
+            "free_and_paid_links",
+            "friend_components",
+            "road_redundancy"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "unique_streak",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "fresh_letters"
+          ],
+          "top_5": [
+            "shared_melody",
+            "fresh_letters",
+            "word_transform",
+            "skyline_rectangle",
+            "envelope_chain"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "pair_to_target",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "matching_receipts"
+          ],
+          "top_5": [
+            "matching_receipts",
+            "exact_weight_check",
+            "subtree_totals",
+            "bounded_positive_segment",
+            "pair_budget"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "common_genes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "shared_melody",
+            "edit_sequence"
+          ],
+          "top_5": [
+            "shared_melody",
+            "merge_streams",
+            "matching_inventory",
+            "distinct_badges",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "exact_parcel",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "exact_weight_check",
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "toll_routes",
+            "cable_network",
+            "rebate_routes",
+            "free_and_paid_links"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "bird_feeders",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "spread_out_towers"
+          ],
+          "top_5": [
+            "spread_out_towers",
+            "stair_cost",
+            "matching_receipts",
+            "pair_budget",
+            "station_refills"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "org_chart_manager",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "family_meeting_point"
+          ],
+          "top_5": [
+            "family_meeting_point",
+            "envelope_chain",
+            "subtree_totals",
+            "tree_distances",
+            "next_warmer"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rival_dorms",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "two_team_split"
+          ],
+          "top_5": [],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "dungeon_moves",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "maze_steps"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "edit_sequence",
+            "word_transform",
+            "island_count",
+            "maze_steps"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "taller_ahead",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "next_warmer"
+          ],
+          "top_5": [
+            "skyline_rectangle",
+            "course_layers",
+            "rising_readings",
+            "envelope_chain",
+            "next_warmer"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "merging_clubs",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "friend_components",
+            "road_redundancy"
+          ],
+          "top_5": [
+            "capacity_manifest",
+            "split_workload",
+            "next_warmer",
+            "build_order",
+            "rebate_routes"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "fuel_planning",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "station_refills"
+          ],
+          "top_5": [
+            "station_refills",
+            "spread_out_towers",
+            "next_warmer",
+            "rectangle_totals",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "payroll_subtrees",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "subtree_totals"
+          ],
+          "top_5": [
+            "tree_distances",
+            "rucksack_value",
+            "family_meeting_point",
+            "subtree_totals",
+            "matching_inventory"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "polygon_area",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "spread_out_towers",
+            "skyline_rectangle",
+            "matching_receipts",
+            "matching_inventory",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "tfidf",
+      "representation": "raw",
+      "split": "test",
+      "cue_weight": 0.2,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 22,
+      "positive_query_count": 21,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.18181818181818182,
+      "recall_at_5": 0.8571428571428571,
+      "mrr": 0.6988095238095239,
+      "story_pair_top5_jaccard": {
+        "test_static_sums": 0.1111111111111111
+      },
+      "queries": [
+        {
+          "id": "mixing_desk_levels",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "sensor_adjustments"
+          ],
+          "top_5": [
+            "rectangle_totals",
+            "seat_reservations",
+            "word_transform",
+            "vacation_choices",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.0
+        },
+        {
+          "id": "frozen_price_totals",
+          "category": "hard_negative",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "rectangle_totals",
+            "lowest_reading_queries",
+            "sensor_adjustments",
+            "next_warmer"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "archive_page_sums",
+          "category": "story_invariance",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "matching_inventory",
+            "rectangle_totals",
+            "coin_combinations",
+            "zero_sum_segments",
+            "word_transform"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.1
+        },
+        {
+          "id": "cheapest_day_lookup",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "lowest_reading_queries"
+          ],
+          "top_5": [
+            "ledger_ranges",
+            "lowest_reading_queries",
+            "rectangle_totals",
+            "vacation_choices",
+            "station_refills"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "lecture_fees",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "paid_bookings"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "toll_routes",
+            "cable_network",
+            "paid_bookings",
+            "vacation_choices"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "lake_regions",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "island_count"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "island_count",
+            "maze_steps",
+            "matching_inventory",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "token_corridors",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "free_and_paid_links"
+          ],
+          "top_5": [
+            "free_and_paid_links",
+            "rebate_routes",
+            "word_transform",
+            "edit_sequence",
+            "toll_routes"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rebate_loop",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "rebate_routes"
+          ],
+          "top_5": [
+            "rebate_routes",
+            "course_layers",
+            "cable_network",
+            "free_and_paid_links",
+            "subtree_totals"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "pipeline_layout",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "cable_network"
+          ],
+          "top_5": [
+            "free_and_paid_links",
+            "friend_components",
+            "road_redundancy",
+            "island_count",
+            "cable_network"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.2
+        },
+        {
+          "id": "unique_streak",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "fresh_letters"
+          ],
+          "top_5": [
+            "fresh_letters",
+            "skyline_rectangle",
+            "edit_sequence",
+            "word_transform",
+            "bounded_positive_segment"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "pair_to_target",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "matching_receipts"
+          ],
+          "top_5": [
+            "matching_receipts",
+            "exact_weight_check",
+            "coin_combinations",
+            "sensor_adjustments",
+            "subtree_totals"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "common_genes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "shared_melody",
+            "edit_sequence"
+          ],
+          "top_5": [
+            "shared_melody",
+            "rising_readings",
+            "edit_sequence",
+            "merge_streams",
+            "matching_inventory"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "exact_parcel",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "exact_weight_check",
+            "rucksack_value"
+          ],
+          "top_5": [
+            "rucksack_value",
+            "toll_routes",
+            "matching_receipts",
+            "coin_combinations",
+            "exact_weight_check"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "bird_feeders",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "spread_out_towers"
+          ],
+          "top_5": [
+            "spread_out_towers",
+            "stair_cost",
+            "matching_receipts",
+            "pair_budget",
+            "station_refills"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "org_chart_manager",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "family_meeting_point"
+          ],
+          "top_5": [
+            "family_meeting_point",
+            "subtree_totals",
+            "tree_distances",
+            "envelope_chain",
+            "next_warmer"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rival_dorms",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "two_team_split"
+          ],
+          "top_5": [
+            "two_team_split"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "dungeon_moves",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "maze_steps"
+          ],
+          "top_5": [
+            "grid_rewards",
+            "maze_steps",
+            "island_count",
+            "edit_sequence",
+            "word_transform"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "taller_ahead",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "next_warmer"
+          ],
+          "top_5": [
+            "next_warmer",
+            "matching_inventory",
+            "skyline_rectangle",
+            "seat_reservations",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "merging_clubs",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "friend_components",
+            "road_redundancy"
+          ],
+          "top_5": [
+            "matching_inventory",
+            "coin_combinations",
+            "zero_sum_segments",
+            "island_count",
+            "seat_reservations"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": 0.0,
+          "reciprocal_rank": 0.125
+        },
+        {
+          "id": "fuel_planning",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "station_refills"
+          ],
+          "top_5": [
+            "station_refills",
+            "delivery_distances",
+            "free_and_paid_links",
+            "tree_distances",
+            "word_transform"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "payroll_subtrees",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "subtree_totals"
+          ],
+          "top_5": [
+            "tree_distances",
+            "subtree_totals",
+            "family_meeting_point",
+            "rucksack_value",
+            "matching_inventory"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "polygon_area",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "spread_out_towers",
+            "skyline_rectangle",
+            "matching_receipts",
+            "matching_inventory",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "semantic",
+      "representation": "raw",
+      "split": "test",
+      "cue_weight": null,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    },
+    {
+      "method": "semantic",
+      "representation": "raw",
+      "split": "test",
+      "cue_weight": 0.2,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    },
+    {
+      "method": "tfidf",
+      "representation": "normalized",
+      "split": "test",
+      "cue_weight": null,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 22,
+      "positive_query_count": 21,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.2,
+      "recall_at_5": 0.9523809523809523,
+      "mrr": 0.9087301587301587,
+      "story_pair_top5_jaccard": {
+        "test_static_sums": 0.25
+      },
+      "queries": [
+        {
+          "id": "mixing_desk_levels",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "sensor_adjustments"
+          ],
+          "top_5": [
+            "sensor_adjustments",
+            "lowest_reading_queries",
+            "ledger_ranges",
+            "rectangle_totals",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "frozen_price_totals",
+          "category": "hard_negative",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "sensor_adjustments",
+            "ledger_ranges",
+            "rectangle_totals",
+            "family_meeting_point"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.3333333333333333
+        },
+        {
+          "id": "archive_page_sums",
+          "category": "story_invariance",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "ledger_ranges",
+            "field_increments",
+            "fresh_letters",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "cheapest_day_lookup",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "lowest_reading_queries"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "sensor_adjustments",
+            "rectangle_totals",
+            "ledger_ranges",
+            "station_refills"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "lecture_fees",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "paid_bookings"
+          ],
+          "top_5": [
+            "paid_bookings",
+            "rucksack_value",
+            "vacation_choices",
+            "cable_network",
+            "merge_coverage"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "lake_regions",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "island_count"
+          ],
+          "top_5": [
+            "island_count",
+            "maze_steps",
+            "road_redundancy",
+            "friend_components",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "token_corridors",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "free_and_paid_links"
+          ],
+          "top_5": [
+            "free_and_paid_links",
+            "rebate_routes",
+            "toll_routes",
+            "delivery_distances",
+            "maze_steps"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rebate_loop",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "rebate_routes"
+          ],
+          "top_5": [
+            "rebate_routes",
+            "delivery_distances",
+            "toll_routes",
+            "free_and_paid_links",
+            "build_order"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "pipeline_layout",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "cable_network"
+          ],
+          "top_5": [
+            "cable_network",
+            "toll_routes",
+            "two_team_split",
+            "friend_components",
+            "rucksack_value"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "unique_streak",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "fresh_letters"
+          ],
+          "top_5": [
+            "fresh_letters",
+            "shared_melody",
+            "matching_receipts",
+            "pair_budget",
+            "envelope_chain"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "pair_to_target",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "matching_receipts"
+          ],
+          "top_5": [
+            "matching_receipts",
+            "bounded_positive_segment",
+            "pair_budget",
+            "subtree_totals",
+            "sensor_adjustments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "common_genes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "shared_melody",
+            "edit_sequence"
+          ],
+          "top_5": [
+            "shared_melody",
+            "rising_readings",
+            "family_meeting_point",
+            "envelope_chain",
+            "fresh_letters"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "exact_parcel",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "exact_weight_check",
+            "rucksack_value"
+          ],
+          "top_5": [
+            "exact_weight_check",
+            "matching_receipts",
+            "split_workload",
+            "coin_combinations",
+            "two_team_split"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 0.5,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "bird_feeders",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "spread_out_towers"
+          ],
+          "top_5": [
+            "spread_out_towers",
+            "paid_bookings",
+            "next_warmer",
+            "station_refills",
+            "pair_budget"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "org_chart_manager",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "family_meeting_point"
+          ],
+          "top_5": [
+            "family_meeting_point",
+            "subtree_totals",
+            "shared_melody",
+            "tree_distances",
+            "lowest_reading_queries"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rival_dorms",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "two_team_split"
+          ],
+          "top_5": [
+            "free_and_paid_links",
+            "toll_routes",
+            "cable_network",
+            "two_team_split",
+            "friend_components"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.25
+        },
+        {
+          "id": "dungeon_moves",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "maze_steps"
+          ],
+          "top_5": [
+            "maze_steps",
+            "edit_sequence",
+            "island_count",
+            "stair_cost",
+            "free_and_paid_links"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "taller_ahead",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "next_warmer"
+          ],
+          "top_5": [
+            "next_warmer",
+            "grid_rewards",
+            "paid_bookings",
+            "spread_out_towers",
+            "rising_readings"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "merging_clubs",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "friend_components",
+            "road_redundancy"
+          ],
+          "top_5": [
+            "road_redundancy",
+            "island_count",
+            "merge_coverage",
+            "friend_components",
+            "zero_sum_segments"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "fuel_planning",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "station_refills"
+          ],
+          "top_5": [
+            "station_refills",
+            "spread_out_towers",
+            "lowest_reading_queries",
+            "stair_cost",
+            "rectangle_totals"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "payroll_subtrees",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "subtree_totals"
+          ],
+          "top_5": [
+            "subtree_totals",
+            "family_meeting_point",
+            "tree_distances",
+            "exact_weight_check",
+            "paid_bookings"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "polygon_area",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "skyline_rectangle",
+            "delivery_distances",
+            "stair_cost",
+            "matching_inventory",
+            "station_refills"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "tfidf",
+      "representation": "normalized",
+      "split": "test",
+      "cue_weight": 0.2,
+      "catalog_revision": "e00501f992b177b3",
+      "evaluation_revision": "75aed4ad080dd355",
+      "provenance": {
+        "scikit_learn_version": "1.9.1",
+        "representation_version": "task-only-v1"
+      },
+      "query_count": 22,
+      "positive_query_count": 21,
+      "label_status": [
+        "provisional_author_judgment"
+      ],
+      "precision_at_5": 0.21818181818181823,
+      "recall_at_5": 1.0,
+      "mrr": 0.9523809523809523,
+      "story_pair_top5_jaccard": {
+        "test_static_sums": 0.42857142857142855
+      },
+      "queries": [
+        {
+          "id": "mixing_desk_levels",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "sensor_adjustments"
+          ],
+          "top_5": [
+            "sensor_adjustments",
+            "lowest_reading_queries",
+            "ledger_ranges",
+            "field_increments",
+            "bounded_positive_segment"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "frozen_price_totals",
+          "category": "hard_negative",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "ledger_ranges",
+            "sensor_adjustments",
+            "rectangle_totals",
+            "family_meeting_point"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "archive_page_sums",
+          "category": "story_invariance",
+          "story_pair": "test_static_sums",
+          "relevant_ids": [
+            "ledger_ranges"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "ledger_ranges",
+            "zero_sum_segments",
+            "rectangle_totals",
+            "field_increments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 0.5
+        },
+        {
+          "id": "cheapest_day_lookup",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "lowest_reading_queries"
+          ],
+          "top_5": [
+            "lowest_reading_queries",
+            "rectangle_totals",
+            "ledger_ranges",
+            "sensor_adjustments",
+            "family_meeting_point"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "lecture_fees",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "paid_bookings"
+          ],
+          "top_5": [
+            "paid_bookings",
+            "rucksack_value",
+            "vacation_choices",
+            "cable_network",
+            "merge_coverage"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "lake_regions",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "island_count"
+          ],
+          "top_5": [
+            "island_count",
+            "maze_steps",
+            "road_redundancy",
+            "zero_sum_segments",
+            "friend_components"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "token_corridors",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "free_and_paid_links"
+          ],
+          "top_5": [
+            "free_and_paid_links",
+            "rebate_routes",
+            "toll_routes",
+            "delivery_distances",
+            "build_order"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rebate_loop",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "rebate_routes"
+          ],
+          "top_5": [
+            "rebate_routes",
+            "delivery_distances",
+            "toll_routes",
+            "free_and_paid_links",
+            "course_layers"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "pipeline_layout",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "cable_network"
+          ],
+          "top_5": [
+            "cable_network",
+            "friend_components",
+            "two_team_split",
+            "toll_routes",
+            "road_redundancy"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "unique_streak",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "fresh_letters"
+          ],
+          "top_5": [
+            "fresh_letters",
+            "bounded_positive_segment",
+            "distinct_badges",
+            "edit_sequence",
+            "skyline_rectangle"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "pair_to_target",
+          "category": "hard_negative",
+          "story_pair": null,
+          "relevant_ids": [
+            "matching_receipts"
+          ],
+          "top_5": [
+            "matching_receipts",
+            "bounded_positive_segment",
+            "pair_budget",
+            "subtree_totals",
+            "sensor_adjustments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "common_genes",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "shared_melody",
+            "edit_sequence"
+          ],
+          "top_5": [
+            "shared_melody",
+            "rising_readings",
+            "edit_sequence",
+            "word_transform",
+            "family_meeting_point"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "exact_parcel",
+          "category": "multiple_relevant",
+          "story_pair": null,
+          "relevant_ids": [
+            "exact_weight_check",
+            "rucksack_value"
+          ],
+          "top_5": [
+            "exact_weight_check",
+            "matching_receipts",
+            "rucksack_value",
+            "coin_combinations",
+            "split_workload"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "bird_feeders",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "spread_out_towers"
+          ],
+          "top_5": [
+            "spread_out_towers",
+            "paid_bookings",
+            "next_warmer",
+            "station_refills",
+            "pair_budget"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "org_chart_manager",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "family_meeting_point"
+          ],
+          "top_5": [
+            "family_meeting_point",
+            "subtree_totals",
+            "tree_distances",
+            "lowest_reading_queries",
+            "field_increments"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "rival_dorms",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "two_team_split"
+          ],
+          "top_5": [
+            "two_team_split",
+            "free_and_paid_links",
+            "build_order",
+            "word_transform",
+            "friend_components"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "dungeon_moves",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "maze_steps"
+          ],
+          "top_5": [
+            "maze_steps",
+            "island_count",
+            "grid_rewards",
+            "edit_sequence",
+            "stair_cost"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "taller_ahead",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "next_warmer"
+          ],
+          "top_5": [
+            "next_warmer",
+            "grid_rewards",
+            "paid_bookings",
+            "spread_out_towers",
+            "rising_readings"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "merging_clubs",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "friend_components",
+            "road_redundancy"
+          ],
+          "top_5": [
+            "road_redundancy",
+            "island_count",
+            "zero_sum_segments",
+            "friend_components",
+            "coin_combinations"
+          ],
+          "precision_at_5": 0.4,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "fuel_planning",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "station_refills"
+          ],
+          "top_5": [
+            "station_refills",
+            "spread_out_towers",
+            "lowest_reading_queries",
+            "stair_cost",
+            "rectangle_totals"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "payroll_subtrees",
+          "category": "coverage",
+          "story_pair": null,
+          "relevant_ids": [
+            "subtree_totals"
+          ],
+          "top_5": [
+            "subtree_totals",
+            "family_meeting_point",
+            "tree_distances",
+            "build_order",
+            "word_transform"
+          ],
+          "precision_at_5": 0.2,
+          "recall_at_5": 1.0,
+          "reciprocal_rank": 1.0
+        },
+        {
+          "id": "polygon_area",
+          "category": "no_strong_match",
+          "story_pair": null,
+          "relevant_ids": [],
+          "top_5": [
+            "delivery_distances",
+            "word_transform",
+            "tree_distances",
+            "free_and_paid_links",
+            "two_team_split"
+          ],
+          "precision_at_5": 0.0,
+          "recall_at_5": null,
+          "reciprocal_rank": null
+        }
+      ],
+      "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."
+    },
+    {
+      "method": "semantic",
+      "representation": "normalized",
+      "split": "test",
+      "cue_weight": null,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    },
+    {
+      "method": "semantic",
+      "representation": "normalized",
+      "split": "test",
+      "cue_weight": 0.2,
+      "status": "not_evaluated",
+      "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."
+    }
+  ]
+}

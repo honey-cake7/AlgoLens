@@ -6,6 +6,7 @@ ERRORS = {
     "provider_timeout": (504, "Groq did not respond in time. Try again later or use Demo Mode."),
     "invalid_response": (502, "The model response could not be validated. No analysis was returned. Try again later or use Demo Mode."),
     "provider_unavailable": (503, "Groq is currently unavailable. Try again later or use Demo Mode."),
+    "local_rate_limit": (429, "Too many live analyses this minute from this server. Wait a minute, use Assess constraints only, or switch to Demo Mode. No request was sent to Groq."),
     "internal_error": (500, "Analysis could not be completed because of an internal error."),
 }
 

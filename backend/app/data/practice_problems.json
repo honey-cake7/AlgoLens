@@ -502,5 +502,209 @@
     "constraints_summary": null,
     "source_type": "original_practice",
     "source_url": null
+  },
+  {
+    "id": "sensor_adjustments",
+    "title": "Live sensor adjustments",
+    "short_description": "A row of sensors holds signed readings. Operations arrive interleaved: either overwrite one sensor's reading or ask for the total of readings between two sensor positions inclusive.",
+    "normalized_description": "Maintain a signed array under single-position assignments interleaved with inclusive contiguous range-sum queries; answer each query against the current values.",
+    "main_technique": "fenwick_tree",
+    "secondary_tags": [
+      "point_updates",
+      "range_queries"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "lowest_reading_queries",
+    "title": "Coldest stretch lookups",
+    "short_description": "A fixed log of daily temperatures never changes. Many questions each name two days and ask for the lowest temperature recorded between them inclusive.",
+    "normalized_description": "Given an immutable numeric array, answer many inclusive contiguous range-minimum queries.",
+    "main_technique": "sparse_table",
+    "secondary_tags": [
+      "static_queries"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "paid_bookings",
+    "title": "Most profitable bookings",
+    "short_description": "A hall receives booking offers, each with a start time, end time and fee. Accept a set of offers whose times do not overlap and earn the largest total fee.",
+    "normalized_description": "Select pairwise nonoverlapping half-open intervals, each with a nonnegative value, maximizing the total value of the selected intervals.",
+    "main_technique": "dynamic_programming",
+    "secondary_tags": [
+      "weighted_intervals",
+      "binary_search"
+    ],
+    "difficulty": "hard",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "island_count",
+    "title": "Counting islands",
+    "short_description": "A map grid marks each cell as land or water. Land cells sharing an edge belong to the same island. Report how many islands the map contains.",
+    "normalized_description": "Count connected components of marked cells in a grid under four-directional adjacency.",
+    "main_technique": "flood_fill",
+    "secondary_tags": [
+      "grid",
+      "connectivity"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "free_and_paid_links",
+    "title": "Free and paid corridors",
+    "short_description": "A building's corridors are directed. Some corridors are free to use, others cost exactly one token. Find the fewest tokens needed to walk from the entrance to the exit.",
+    "normalized_description": "Find a minimum-cost path between two vertices of a directed graph where every edge weight is either zero or one.",
+    "main_technique": "zero_one_bfs",
+    "secondary_tags": [
+      "weighted_shortest_path"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "rebate_routes",
+    "title": "Routes with rebates",
+    "short_description": "Some one-way roads charge a toll and some pay a rebate, so road values may be negative. From the depot, compute the cheapest total to each town, or report that a loop can lower costs forever.",
+    "normalized_description": "Compute single-source minimum path costs in a directed graph whose edge weights may be negative, or report a reachable negative-weight cycle.",
+    "main_technique": "bellman_ford",
+    "secondary_tags": [
+      "negative_weights",
+      "cycle_detection"
+    ],
+    "difficulty": "hard",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "cable_network",
+    "title": "Cheapest cable network",
+    "short_description": "Villages can be joined by cables of given installation prices. Choose cables so every village is linked to every other, directly or indirectly, at minimum total price.",
+    "normalized_description": "Select edges of a weighted undirected graph that connect all vertices with minimum total edge weight.",
+    "main_technique": "minimum_spanning_tree",
+    "secondary_tags": [
+      "connectivity",
+      "greedy"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "fresh_letters",
+    "title": "Longest fresh run",
+    "short_description": "Given a line of text, find the length of the longest stretch of consecutive characters in which no character appears twice.",
+    "normalized_description": "Find the maximum length contiguous substring containing no repeated character.",
+    "main_technique": "sliding_window",
+    "secondary_tags": [
+      "strings",
+      "frequency_counting"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "matching_receipts",
+    "title": "Two receipts that match",
+    "short_description": "A shuffled pile of receipts lists amounts in no particular order. Find two different receipts whose amounts add up exactly to a given target.",
+    "normalized_description": "Given an unsorted integer array and a target, find two distinct positions whose values sum exactly to the target.",
+    "main_technique": "hash_map",
+    "secondary_tags": [
+      "frequency_counting"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "shared_melody",
+    "title": "Shared melody",
+    "short_description": "Two melodies are written as note sequences. Find the length of the longest sequence of notes appearing in both melodies in the same order, though not necessarily adjacent.",
+    "normalized_description": "Compute the length of the longest common subsequence of two sequences; matched positions need not be contiguous.",
+    "main_technique": "dynamic_programming",
+    "secondary_tags": [
+      "strings",
+      "subsequences"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "exact_weight_check",
+    "title": "Exact weight check",
+    "short_description": "A scale must show an exact target weight using some of the available weights, each at most once. Decide whether this is possible.",
+    "normalized_description": "Decide whether some subset of positive integers, each used at most once, sums exactly to a target.",
+    "main_technique": "knapsack",
+    "secondary_tags": [
+      "subset_sum"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "spread_out_towers",
+    "title": "Spread-out towers",
+    "short_description": "Candidate tower sites lie along a straight road. Build exactly K towers at candidate sites so that the closest pair of towers is as far apart as possible.",
+    "normalized_description": "Choose K positions from given points on a line maximizing the minimum distance between any two chosen positions.",
+    "main_technique": "binary_search_answer",
+    "secondary_tags": [
+      "sorting",
+      "greedy"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "family_meeting_point",
+    "title": "Closest shared ancestor",
+    "short_description": "A family tree is rooted at its oldest member. Answer many questions, each naming two people, with the closest relative who is an ancestor of both.",
+    "normalized_description": "Answer many lowest common ancestor queries for pairs of vertices in a rooted tree.",
+    "main_technique": "binary_lifting",
+    "secondary_tags": [
+      "tree_queries"
+    ],
+    "difficulty": "hard",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "two_team_split",
+    "title": "Two rival teams",
+    "short_description": "Some pairs of players refuse to share a team. Decide whether everyone can be split into two teams so that no refusing pair ends up together.",
+    "normalized_description": "Decide whether an undirected graph is bipartite, two-coloring vertices so no edge joins equal colors.",
+    "main_technique": "bfs",
+    "secondary_tags": [
+      "graph_coloring"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
   }
 ]

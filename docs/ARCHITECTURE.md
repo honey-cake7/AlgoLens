@@ -74,6 +74,14 @@ Two in-memory indexes and one encoder are retained per process, protected by a l
 
 Only `python -m app.retrieval.setup_model --download` can download weights. It fetches selected files at a resolved commit into ignored .cache, verifies CPU encoding, and records local identity. Runtime uses `local_files_only=True`, `trust_remote_code=False`, and CPU. Missing setup never triggers a hosted API or download. Dependencies are optional through the semantic extra; base scikit-learn enables key-free local development. The explicit model download/resource policy and measured 87.3 MiB cache are documented in RETRIEVAL.md.
 
+## Stage 5 task-cue reranking
+
+`retrieval/cues.py` turns task text into a small signed cue vector with regular expressions only. `CueReranker` wraps either cached base index and blends cosine scores with cue cosine (`CUE_WEIGHT=0.2`, chosen on the dev query split). SimilarProblemService applies it when `RETRIEVAL_RERANK=cues` (default), including after semantic→TF-IDF fallback, and labels responses with `reranking`. Cue vectors are cached per base index through weak references. Evaluation supports `split` (dev/test) and an optional cue weight; Stage 5 numbers live in docs/retrieval_results_stage5.json. See RETRIEVAL.md and decisions 019–020.
+
+## Request protections and provenance (Stages 6 and 8)
+
+Middleware order (outermost first): CORS → request log → body-size limit → security headers → routes. CORS stays outermost so browsers can read 413/500 JSON. `core/security.py` holds the 256 KiB streaming body cap, the response headers, and the in-memory live-provider rate limiter that AnalysisService checks before calling Groq (fake mode is unlimited). `core/observability.py` logs id/method/path/status/duration only. A catch-all handler maps unexpected exceptions to the fixed `internal_error` JSON. The deterministic parser runs in a worker thread during `/analyze`. Catalog records carry a provenance contract: original records have no URL, while `external_curated` records require verified https provenance, and SimilarMatch passes it through. `retrieval/catalog_check.py` is an offline quality report used by CI. See SECURITY.md and decisions 021–023.
+
 ## Budget, errors, and local configuration
 
 Default fake mode and the independent offline assessment need no key or external service after installation. Groq mode requires the user's deliberate backend selection and an Analyze submission. There is one non-streaming request, default 3,072 maximum completion tokens with low reasoning effort, and a default 30-second total deadline (configurable up to 40). The browser waits up to 45 seconds. A character limit does not guarantee staying below an account's token quota. Stage 3 adds no dependencies and no model calls.

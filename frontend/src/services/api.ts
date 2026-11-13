@@ -86,6 +86,8 @@ async function postStatement(statement: string, signal: AbortSignal, endpoint: '
       invalid_response: 'The model response could not be validated. No analysis was displayed. Try again later or use Demo Mode.',
       internal_error: 'Analysis could not be completed because of an internal error.',
       retrieval_unavailable: 'Local practice search is unavailable. Check the backend retrieval settings and catalog.',
+      local_rate_limit: 'Too many live analyses this minute. Wait a minute, use Assess constraints only, or switch to Demo Mode. Nothing was sent to Groq.',
+      request_too_large: 'The request was too large. Statements are limited to 20,000 characters.',
     }
     let body: unknown
     try { body = await response.json() } catch { body = null }
