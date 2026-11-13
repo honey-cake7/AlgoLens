@@ -101,3 +101,25 @@ Keep 14 authored benchmark queries separate from the catalog, including narrativ
 Compare TF-IDF and real cached MiniLM on identical raw and separately authored normalized queries. Measure Precision@5 with denominator five, Recall@5 with each query's full relevance set, and MRR over all returned positive-score candidates. No-relevance queries contribute P@5=0 and are excluded from undefined recall/MRR. Retain full per-query output, model/library/corpus provenance, story-pair overlap, and failure cases. Missing semantic setup means not evaluated, never disguised fallback metrics.
 
 Optional dependencies and weights were explicitly announced and installed/downloaded for separate offline neural verification. Automated tests still use fake encoders, offline flags, ignored real dotenv contents, and blocked networks. Stage 4 ends here; algorithm-aware features, training, reranking, and larger infrastructure remain later work only on request.
+
+## 019 — Stage 5: deterministic task cues before any learned reranker
+
+The user requested Stage 5. Stage 4 failures were mostly about computational structure hidden under shared vocabulary (static versus updated arrays, contiguous versus subsequence, weight sign). Address that first with transparent regex cues over the same solution-free task text, blended into the existing cosine as `(1 − w) · text + w · cue` with signed axes for mutually exclusive properties. This needs no training, dependency, download, database, or Groq call, and each match can explain which cues it shares. Technique labels, titles, tags, and difficulty remain excluded from every representation.
+
+Default `RETRIEVAL_RERANK=cues` because it improved both the dev split and a held-out test split for TF-IDF. `RETRIEVAL_RERANK=none` reproduces Stage 4 exactly. Rebuild the thin reranker per search but cache cue vectors per base index (weak references follow the existing two-index cache). A strong conflict may push a record to a nonpositive score and remove it; this is intended and measured, not hidden.
+
+## 020 — Dev/test split and hard negatives
+
+Keep the original 14 queries as `split: dev` and choose the cue weight only there. Write new `split: test` queries before cue rules exist, and never tune rules or weights against them. Report remaining test failures instead of fixing them in place; later rule changes must be evaluated against a newly written held-out set. Add original hard-negative catalog records beside existing ones so evaluation rewards algorithmic distinctions, not just topic overlap. Write Stage 5 measurements to a separate report so Stage 4's real MiniLM numbers remain reproducible history. Labels stay provisional author judgments until the user reviews them.
+
+## 021 — Hardening without new dependencies
+
+The 2026-11-14 audit (docs/SECURITY.md) reproduced a quadratic constraint-parser path, event-loop blocking, unbounded request bodies, and unlimited live-provider calls. Fix them with small pure-ASGI middleware and standard-library code rather than adding a rate-limiting or security package. The parser rewrite must keep output identical, which was verified by differential fuzzing against the previous implementation. Limits are per process and in memory, which suits a local single-user app. Shared or multi-worker deployments would need a different design, and that is out of scope.
+
+## 022 — Stage 6 groundwork: provenance rules before external data
+
+External records are now *representable* but not present. A record with `source_type: external_curated` must carry an https `source_url`, `source_name`, `license_note`, and `verified_on`, and original records may carry none of these. Backend and browser both validate, and the browser renders only safe https links. No external record was added: URLs must be verified by a person opening the page, never generated. `app.retrieval.catalog_check` reports near duplicates, single-record techniques, unknown relevance IDs, and query/catalog leakage, and CI runs it in strict mode. Persistence and vector databases stay deferred: 50 in-memory records do not justify them.
+
+## 023 — Stage 7 deliberately not implemented; Stage 8 limited to local quality
+
+Stage 7 (trained classifiers, contrastive embeddings, rerankers) is not implemented. AGENTS.md forbids ML training, and 50 records with 36 author-labeled queries would overfit and leak. Its entry gates are recorded in ROADMAP.md instead. Stage 8 is implemented only where it costs ₹0 and needs no hosting: security middleware, request logging, CI on GitHub's free runners, and documented limits. Deployment, monitoring services, and authentication remain out of scope until a hosting decision is made.

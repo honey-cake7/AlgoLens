@@ -6,11 +6,14 @@ import json
 from importlib.metadata import version
 from pathlib import Path
 
+from typing import Literal
+
 from pydantic import BaseModel, ConfigDict, Field, TypeAdapter, model_validator
 
 from app.retrieval.cache import get_index, search_index
 from app.retrieval.catalog import REPRESENTATION_VERSION, load_catalog
-from app.retrieval.config import RetrievalSettings, get_retrieval_settings
+from app.retrieval.config import CUE_WEIGHT, RetrievalSettings, get_retrieval_settings
+from app.retrieval.retrievers import CueReranker
 
 EVALUATION_PATH = Path(__file__).resolve().parents[1] / "data" / "retrieval_queries.json"
 
@@ -25,6 +28,9 @@ class EvaluationQuery(BaseModel):
     notes: str = Field(min_length=1)
     story_pair: str | None = None
     label_status: str = "provisional_author_judgment"
+    # dev: the original 14 queries, used to choose the cue weight.
+    # test: written before cue rules existed; held out from all tuning.
+    split: Literal["dev", "test"] = "dev"
 
     @model_validator(mode="after")
     def unique_relevance(self):
@@ -42,13 +48,21 @@ def metrics(ranked_ids: list[str], relevant_ids: set[str], k: int = 5) -> dict:
             "reciprocal_rank": 1 / first if first else None if not relevant_ids else 0.0}
 
 
-def evaluate(method: str, settings: RetrievalSettings, representation="raw", path: Path = EVALUATION_PATH) -> dict:
+def load_queries(path: Path = EVALUATION_PATH) -> list[EvaluationQuery]:
+    return TypeAdapter(list[EvaluationQuery]).validate_python(json.loads(path.read_text(encoding="utf-8")))
+
+
+def evaluate(method: str, settings: RetrievalSettings, representation="raw", path: Path = EVALUATION_PATH,
+             split: str | None = None, cue_weight: float | None = None) -> dict:
     records, revision = load_catalog()
-    queries = TypeAdapter(list[EvaluationQuery]).validate_python(json.loads(path.read_text(encoding="utf-8")))
+    queries = load_queries(path)
     valid = {item.id for item in records}
     if len({item.id for item in queries}) != len(queries) or any(set(item.relevant_ids) - valid for item in queries):
         raise ValueError("Invalid benchmark identifiers")
+    queries = [item for item in queries if split is None or item.split == split]
     index = get_index(method, records, revision, settings)
+    if cue_weight is not None:
+        index = CueReranker(index, cue_weight)
     rows = []
     for query in queries:
         text = query.query if representation == "raw" else query.normalized_query
@@ -70,7 +84,7 @@ def evaluate(method: str, settings: RetrievalSettings, representation="raw", pat
     if method == "semantic":
         marker = json.loads((settings.model_dir / "algolens_model.json").read_text(encoding="utf-8"))
         provenance.update({"model": settings.model, "model_revision": marker["revision"], "sentence_transformers_version": version("sentence-transformers"), "torch_version": version("torch")})
-    return {"method": method, "representation": representation, "catalog_revision": revision,
+    return {"method": method, "representation": representation, "split": split or "all", "cue_weight": cue_weight, "catalog_revision": revision,
         "evaluation_revision": hashlib.sha256(path.read_bytes()).hexdigest()[:16], "provenance": provenance,
         "query_count": len(rows), "positive_query_count": len(labeled), "label_status": sorted({q.label_status for q in queries}),
         "precision_at_5": mean("precision_at_5", rows), "recall_at_5": mean("recall_at_5", labeled),
@@ -84,14 +98,16 @@ def main():
     args = parser.parse_args()
     settings = get_retrieval_settings()
     results = []
-    for representation in ("raw", "normalized"):
-        for method in ("tfidf", "semantic"):
-            try:
-                results.append(evaluate(method, settings, representation))
-            except Exception:
-                if method != "semantic":
-                    raise
-                results.append({"method": method, "representation": representation, "status": "not_evaluated", "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."})
+    for split in ("dev", "test"):
+        for representation in ("raw", "normalized"):
+            for method in ("tfidf", "semantic"):
+                for cue_weight in (None, CUE_WEIGHT):
+                    try:
+                        results.append(evaluate(method, settings, representation, split=split, cue_weight=cue_weight))
+                    except Exception:
+                        if method != "semantic":
+                            raise
+                        results.append({"method": method, "representation": representation, "split": split, "cue_weight": cue_weight, "status": "not_evaluated", "reason": "Local model/dependencies unavailable or invalid; no fallback scores substituted."})
     report = json.dumps({"experiments": results}, indent=2)
     if args.output:
         args.output.parent.mkdir(parents=True, exist_ok=True)

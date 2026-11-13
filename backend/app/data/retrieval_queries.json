@@ -10,7 +10,8 @@
     "category": "same_algorithm_different_story",
     "notes": "Both records optimize the largest contiguous-group load with positive entries; exactly K and at-most K are related under K <= n.",
     "story_pair": "partition",
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "capacity_music",
@@ -23,7 +24,8 @@
     "category": "story_invariance",
     "notes": "Same positive contiguous partition objective as the publisher query; labels concern structure, not vocabulary.",
     "story_pair": "partition",
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "rainfall_intervals",
@@ -35,7 +37,8 @@
     "category": "same_algorithm_different_story",
     "notes": "Static one-dimensional range sums, rather than dynamic interval updates.",
     "story_pair": "range_sum",
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "audio_intervals",
@@ -47,7 +50,8 @@
     "category": "story_invariance",
     "notes": "Rephrases the same fixed-array range-sum task without copying the catalog text.",
     "story_pair": "range_sum",
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "battery_paths",
@@ -60,7 +64,8 @@
     "category": "same_structure_different_objective",
     "notes": "Weighted cheapest paths are related; unweighted maze steps and connectivity-only tasks are not primary matches.",
     "story_pair": "weighted_paths",
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "currency_paths",
@@ -73,7 +78,8 @@
     "category": "story_invariance",
     "notes": "Same nonnegative weighted shortest-path task as battery paths, in a different narrative.",
     "story_pair": "weighted_paths",
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "signed_balance",
@@ -85,7 +91,8 @@
     "category": "similar_story_different_algorithm",
     "notes": "An array total appears, but the goal is counting zero-sum intervals rather than answering supplied range requests.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "room_choices",
@@ -97,7 +104,8 @@
     "category": "similar_story_different_algorithm",
     "notes": "Reservation vocabulary overlaps occupancy counting, but here a maximum subset is selected.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "rising_noncontiguous",
@@ -110,7 +118,8 @@
     "category": "same_data_structure_different_objective",
     "notes": "Rising readings is direct; envelope nesting is a structurally related extension with an extra coordinate, a subjective broader relevance judgment.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "prerequisites",
@@ -123,7 +132,8 @@
     "category": "multiple_relevant",
     "notes": "Both use dependency ordering and cycle detection; layer minimization is a related extension.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "one_use_equipment",
@@ -135,7 +145,8 @@
     "category": "same_data_structure_different_objective",
     "notes": "One-use optimization differs from unlimited coin combination counting.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "batch_changes",
@@ -148,7 +159,8 @@
     "category": "multiple_relevant",
     "notes": "Direct interval increments plus the related interval occupancy accumulation pattern.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "stateful_choices",
@@ -165,7 +177,8 @@
     "category": "multiple_relevant",
     "notes": "Deliberately broad practice request with six relevant records; recall denominator must be six, not five. Not an algorithm identification query.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
   },
   {
     "id": "circle_geometry",
@@ -175,6 +188,294 @@
     "category": "no_strong_match",
     "notes": "No computational-geometry record is present. Textual neighbors must not be treated as known algorithmic matches.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment"
+    "label_status": "provisional_author_judgment",
+    "split": "dev"
+  },
+  {
+    "id": "mixing_desk_levels",
+    "query": "A mixing desk has a row of channel levels. Engineers repeatedly either set one channel to a new level or ask for the combined level across a block of adjacent channels.",
+    "normalized_query": "Support single-position assignments interleaved with contiguous range-sum queries on an array.",
+    "relevant_ids": [
+      "sensor_adjustments"
+    ],
+    "category": "hard_negative",
+    "notes": "Range sums with interleaved point changes; the static prefix-sum record is a deliberate near miss.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "frozen_price_totals",
+    "query": "Yesterday's closing prices are final and will not change. Analysts send many requests, each asking for the sum of prices from one position to another inclusive.",
+    "normalized_query": "Answer many inclusive range-sum queries on an array that is never modified.",
+    "relevant_ids": [
+      "ledger_ranges"
+    ],
+    "category": "hard_negative",
+    "notes": "Static range sums; the point-update record is a deliberate near miss.",
+    "story_pair": "test_static_sums",
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "archive_page_sums",
+    "query": "An archive stores word counts per page, fixed forever. Researchers repeatedly ask how many words appear from page a to page b, both included.",
+    "normalized_query": "Repeated inclusive interval totals over an immutable count array.",
+    "relevant_ids": [
+      "ledger_ranges"
+    ],
+    "category": "story_invariance",
+    "notes": "Same static range-sum task as frozen prices with another story.",
+    "story_pair": "test_static_sums",
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "cheapest_day_lookup",
+    "query": "Ticket prices for every day of a season are published and never revised. For many date ranges, report the cheapest price within that range.",
+    "normalized_query": "Answer many range-minimum queries on a fixed array.",
+    "relevant_ids": [
+      "lowest_reading_queries"
+    ],
+    "category": "hard_negative",
+    "notes": "Minimum, not sum, over static ranges.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "lecture_fees",
+    "query": "A lecturer is offered talks, each with a start, an end and a payment. Talks cannot overlap. Which set of talks earns the most money in total?",
+    "normalized_query": "Maximize total value of pairwise nonoverlapping weighted intervals.",
+    "relevant_ids": [
+      "paid_bookings"
+    ],
+    "category": "hard_negative",
+    "notes": "Weighted selection; the unweighted maximum-count interval record is a deliberate near miss.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "lake_regions",
+    "query": "An aerial photo is split into a grid of water and dry pixels. Neighbouring water pixels up, down, left or right form one lake. How many lakes are there?",
+    "normalized_query": "Count four-directionally connected regions of marked grid cells.",
+    "relevant_ids": [
+      "island_count"
+    ],
+    "category": "coverage",
+    "notes": "Grid connected components; unit-step grid shortest path is related vocabulary only.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "token_corridors",
+    "query": "In a one-way metro network some transfers are free and the rest cost a single ticket. Find the minimum number of tickets from the start station to the goal.",
+    "normalized_query": "Shortest path in a directed graph whose edge weights are only zero or one.",
+    "relevant_ids": [
+      "free_and_paid_links"
+    ],
+    "category": "hard_negative",
+    "notes": "General nonnegative-weight records would also be correct but are not the targeted specialization.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "rebate_loop",
+    "query": "Currency trades may cost or earn money, so some edges have negative values. From a home currency find the cheapest total to each currency, or detect a trading loop with unbounded gain.",
+    "normalized_query": "Single-source shortest paths with possibly negative directed edge weights and negative-cycle detection.",
+    "relevant_ids": [
+      "rebate_routes"
+    ],
+    "category": "hard_negative",
+    "notes": "Negative weights rule out the nonnegative shortest-path records.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "pipeline_layout",
+    "query": "Every pair of oil wells can be joined by a pipe of known cost. Pick pipes so all wells are connected through the network while spending as little as possible.",
+    "normalized_query": "Minimum total weight set of edges connecting all vertices of a weighted undirected graph.",
+    "relevant_ids": [
+      "cable_network"
+    ],
+    "category": "hard_negative",
+    "notes": "Connect everything cheaply, not shortest paths from a source.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "unique_streak",
+    "query": "Read a password string and report the length of its longest consecutive piece where every character is different.",
+    "normalized_query": "Longest contiguous substring with all distinct characters.",
+    "relevant_ids": [
+      "fresh_letters"
+    ],
+    "category": "coverage",
+    "notes": "Sliding window over characters.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "pair_to_target",
+    "query": "A list of coupon values arrives unsorted. Find any two different coupons whose values add up to exactly the target amount.",
+    "normalized_query": "Find two distinct indices in an unsorted array with values summing to a target.",
+    "relevant_ids": [
+      "matching_receipts"
+    ],
+    "category": "hard_negative",
+    "notes": "The sorted maximum-pair-under-limit record is a deliberate near miss.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "common_genes",
+    "query": "Two gene sequences are given as strings. Find how long the longest sequence of symbols is that appears in both, in order but possibly with gaps.",
+    "normalized_query": "Longest common subsequence length of two strings.",
+    "relevant_ids": [
+      "shared_melody",
+      "edit_sequence"
+    ],
+    "category": "multiple_relevant",
+    "notes": "Edit distance is a closely related two-string DP; subjective broader relevance judgment.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "exact_parcel",
+    "query": "A courier holds parcels of known weights and must load some of them, each once, to reach an exact total weight. Is it possible?",
+    "normalized_query": "Decide if a subset of positive integers sums exactly to a target, each used once.",
+    "relevant_ids": [
+      "exact_weight_check",
+      "rucksack_value"
+    ],
+    "category": "multiple_relevant",
+    "notes": "0/1 capacity optimization is a related single-use item DP.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "bird_feeders",
+    "query": "Feeders can be hung at given positions along a fence. Hang K of them so that the two closest feeders are as far apart as possible.",
+    "normalized_query": "Maximize the minimum pairwise distance when choosing K points on a line.",
+    "relevant_ids": [
+      "spread_out_towers"
+    ],
+    "category": "coverage",
+    "notes": "Maximize-the-minimum answer search.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "org_chart_manager",
+    "query": "A company hierarchy is a tree under the CEO. For many pairs of employees, report the lowest-ranked manager who oversees both.",
+    "normalized_query": "Lowest common ancestor queries in a rooted tree.",
+    "relevant_ids": [
+      "family_meeting_point"
+    ],
+    "category": "coverage",
+    "notes": "Tree path queries rather than whole-subtree aggregation.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "rival_dorms",
+    "query": "Some students dislike each other. Can all students be put into two dormitories so that no two who dislike each other share a dormitory?",
+    "normalized_query": "Check whether a conflict graph can be two-colored.",
+    "relevant_ids": [
+      "two_team_split"
+    ],
+    "category": "coverage",
+    "notes": "Bipartiteness test.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "dungeon_moves",
+    "query": "A hero walks in a dungeon grid with walls, moving one square up, down, left or right per turn. What is the minimum number of turns to reach the treasure?",
+    "normalized_query": "Unit-cost shortest path between two cells in an obstacle grid.",
+    "relevant_ids": [
+      "maze_steps"
+    ],
+    "category": "coverage",
+    "notes": "Grid BFS; counting regions is a related grid vocabulary near miss.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "taller_ahead",
+    "query": "People stand in a queue with given heights. For each person, how many places ahead is the first person who is strictly taller?",
+    "normalized_query": "For every position find the distance to the next strictly greater value to its right.",
+    "relevant_ids": [
+      "next_warmer"
+    ],
+    "category": "coverage",
+    "notes": "Next greater element.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "merging_clubs",
+    "query": "Clubs start separate. Each announcement merges two clubs' memberships. After every announcement, report how many separate groups remain.",
+    "normalized_query": "Track connected component count under union operations.",
+    "relevant_ids": [
+      "friend_components",
+      "road_redundancy"
+    ],
+    "category": "coverage",
+    "notes": "Incremental connectivity; redundant-edge detection uses the same structure.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "fuel_planning",
+    "query": "A truck crosses a desert road with fuel depots at known kilometre marks and can drive a fixed distance on a full tank. Minimize the number of refuelling stops.",
+    "normalized_query": "Minimum refills to travel along a line with a fixed range per full tank and given stop positions.",
+    "relevant_ids": [
+      "station_refills"
+    ],
+    "category": "coverage",
+    "notes": "Greedy refuelling.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "payroll_subtrees",
+    "query": "In a management tree each employee has a salary. For every manager, compute the total salary of themselves and everyone below them.",
+    "normalized_query": "Subtree value sums for every vertex of a rooted tree.",
+    "relevant_ids": [
+      "subtree_totals"
+    ],
+    "category": "coverage",
+    "notes": "Subtree aggregation.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
+  },
+  {
+    "id": "polygon_area",
+    "query": "A plot of land is given as the corner points of a simple polygon in order. Compute its area exactly.",
+    "normalized_query": "Compute the area of a simple polygon from its ordered vertices.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "No computational-geometry record exists; returned neighbors are failure evidence.",
+    "story_pair": null,
+    "label_status": "provisional_author_judgment",
+    "split": "test"
   }
 ]

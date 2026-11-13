@@ -7,6 +7,7 @@ from starlette.concurrency import run_in_threadpool
 
 from app.core.config import get_settings
 from app.core.errors import AnalysisError
+from app.core.security import provider_rate_limiter
 from app.llm.base import LLMProvider
 from app.llm.fake_provider import DEMO_NOTICE, FakeLLMProvider
 from app.llm.groq_provider import GroqProvider
@@ -16,12 +17,18 @@ from app.services.similar_problem_service import get_similar_service
 
 
 class AnalysisService:
-    def __init__(self, provider: LLMProvider):
+    def __init__(self, provider: LLMProvider, requests_per_minute: int | None = None):
         self.provider = provider
+        self.requests_per_minute = requests_per_minute
 
     async def analyze(self, request: AnalyzeRequest) -> AnalyzeResponse:
+        # Checked before any work so a rejected request never reaches Groq.
+        if self.requests_per_minute is not None and not provider_rate_limiter.acquire(self.requests_per_minute):
+            raise AnalysisError("local_rate_limit")
         try:
-            deterministic = assess_statement(request.statement)
+            # CPU-bound parsing runs in a worker thread so one long statement
+            # cannot stall health checks or other requests on the event loop.
+            deterministic = await asyncio.to_thread(assess_statement, request.statement)
             content = AnalysisContent.model_validate(await self.provider.analyze(request.statement))
             is_fake = self.provider.name == "fake"
             if not is_fake:
@@ -60,5 +67,6 @@ class AnalysisService:
 
 def get_analysis_service() -> AnalysisService:
     settings = get_settings()
-    provider = FakeLLMProvider() if settings.llm_provider == "fake" else GroqProvider(settings)
-    return AnalysisService(provider)
+    if settings.llm_provider == "fake":
+        return AnalysisService(FakeLLMProvider())
+    return AnalysisService(GroqProvider(settings), settings.groq_requests_per_minute)

@@ -27,9 +27,9 @@ def write_catalog(tmp_path, data):
 
 
 def test_catalog_is_original_diverse_valid_and_has_no_fake_links(records):
-    assert len(records) == 36
-    assert len({record.id for record in records}) == 36
-    assert len({record.main_technique for record in records}) >= 17
+    assert len(records) == 50
+    assert len({record.id for record in records}) == 50
+    assert len({record.main_technique for record in records}) >= 23
     assert all(record.source_type == "original_practice" and record.source_url is None for record in records)
 
 
@@ -194,12 +194,16 @@ def test_metric_definitions_use_query_specific_relevance_and_full_ranking():
 def test_evaluation_is_separate_and_labels_are_provisional(records):
     data = json.loads(EVALUATION_PATH.read_text(encoding="utf-8"))
     queries = [EvaluationQuery.model_validate(item) for item in data]
-    assert len(queries) == 14
+    assert len(queries) == 36
+    assert sum(query.split == "dev" for query in queries) == 14
+    assert sum(query.split == "test" for query in queries) == 22
     assert all(query.query not in {record.short_description for record in records} for query in queries)
     assert any(len(query.relevant_ids) > 5 for query in queries)
     assert any(not query.relevant_ids for query in queries)
     result = evaluate("tfidf", RetrievalSettings())
-    assert result["positive_query_count"] == 13 and len(result["story_pair_top5_jaccard"]) == 3
+    assert result["positive_query_count"] == 34 and len(result["story_pair_top5_jaccard"]) == 4
+    dev = evaluate("tfidf", RetrievalSettings(), split="dev")
+    assert dev["query_count"] == 14 and dev["positive_query_count"] == 13 and len(dev["story_pair_top5_jaccard"]) == 3
     assert 0 <= result["precision_at_5"] <= 1 and 0 <= result["mrr"] <= 1
 
 

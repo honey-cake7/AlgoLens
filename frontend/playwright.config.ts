@@ -42,7 +42,7 @@ export default defineConfig({
         LLM_PROVIDER: 'fake', GROQ_API_KEY: '',
         GROQ_MODEL: 'openai/gpt-oss-120b', GROQ_MAX_OUTPUT_TOKENS: '3072',
         GROQ_TIMEOUT_SECONDS: '30',
-        RETRIEVAL_METHOD: 'tfidf', RETRIEVAL_TOP_K: '5',
+        RETRIEVAL_METHOD: 'tfidf', RETRIEVAL_TOP_K: '5', RETRIEVAL_RERANK: 'cues',
         EMBEDDING_MODEL: 'sentence-transformers/all-MiniLM-L6-v2',
         CORS_ORIGINS: `http://localhost:${frontendPort},${frontendUrl}`,
       },

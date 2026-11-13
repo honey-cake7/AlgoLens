@@ -150,3 +150,55 @@ Primary references: [TfidfVectorizer](https://scikit-learn.org/stable/modules/ge
 10. **Caching:** precompute corpus vectors once per revision; encode only each incoming query. Changing catalog/preparation/model identity invalidates the right cache rather than serving stale vectors.
 11. **Baselines and experiments:** using the same queries/representations/labels makes TF-IDF versus MiniLM comparisons meaningful. Keep wins and failures; a larger model is not automatically better on every query.
 12. **Future contrastive learning/reranking:** reviewed positive pairs and hard negatives such as static sums versus interval updates could eventually teach algorithm-aware representations. Separate train/validation/test data and compare against this baseline before adopting improvements. Stage 5 might add verified algorithm-aware features or ranking experiments, but no training, reranker, or later-stage implementation starts here.
+
+# Stage 5: task-cue reranking, hard negatives, and a held-out split
+
+Stage 4 showed text similarity confusing tasks that share vocabulary but need different algorithms (static range sums versus interval updates; unrelated neighbors for out-of-catalog queries). Stage 5 measures one small, explainable fix without training, new dependencies, or Groq calls.
+
+## What changed
+
+- **Catalog: 36 → 50 original records.** The 14 additions are mostly *hard negatives* placed next to existing records: range sums with point updates (vs. static `ledger_ranges`), static range minimum, weighted interval selection (vs. maximum-count `meeting_schedule`), grid flood fill (vs. `maze_steps`), 0/1-weight and negative-weight shortest paths (vs. the Dijkstra records), minimum spanning tree, unsorted two-sum (vs. sorted `pair_budget`), longest common subsequence, subset sum, maximize-the-minimum placement, lowest common ancestor, and bipartite checking. Same provenance rules: original text, `source_url: null`, technique labels excluded from retrieval text.
+- **Queries: 14 → 36, with an explicit `split`.** The original 14 are the **dev** split. The 22 new **test** queries were written *before* any cue rule existed and were never used to choose rules or weights. They include 8 hard negatives, a static-sum story pair, technique coverage the dev split lacked, and one no-match geometry query. Labels remain `provisional_author_judgment`.
+- **Task cues** (`app/retrieval/cues.py`): ~23 regex signals over the solution-free task text, such as fixed data vs. updates, contiguous vs. gaps allowed, directed vs. undirected, nonnegative vs. negative edge weights, weighted vs. unit steps, minimize-max vs. maximize-min, plus binary cues (graph, tree, grid, many queries, index ranges, time intervals, strings, counting, connectivity, cycles, single-use items, exact target, sorted input, geometry, next greater, common ancestor, two-way split). Opposite cues share a **signed axis**, so a conflict lowers similarity. Negated phrases ("never updated", "need not be contiguous") are stripped before the opposite cue is tested. Edge-weight axes only activate when graph vocabulary is present.
+- **`CueReranker`** wraps either base retriever: `score = (1 − w) · text_cosine + w · cue_cosine`, still in [−1, 1]. Only positive blended scores are returned, so a strong cue conflict can remove a lexically similar record entirely. `w = 0.2` (`CUE_WEIGHT`) was chosen on the dev split only.
+- **API/UI:** `SimilarResponse.reranking` is `"task_cues"` or `"none"`. Explanations add "Shared task cues: …". The UI shows "TF-IDF + task cues" and "Blended score". `RETRIEVAL_RERANK=none` restores the exact Stage 4 ranking. Older responses without the field still render.
+
+## Weight selection (dev split only)
+
+Objective: mean of R@5 and MRR over raw and normalized dev queries, TF-IDF base, 50-record catalog.
+
+| w | none | 0.1 | 0.15 | **0.2** | 0.25 | 0.3 | 0.4 | 0.6 |
+|---|---|---|---|---|---|---|---|---|
+| objective | 0.728 | 0.853 | 0.856 | **0.864** | 0.857 | 0.852 | 0.841 | 0.831 |
+
+Gains form a broad plateau (0.1–0.35), so the result is not sensitive to the exact weight.
+
+## Measured results (catalog `e00501f992b177b3`, queries `75aed4ad080dd355`)
+
+| Split | Query | Ranking | P@5 | R@5 | MRR |
+|---|---|---|---|---|---|
+| dev (14) | raw | TF-IDF | 0.200 | 0.654 | 0.574 |
+| dev (14) | raw | TF-IDF + cues | 0.257 | 0.808 | 0.904 |
+| dev (14) | normalized | TF-IDF | 0.286 | 0.910 | 0.776 |
+| dev (14) | normalized | TF-IDF + cues | 0.286 | 0.910 | 0.833 |
+| **test (22)** | raw | TF-IDF | 0.145 | 0.714 | 0.467 |
+| **test (22)** | raw | TF-IDF + cues | **0.182** | **0.857** | **0.699** |
+| **test (22)** | normalized | TF-IDF | 0.200 | 0.952 | 0.909 |
+| **test (22)** | normalized | TF-IDF + cues | **0.218** | **1.000** | **0.952** |
+
+Full per-query output: [retrieval_results_stage5.json](retrieval_results_stage5.json). MiniLM was **not evaluated** in Stage 5 because the optional model is not installed on the machine that ran it; the report says so rather than substituting fallback numbers. Stage 4's MiniLM results remain in [retrieval_results.json](retrieval_results.json) for the 36-record catalog. Adding 14 distractors lowered the plain TF-IDF dev baseline (raw R@5 0.731 → 0.654), as expected for a larger catalog.
+
+## Held-out wins and remaining failures (raw test queries)
+
+Improved: `cheapest_day_lookup`, `frozen_price_totals` (static sums now rank `ledger_ranges` first instead of the update record), `token_corridors`, `unique_streak`, `taller_ahead`, `rival_dorms` (no shared TF-IDF terms; found only through cues), `pipeline_layout` (recall 0 → 1), `common_genes`, `exact_parcel`, `dungeon_moves`, `payroll_subtrees`.
+
+Still failing, kept as evidence and not tuned against:
+
+- `mixing_desk_levels` (updates + range sums): "set one channel to a new level" does not trigger the update cue, so the hard negative still wins.
+- `archive_page_sums`, `merging_clubs`: story vocabulary ("word counts per page", "clubs merge") shares too little with the task text, and no cue fires strongly enough.
+- `lecture_fees`: `paid_bookings` ranks 4th. The weighted/unweighted interval distinction has no cue.
+- `polygon_area` (no relevant record): weak neighbors are still returned. No out-of-domain abstention is implemented.
+
+## Limits
+
+The same author wrote the queries, labels, and cue rules. Writing the test split before the rules reduces, but does not remove, that bias: 21 positive test queries is small and the improvement is exploratory evidence, not proof of generalization. Cues are keyword rules: they miss paraphrases, can fire on incidental words, and do not identify algorithms. Semantic + cues is implemented and unit-tested with fake encoders but not measured. Reranking adds about 6 ms per search on the 50-record catalog (cue vectors are cached per index).
