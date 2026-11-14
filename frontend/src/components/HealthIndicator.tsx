@@ -22,12 +22,12 @@ export default function HealthIndicator() {
   }, [attempt])
 
   return (
-    <div className="flex flex-wrap items-center gap-3 text-xs text-slate-500">
+    <div className="flex flex-wrap items-center gap-3 font-mono text-[0.7rem] text-ink-3">
       <span role="status" className="flex items-center gap-2">
-        <span aria-hidden="true" className={`h-2 w-2 rounded-full ${status === 'online' ? 'bg-emerald-600' : status === 'offline' ? 'bg-amber-500' : 'bg-slate-400'}`} />
+        <span aria-hidden="true" className={`h-2 w-2 rounded-full ${status === 'online' ? 'bg-ok' : status === 'offline' ? 'bg-warn' : 'bg-ink-3 animate-pulse'}`} />
         {status === 'checking' ? 'Checking backend…' : status === 'online' ? 'Backend connected' : 'Backend unavailable'}
       </span>
-      <button className="underline underline-offset-4 hover:text-slate-900 disabled:opacity-50" disabled={status === 'checking'} onClick={() => setAttempt(value => value + 1)}>Recheck</button>
+      <button className="underline underline-offset-4 hover:text-ink disabled:opacity-50" disabled={status === 'checking'} onClick={() => setAttempt(value => value + 1)}>Recheck</button>
     </div>
   )
 }
