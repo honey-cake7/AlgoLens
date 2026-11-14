@@ -134,7 +134,7 @@ def test_test_split_is_held_out_and_labels_reference_catalog(records):
 def test_split_filter_and_cue_weight_are_recorded():
     result = evaluate("tfidf", RetrievalSettings(), split="test", cue_weight=CUE_WEIGHT)
     assert result["split"] == "test" and result["cue_weight"] == CUE_WEIGHT
-    assert result["query_count"] == 22 and result["positive_query_count"] == 21
+    assert result["query_count"] == 28 and result["positive_query_count"] == 21
 
 
 def test_old_split_field_defaults_to_dev(tmp_path):
@@ -144,3 +144,37 @@ def test_old_split_field_defaults_to_dev(tmp_path):
     path = tmp_path / "queries.json"
     path.write_text(json.dumps(data), encoding="utf-8")
     assert all(query.split == "dev" for query in load_queries(path))
+
+
+def test_uncovered_topic_notice_for_out_of_catalog_geometry():
+    result = SimilarProblemService(RetrievalSettings()).search("Find the smallest circle radius enclosing planar points with real coordinates.")
+    assert result.uncovered_topics == ["geometry"]
+    assert any("no problem in this practice catalog covers" in note for note in result.warnings)
+    assert result.matches  # weak neighbours stay visible; nothing is hidden
+
+
+def test_covered_topics_produce_no_notice():
+    for statement in ("Answer many range sums on an array that is never updated.",
+                      "Place K towers on a line maximizing the minimum distance between them."):
+        assert SimilarProblemService(RetrievalSettings()).search(statement).uncovered_topics == []
+
+
+def test_notice_requires_cue_reranking():
+    result = SimilarProblemService(RetrievalSettings(rerank="none")).search("Find the smallest circle radius enclosing planar points.")
+    assert result.uncovered_topics == []
+
+
+def test_cue_inflections_for_min_max_objectives():
+    assert cues.extract("maximizing the minimum gap")["extreme"] == -1
+    assert cues.extract("minimizing the maximum load")["extreme"] == 1
+
+
+def test_evaluation_reports_out_of_catalog_rates():
+    rates = evaluate("tfidf", RetrievalSettings(), split="test", cue_weight=CUE_WEIGHT)["out_of_catalog"]
+    assert rates["no_match_queries"] == 7 and rates["real_match_queries"] == 21
+    assert 0 <= rates["flagged_no_match_rate"] <= 1 and 0 <= rates["false_flag_rate"] <= 1
+    assert evaluate("tfidf", RetrievalSettings(), split="test")["out_of_catalog"] is None
+
+
+def test_labels_are_marked_assistant_reviewed_not_human_reviewed():
+    assert {query.label_status for query in load_queries()} == {"assistant_reviewed_pending_user"}

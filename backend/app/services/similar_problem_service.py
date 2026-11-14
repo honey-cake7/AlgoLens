@@ -9,6 +9,7 @@ from app.retrieval.retrievers import CueReranker
 from app.schemas.retrieval import SimilarMatch, SimilarResponse
 
 LIMITATION = "Ranking scores are cosine similarities, not confidence probabilities or proof of the same algorithm. This small original catalog may have no strong match."
+UNCOVERED_NOTE = "Your statement mentions {topics}, which no problem in this practice catalog covers. The results below are probably a different kind of task."
 CUE_NOTE = "Scores blend text similarity with deterministic task cues (such as fixed data versus updates, or contiguous versus gaps allowed). Cues are keyword rules, not algorithm identification."
 
 
@@ -36,13 +37,21 @@ class SimilarProblemService:
         if method == "semantic":
             warnings.append("MiniLM is a general-purpose encoder; long statements can be truncated at its 256 word-piece limit.")
             try:
-                ranked = search_index(self._index(method, records, revision, settings), query, k)
+                index = self._index(method, records, revision, settings)
+                ranked = search_index(index, query, k)
             except Exception:
                 method = "tfidf"
                 warnings.append("Semantic retrieval is unavailable locally. Using TF-IDF instead; install optional dependencies and run the explicit model setup command. No model was downloaded.")
-                ranked = search_index(self._index(method, records, revision, settings), query, k)
+                index = self._index(method, records, revision, settings)
+                ranked = search_index(index, query, k)
         else:
-            ranked = search_index(self._index(method, records, revision, settings), query, k)
+            index = self._index(method, records, revision, settings)
+            ranked = search_index(index, query, k)
+        # Topic coverage, not a score cutoff: on the dev queries no score
+        # threshold separated real matches from out-of-catalog topics.
+        uncovered = list(index.uncovered(query)) if isinstance(index, CueReranker) else []
+        if uncovered:
+            warnings.append(UNCOVERED_NOTE.format(topics=", ".join(uncovered)))
         matches = []
         for item in ranked:
             problem = item.problem
@@ -55,7 +64,7 @@ class SimilarProblemService:
                 source_type=problem.source_type, source_url=problem.source_url, source_name=problem.source_name))
         if not matches:
             warnings.append("No positive-similarity candidates were found; try a concise description of the task and its conditions.")
-        return SimilarResponse(query=query, query_source=query_source, requested_method=settings.method, retrieval_method=method, catalog_revision=revision, reranking=reranking, matches=matches, warnings=warnings)
+        return SimilarResponse(query=query, query_source=query_source, requested_method=settings.method, retrieval_method=method, catalog_revision=revision, reranking=reranking, uncovered_topics=uncovered, matches=matches, warnings=warnings)
 
     @staticmethod
     def _index(method, records, revision, settings):

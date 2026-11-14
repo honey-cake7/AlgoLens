@@ -123,3 +123,7 @@ External records are now *representable* but not present. A record with `source_
 ## 023 — Stage 7 deliberately not implemented; Stage 8 limited to local quality
 
 Stage 7 (trained classifiers, contrastive embeddings, rerankers) is not implemented. AGENTS.md forbids ML training, and 50 records with 36 author-labeled queries would overfit and leak. Its entry gates are recorded in ROADMAP.md instead. Stage 8 is implemented only where it costs ₹0 and needs no hosting: security middleware, request logging, CI on GitHub's free runners, and documented limits. Deployment, monitoring services, and authentication remain out of scope until a hosting decision is made.
+
+## 024 — Stage 5b: reviewed labels, coverage-based "no close match", no re-tuning
+
+Labels follow a written reuse-the-main-idea policy (LABEL_REVIEW.md) and are marked `assistant_reviewed_pending_user`, never "human-reviewed", until the user signs off. Keep the cue weight at 0.2 despite a flat dev plateau, so as not to tune to noise or to test results already seen. Detect out-of-catalog topics through cue coverage rather than a score threshold, because dev scores overlap. Results are never hidden, so a wrong notice costs a warning, not a missing answer. Report held-out numbers from before any fix that test results revealed, and label post-fix numbers as no longer held-out. Do not add topic cues for the topics in the new no-match queries until an independent query set exists.

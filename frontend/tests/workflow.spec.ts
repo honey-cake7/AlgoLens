@@ -461,3 +461,22 @@ test('unknown reranking value is rejected safely', async ({ page }) => {
   await expect(page.getByRole('region', { name: 'Similar practice problems', exact: true })).toHaveCount(0)
   await expect(page.getByLabel('Problem statement', { exact: true })).toHaveValue(retrievalQuery)
 })
+
+test('out-of-catalog topic shows a clear no-close-match notice', async ({ page }) => {
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill('Find the smallest circle radius enclosing all planar points with real coordinates.')
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  const section = page.getByRole('region', { name: 'Similar practice problems', exact: true })
+  await expect(section.getByRole('note')).toContainText('No close match in this catalog.')
+  await expect(section.getByRole('note')).toContainText('geometry')
+  await expect(section.getByText('AlgoLens practice example', { exact: false }).first()).toBeVisible()
+})
+
+test('covered topic shows no coverage notice', async ({ page }) => {
+  await page.goto('/')
+  await page.getByLabel('Problem statement', { exact: true }).fill(retrievalQuery)
+  await page.getByRole('button', { name: 'Find similar problems', exact: true }).click()
+  const section = page.getByRole('region', { name: 'Similar practice problems', exact: true })
+  await expect(section.getByRole('heading', { name: 'Static ledger totals', exact: true })).toBeVisible()
+  await expect(section.getByRole('note')).toHaveCount(0)
+})

@@ -2,7 +2,7 @@
 
 Follow each contributor's global RTK guidance (for example `~/.claude/RTK.md` or `~/.codex/RTK.md`) when available. Prefix shell commands with `rtk`; `rtk proxy` can run commands without filtering.
 
-- Current state: Stages 0–5 complete; Stage 6 provenance groundwork and the local part of Stage 8 (see docs/SECURITY.md) complete; Stage 7 gated (no training). Preserve all of it. Never tune cue rules or weights against the test split. Add external records only with human-verified provenance; run `python -m app.retrieval.catalog_check --strict` after catalog edits.
+- Current state: Stages 0–5 complete; Stage 6 provenance groundwork and the local part of Stage 8 (see docs/SECURITY.md) complete; Stage 7 gated (no training). Preserve all of it. Never tune cue rules or weights against the test split; if a test result exposes a bug, report pre-fix numbers as held-out. Labels are assistant-reviewed pending user sign-off (docs/LABEL_REVIEW.md); never call them human-reviewed. Add external records only with human-verified provenance; run `python -m app.retrieval.catalog_check --strict` after catalog edits.
 - Keep changes small, focused, understandable, and limited to the requested behavior. Preserve user work.
 - Read README.md and the relevant docs before changes. Read docs/ARCHITECTURE.md and docs/DECISIONS.md before modifying architecture; record material decisions there.
 - Test changed behavior, including failure cases where relevant. Run backend pytest for API changes and frontend typecheck/build for frontend changes. Add targeted behavior tests as features grow.

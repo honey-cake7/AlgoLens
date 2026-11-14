@@ -10,7 +10,7 @@
     "category": "same_algorithm_different_story",
     "notes": "Both records optimize the largest contiguous-group load with positive entries; exactly K and at-most K are related under K <= n.",
     "story_pair": "partition",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -24,7 +24,7 @@
     "category": "story_invariance",
     "notes": "Same positive contiguous partition objective as the publisher query; labels concern structure, not vocabulary.",
     "story_pair": "partition",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -37,7 +37,7 @@
     "category": "same_algorithm_different_story",
     "notes": "Static one-dimensional range sums, rather than dynamic interval updates.",
     "story_pair": "range_sum",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -50,7 +50,7 @@
     "category": "story_invariance",
     "notes": "Rephrases the same fixed-array range-sum task without copying the catalog text.",
     "story_pair": "range_sum",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -61,10 +61,10 @@
       "toll_routes",
       "delivery_distances"
     ],
-    "category": "same_structure_different_objective",
+    "category": "same_algorithm_different_story",
     "notes": "Weighted cheapest paths are related; unweighted maze steps and connectivity-only tasks are not primary matches.",
     "story_pair": "weighted_paths",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -78,7 +78,7 @@
     "category": "story_invariance",
     "notes": "Same nonnegative weighted shortest-path task as battery paths, in a different narrative.",
     "story_pair": "weighted_paths",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -91,7 +91,7 @@
     "category": "similar_story_different_algorithm",
     "notes": "An array total appears, but the goal is counting zero-sum intervals rather than answering supplied range requests.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -104,7 +104,7 @@
     "category": "similar_story_different_algorithm",
     "notes": "Reservation vocabulary overlaps occupancy counting, but here a maximum subset is selected.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -115,10 +115,10 @@
       "rising_readings",
       "envelope_chain"
     ],
-    "category": "same_data_structure_different_objective",
+    "category": "same_algorithm_different_story",
     "notes": "Rising readings is direct; envelope nesting is a structurally related extension with an extra coordinate, a subjective broader relevance judgment.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -132,7 +132,7 @@
     "category": "multiple_relevant",
     "notes": "Both use dependency ordering and cycle detection; layer minimization is a related extension.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -140,12 +140,13 @@
     "query": "A diver has a weight allowance and indivisible tools with weights and usefulness scores. Each tool exists once. Maximize usefulness within the weight allowance.",
     "normalized_query": "Choose each weighted, valued item at most once to maximize total value under a capacity cap.",
     "relevant_ids": [
-      "rucksack_value"
+      "rucksack_value",
+      "exact_weight_check"
     ],
-    "category": "same_data_structure_different_objective",
+    "category": "same_algorithm_different_story",
     "notes": "One-use optimization differs from unlimited coin combination counting.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -159,25 +160,28 @@
     "category": "multiple_relevant",
     "notes": "Direct interval increments plus the related interval occupancy accumulation pattern.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
     "id": "stateful_choices",
-    "query": "I want practice with optimal or counted choices: paying landing fees while moving one or two positions, editing one string into another, selecting single-use weighted items, making unordered payments with unlimited coins, choosing daily activities without adjacent repeats, or maximizing rewards on right/down grid paths.",
-    "normalized_query": "Find practice tasks about optimal or counted sequences of choices over positions, edits, weighted items, coin multiplicities, activity days, or one-way grid routes.",
+    "query": "I want practice problems where the best total, or the number of ways, is built up step by step because every choice depends on the choices made before it, over positions, strings, item sets, intervals or grids.",
+    "normalized_query": "Practice tasks answered by combining optimal or counted results of smaller prefixes, subsets or subproblems.",
     "relevant_ids": [
       "stair_cost",
       "edit_sequence",
+      "vacation_choices",
+      "grid_rewards",
+      "paid_bookings",
+      "shared_melody",
       "rucksack_value",
       "coin_combinations",
-      "vacation_choices",
-      "grid_rewards"
+      "exact_weight_check"
     ],
     "category": "multiple_relevant",
-    "notes": "Deliberately broad practice request with six relevant records; recall denominator must be six, not five. Not an algorithm identification query.",
+    "notes": "Broad practice request; relevant set is every record whose main technique is dynamic programming or knapsack (recall denominator 9). Rewritten 2026-11-14 so it no longer lists the records it should find.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -188,7 +192,7 @@
     "category": "no_strong_match",
     "notes": "No computational-geometry record is present. Textual neighbors must not be treated as known algorithmic matches.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "dev"
   },
   {
@@ -196,12 +200,13 @@
     "query": "A mixing desk has a row of channel levels. Engineers repeatedly either set one channel to a new level or ask for the combined level across a block of adjacent channels.",
     "normalized_query": "Support single-position assignments interleaved with contiguous range-sum queries on an array.",
     "relevant_ids": [
-      "sensor_adjustments"
+      "sensor_adjustments",
+      "scoreboard_bonuses"
     ],
     "category": "hard_negative",
     "notes": "Range sums with interleaved point changes; the static prefix-sum record is a deliberate near miss.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -214,7 +219,7 @@
     "category": "hard_negative",
     "notes": "Static range sums; the point-update record is a deliberate near miss.",
     "story_pair": "test_static_sums",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -227,7 +232,7 @@
     "category": "story_invariance",
     "notes": "Same static range-sum task as frozen prices with another story.",
     "story_pair": "test_static_sums",
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -235,12 +240,13 @@
     "query": "Ticket prices for every day of a season are published and never revised. For many date ranges, report the cheapest price within that range.",
     "normalized_query": "Answer many range-minimum queries on a fixed array.",
     "relevant_ids": [
-      "lowest_reading_queries"
+      "lowest_reading_queries",
+      "tallest_wave_lookup"
     ],
     "category": "hard_negative",
     "notes": "Minimum, not sum, over static ranges.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -253,7 +259,7 @@
     "category": "hard_negative",
     "notes": "Weighted selection; the unweighted maximum-count interval record is a deliberate near miss.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -261,12 +267,13 @@
     "query": "An aerial photo is split into a grid of water and dry pixels. Neighbouring water pixels up, down, left or right form one lake. How many lakes are there?",
     "normalized_query": "Count four-directionally connected regions of marked grid cells.",
     "relevant_ids": [
-      "island_count"
+      "island_count",
+      "paint_bucket"
     ],
     "category": "coverage",
     "notes": "Grid connected components; unit-step grid shortest path is related vocabulary only.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -274,12 +281,13 @@
     "query": "In a one-way metro network some transfers are free and the rest cost a single ticket. Find the minimum number of tickets from the start station to the goal.",
     "normalized_query": "Shortest path in a directed graph whose edge weights are only zero or one.",
     "relevant_ids": [
-      "free_and_paid_links"
+      "free_and_paid_links",
+      "wall_breaker"
     ],
     "category": "hard_negative",
     "notes": "General nonnegative-weight records would also be correct but are not the targeted specialization.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -287,12 +295,13 @@
     "query": "Currency trades may cost or earn money, so some edges have negative values. From a home currency find the cheapest total to each currency, or detect a trading loop with unbounded gain.",
     "normalized_query": "Single-source shortest paths with possibly negative directed edge weights and negative-cycle detection.",
     "relevant_ids": [
-      "rebate_routes"
+      "rebate_routes",
+      "arbitrage_alarm"
     ],
     "category": "hard_negative",
     "notes": "Negative weights rule out the nonnegative shortest-path records.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -300,12 +309,13 @@
     "query": "Every pair of oil wells can be joined by a pipe of known cost. Pick pipes so all wells are connected through the network while spending as little as possible.",
     "normalized_query": "Minimum total weight set of edges connecting all vertices of a weighted undirected graph.",
     "relevant_ids": [
-      "cable_network"
+      "cable_network",
+      "bottleneck_cables"
     ],
     "category": "hard_negative",
     "notes": "Connect everything cheaply, not shortest paths from a source.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -313,12 +323,13 @@
     "query": "Read a password string and report the length of its longest consecutive piece where every character is different.",
     "normalized_query": "Longest contiguous substring with all distinct characters.",
     "relevant_ids": [
-      "fresh_letters"
+      "fresh_letters",
+      "distinct_badges"
     ],
     "category": "coverage",
     "notes": "Sliding window over characters.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -326,12 +337,13 @@
     "query": "A list of coupon values arrives unsorted. Find any two different coupons whose values add up to exactly the target amount.",
     "normalized_query": "Find two distinct indices in an unsorted array with values summing to a target.",
     "relevant_ids": [
-      "matching_receipts"
+      "matching_receipts",
+      "price_gap_pairs"
     ],
     "category": "hard_negative",
     "notes": "The sorted maximum-pair-under-limit record is a deliberate near miss.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -345,7 +357,7 @@
     "category": "multiple_relevant",
     "notes": "Edit distance is a closely related two-string DP; subjective broader relevance judgment.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -359,7 +371,7 @@
     "category": "multiple_relevant",
     "notes": "0/1 capacity optimization is a related single-use item DP.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -372,7 +384,7 @@
     "category": "coverage",
     "notes": "Maximize-the-minimum answer search.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -380,12 +392,13 @@
     "query": "A company hierarchy is a tree under the CEO. For many pairs of employees, report the lowest-ranked manager who oversees both.",
     "normalized_query": "Lowest common ancestor queries in a rooted tree.",
     "relevant_ids": [
-      "family_meeting_point"
+      "family_meeting_point",
+      "kth_ancestor_lookup"
     ],
     "category": "coverage",
     "notes": "Tree path queries rather than whole-subtree aggregation.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -398,7 +411,7 @@
     "category": "coverage",
     "notes": "Bipartiteness test.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -411,7 +424,7 @@
     "category": "coverage",
     "notes": "Grid BFS; counting regions is a related grid vocabulary near miss.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -424,7 +437,7 @@
     "category": "coverage",
     "notes": "Next greater element.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -438,7 +451,7 @@
     "category": "coverage",
     "notes": "Incremental connectivity; redundant-edge detection uses the same structure.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -451,7 +464,7 @@
     "category": "coverage",
     "notes": "Greedy refuelling.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -464,7 +477,7 @@
     "category": "coverage",
     "notes": "Subtree aggregation.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   },
   {
@@ -475,7 +488,73 @@
     "category": "no_strong_match",
     "notes": "No computational-geometry record exists; returned neighbors are failure evidence.",
     "story_pair": null,
-    "label_status": "provisional_author_judgment",
+    "label_status": "assistant_reviewed_pending_user",
+    "split": "test"
+  },
+  {
+    "id": "pattern_occurrences",
+    "query": "A long DNA string and a short motif are given. Report every position where the motif occurs, including overlapping occurrences.",
+    "normalized_query": "Find all occurrence positions of a pattern string inside a text string, overlaps included.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "Out-of-catalog topic written before the abstention rule; returned neighbors are failure evidence.",
+    "story_pair": null,
+    "label_status": "assistant_reviewed_pending_user",
+    "split": "test"
+  },
+  {
+    "id": "prime_census",
+    "query": "Count how many prime numbers are at most N, for N up to ten million.",
+    "normalized_query": "Count primes not exceeding N.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "Out-of-catalog topic written before the abstention rule; returned neighbors are failure evidence.",
+    "story_pair": null,
+    "label_status": "assistant_reviewed_pending_user",
+    "split": "test"
+  },
+  {
+    "id": "rabbit_generations",
+    "query": "Rabbit pairs follow the rule that each month's count is the sum of the previous two months. Give the count after N months modulo a prime, where N can be up to ten to the eighteenth.",
+    "normalized_query": "Compute the N-th term of a linear recurrence modulo a prime for very large N.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "Out-of-catalog topic written before the abstention rule; returned neighbors are failure evidence.",
+    "story_pair": null,
+    "label_status": "assistant_reviewed_pending_user",
+    "split": "test"
+  },
+  {
+    "id": "stone_game_winner",
+    "query": "Two players alternately remove any positive number of stones from one of several piles; whoever cannot move loses. Decide who wins with perfect play.",
+    "normalized_query": "Determine the winner of an impartial multi-pile removal game under optimal play.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "Out-of-catalog topic written before the abstention rule; returned neighbors are failure evidence.",
+    "story_pair": null,
+    "label_status": "assistant_reviewed_pending_user",
+    "split": "test"
+  },
+  {
+    "id": "pipe_throughput",
+    "query": "Water flows from a reservoir to a city through pipes with capacity limits per hour. What is the most water per hour that can reach the city?",
+    "normalized_query": "Compute the maximum flow from a source to a sink in a capacitated directed network.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "Out-of-catalog topic written before the abstention rule; returned neighbors are failure evidence.",
+    "story_pair": null,
+    "label_status": "assistant_reviewed_pending_user",
+    "split": "test"
+  },
+  {
+    "id": "fence_wrap",
+    "query": "Trees stand at given points in a field. Find the shortest fence enclosing all of them.",
+    "normalized_query": "Compute the perimeter of the convex hull of a planar point set.",
+    "relevant_ids": [],
+    "category": "no_strong_match",
+    "notes": "Out-of-catalog topic written before the abstention rule; returned neighbors are failure evidence.",
+    "story_pair": null,
+    "label_status": "assistant_reviewed_pending_user",
     "split": "test"
   }
 ]

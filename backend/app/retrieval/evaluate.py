@@ -48,6 +48,17 @@ def metrics(ranked_ids: list[str], relevant_ids: set[str], k: int = 5) -> dict:
             "reciprocal_rank": 1 / first if first else None if not relevant_ids else 0.0}
 
 
+def coverage_rates(rows: list[dict]) -> dict | None:
+    """How often the uncovered-topic notice fires on no-match vs real-match queries."""
+    if any(row["uncovered_topics"] is None for row in rows):
+        return None
+    negatives = [row for row in rows if not row["relevant_ids"]]
+    positives = [row for row in rows if row["relevant_ids"]]
+    rate = lambda subset: sum(bool(row["uncovered_topics"]) for row in subset) / len(subset) if subset else None
+    return {"no_match_queries": len(negatives), "flagged_no_match_rate": rate(negatives),
+            "real_match_queries": len(positives), "false_flag_rate": rate(positives)}
+
+
 def load_queries(path: Path = EVALUATION_PATH) -> list[EvaluationQuery]:
     return TypeAdapter(list[EvaluationQuery]).validate_python(json.loads(path.read_text(encoding="utf-8")))
 
@@ -70,8 +81,9 @@ def evaluate(method: str, settings: RetrievalSettings, representation="raw", pat
         # candidates so MRR is not truncated at K=5 or at the API limit.
         ranked = search_index(index, text, max(1, len(records)))
         ids = [item.problem.id for item in ranked]
+        flagged = list(index.uncovered(text)) if isinstance(index, CueReranker) else None
         rows.append({"id": query.id, "category": query.category, "story_pair": query.story_pair,
-                     "relevant_ids": query.relevant_ids, "top_5": ids[:5], **metrics(ids, set(query.relevant_ids))})
+                     "relevant_ids": query.relevant_ids, "top_5": ids[:5], "uncovered_topics": flagged, **metrics(ids, set(query.relevant_ids))})
     labeled = [row for row in rows if row["recall_at_5"] is not None]
     mean = lambda key, subset: sum(row[key] for row in subset) / len(subset) if subset else None
     pairs = {}
@@ -88,7 +100,8 @@ def evaluate(method: str, settings: RetrievalSettings, representation="raw", pat
         "evaluation_revision": hashlib.sha256(path.read_bytes()).hexdigest()[:16], "provenance": provenance,
         "query_count": len(rows), "positive_query_count": len(labeled), "label_status": sorted({q.label_status for q in queries}),
         "precision_at_5": mean("precision_at_5", rows), "recall_at_5": mean("recall_at_5", labeled),
-        "mrr": mean("reciprocal_rank", labeled), "story_pair_top5_jaccard": pairs, "queries": rows,
+        "mrr": mean("reciprocal_rank", labeled), "story_pair_top5_jaccard": pairs,
+        "out_of_catalog": coverage_rates(rows), "queries": rows,
         "policy": "P@5 uses denominator 5 even for short lists. No-relevance queries contribute P@5=0 and are excluded from recall/MRR. MRR uses every returned positive-score candidate, with missing relevant results scored zero. Labels are subjective and provisional pending user review."}
 
 
