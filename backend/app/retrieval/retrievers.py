@@ -123,6 +123,20 @@ class CueReranker:
         cue_scores = np.divide(self.matrix @ query_vector, norms, out=np.zeros(len(self.records)), where=norms > 0)
         return (1 - self.weight) * np.asarray(text_scores, dtype=np.float64) + self.weight * cue_scores
 
+    def uncovered(self, query: str) -> tuple[str, ...]:
+        """Cues in the query that no catalog record has (with the same sign).
+
+        Example: a geometry statement when the catalog has no geometry task.
+        Ranking scores cannot detect this (weak neighbours can still score
+        higher than genuine matches), but a cue with zero catalog coverage
+        says the topic itself is missing.
+        """
+        if self.matrix is None or not len(self.matrix):
+            return ()
+        query_vector = cues.vector(query)
+        return tuple(sorted(cues.label(index, int(sign)) for index, sign in enumerate(query_vector)
+                            if sign != 0 and not np.any(self.matrix[:, index] == sign)))
+
     def search(self, query: str, k: int = 5) -> list[RankedMatch]:
         scores = self.scores(query)
         if scores is None:

@@ -706,5 +706,122 @@
     "constraints_summary": null,
     "source_type": "original_practice",
     "source_url": null
+  },
+  {
+    "id": "scoreboard_bonuses",
+    "title": "Scoreboard bonuses",
+    "short_description": "Teams sit in a numbered row. Judges repeatedly award bonus points to one team, and spectators repeatedly ask for the combined score of the first k teams.",
+    "normalized_description": "Support point additions to an array interleaved with prefix-sum queries over the current values.",
+    "main_technique": "fenwick_tree",
+    "secondary_tags": [
+      "point_updates",
+      "prefix_queries"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "tallest_wave_lookup",
+    "title": "Tallest wave lookups",
+    "short_description": "A buoy recorded wave heights for a season; the log is archived and never edited. Many questions each give two positions and ask for the highest wave between them.",
+    "normalized_description": "For a list of measurements that is never edited, report the largest value inside each of many requested windows between two positions, both included.",
+    "main_technique": "sparse_table",
+    "secondary_tags": [
+      "static_queries"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "arbitrage_alarm",
+    "title": "Arbitrage alarm",
+    "short_description": "Exchange routes between assets have signed gains or losses. Decide whether some sequence of routes returns to its starting asset with a total that keeps decreasing cost forever.",
+    "normalized_description": "Decide whether a directed graph with possibly negative edge weights contains a negative-weight cycle.",
+    "main_technique": "bellman_ford",
+    "secondary_tags": [
+      "negative_weights",
+      "cycle_detection"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "kth_ancestor_lookup",
+    "title": "Climbing the family line",
+    "short_description": "A lineage tree is rooted at the founder. Answer many questions of the form: who is the ancestor exactly k generations above this person, if any?",
+    "normalized_description": "Answer many k-th ancestor queries in a rooted tree, reporting none when the depth is smaller than k.",
+    "main_technique": "binary_lifting",
+    "secondary_tags": [
+      "tree_queries"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "paint_bucket",
+    "title": "Paint bucket",
+    "short_description": "A pixel image and a starting pixel are given. Recolour the starting pixel and every pixel of the same original colour reachable through edge-sharing neighbours.",
+    "normalized_description": "Recolour the connected region of equal-valued grid cells containing a start cell under four-directional adjacency.",
+    "main_technique": "flood_fill",
+    "secondary_tags": [
+      "grid",
+      "connectivity"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "price_gap_pairs",
+    "title": "Pairs with a set price gap",
+    "short_description": "A shuffled list of product prices is given. Count the pairs of different positions whose prices differ by exactly a given amount.",
+    "normalized_description": "Count unordered pairs of distinct positions in an unsorted integer array whose values differ by exactly a given amount.",
+    "main_technique": "hash_map",
+    "secondary_tags": [
+      "frequency_counting"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "bottleneck_cables",
+    "title": "Gentlest longest cable",
+    "short_description": "Towers must all be linked by cables of known lengths. Choose cables so every tower is connected and the longest chosen cable is as short as possible.",
+    "normalized_description": "Connect all vertices of a weighted undirected graph while minimizing the maximum chosen edge weight.",
+    "main_technique": "minimum_spanning_tree",
+    "secondary_tags": [
+      "bottleneck",
+      "connectivity"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
+  },
+  {
+    "id": "wall_breaker",
+    "title": "Wall breaker",
+    "short_description": "A maze grid has open cells and walls. Moving into an open cell is free; moving into a wall breaks it at a cost of one hammer. Find the fewest hammers from start to exit.",
+    "normalized_description": "Find a minimum-cost path between two grid cells where entering an open cell costs zero and entering a blocked cell costs one.",
+    "main_technique": "zero_one_bfs",
+    "secondary_tags": [
+      "grid",
+      "weighted_shortest_path"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": null,
+    "source_type": "original_practice",
+    "source_url": null
   }
 ]

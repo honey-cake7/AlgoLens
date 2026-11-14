@@ -45,8 +45,8 @@ AXES: tuple[Axis, ...] = (
     Axis("edge_cost", "weighted edges", r"\b(weights?|weighted|costs?|fees?|tolls?|prices?|lengths?|energy|distances?)\b",
          "unit steps", r"\b(unweighted|unit[- ]cost|unit steps?|fewest (?:moves|steps|edges|turns)|minimum number of (?:moves|steps|edges|turns))\b",
          negative_first=True, requires="graph"),
-    Axis("extreme", "minimize the maximum", r"\b(minimi[sz]e (?:the )?(?:maximum|largest|capacity)|(?:smallest|minimum|least) (?:\w+ )?(?:capacity|allowance)|smallest (?:\w+ )?duration)\b",
-         "maximize the minimum", r"\b(maximi[sz]e (?:the )?minimum|as far apart as possible)\b"),
+    Axis("extreme", "minimize the maximum", r"\b(minimi[sz](?:e|es|ed|ing) (?:the )?(?:maximum|largest|capacity)|(?:smallest|minimum|least) (?:\w+ )?(?:capacity|allowance)|smallest (?:\w+ )?duration)\b",
+         "maximize the minimum", r"\b(maximi[sz](?:e|es|ed|ing) (?:the )?minimum|as far apart as possible)\b"),
 )
 
 BINARY: tuple[tuple[str, str, str], ...] = (
@@ -119,3 +119,12 @@ def shared_labels(query: str, document: str) -> tuple[str, ...]:
             positive, negative = LABELS[name]
             labels.append(positive if sign > 0 else negative)
     return tuple(sorted(labels))
+
+
+NAMES = [axis.name for axis in AXES] + [name for name, _, _ in BINARY]
+
+
+def label(index: int, sign: int) -> str:
+    """Readable label for vector dimension `index` with value +1 or -1."""
+    positive, negative = LABELS[NAMES[index]]
+    return positive if sign > 0 else negative

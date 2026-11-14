@@ -21,6 +21,8 @@ export interface SimilarResponse {
   catalog_revision: string
   /** Absent from pre-Stage-5 servers; treated as 'none'. */
   reranking?: 'none' | 'task_cues'
+  /** Query topics that no catalog record covers; absent from older servers. */
+  uncovered_topics?: string[]
   matches: SimilarMatch[]
   warnings: string[]
 }

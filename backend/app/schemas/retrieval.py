@@ -86,5 +86,8 @@ class SimilarResponse(RetrievalModel):
     retrieval_method: Method
     catalog_revision: Text
     reranking: Literal["none", "task_cues"] = "none"
+    # Query topics with no catalog coverage (from task cues); empty means none detected,
+    # which is not proof that a strong match exists.
+    uncovered_topics: list[Text] = Field(default_factory=list)
     matches: list[SimilarMatch] = Field(default_factory=list)
     warnings: list[Text] = Field(default_factory=list)

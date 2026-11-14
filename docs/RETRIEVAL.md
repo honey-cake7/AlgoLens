@@ -202,3 +202,39 @@ Still failing, kept as evidence and not tuned against:
 ## Limits
 
 The same author wrote the queries, labels, and cue rules. Writing the test split before the rules reduces, but does not remove, that bias: 21 positive test queries is small and the improvement is exploratory evidence, not proof of generalization. Cues are keyword rules: they miss paraphrases, can fire on incidental words, and do not identify algorithms. Semantic + cues is implemented and unit-tested with fake encoders but not measured. Reranking adds about 6 ms per search on the 50-record catalog (cue vectors are cached per index).
+
+# Stage 5b: label review, full technique coverage, out-of-catalog notice
+
+- **Catalog 50 → 58.** One original second example was added for each technique that had a single record (Fenwick, sparse table, Bellman–Ford, binary lifting, flood fill, hash map, MST, 0/1 BFS). `catalog_check` caught one near duplicate (range max vs. range min, cosine 0.80), which was reworded. Now every technique has at least 2 records.
+- **Labels reviewed** under a written policy; see [LABEL_REVIEW.md](LABEL_REVIEW.md). The status is `assistant_reviewed_pending_user`, **not** human-reviewed.
+- **Queries 36 → 42.** Six out-of-catalog test queries were written before the notice rule existed.
+- **Cue weight kept at 0.2.** After relabeling, the dev sweep is flat (0.15–0.4 within 0.02 objective, with 0.4 marginally best). Changing the default for a noise-level difference after test results were seen would be cherry-picking.
+
+## "No close match" notice
+
+On the dev split, **no score threshold separates** real matches from out-of-catalog queries. The geometry query's top score (0.245) is higher than several genuine matches (as low as 0.138). The notice therefore uses topic **coverage** instead: if the query has a task cue that no catalog record shares with the same sign, the response lists it in `uncovered_topics` and the UI shows "No close match in this catalog". Results stay visible.
+
+| Split | No-match queries flagged | Real-match queries wrongly flagged |
+|---|---|---|
+| dev (design) | 1/1 | 0/13 |
+| **test, held-out** | **1/7 raw · 2/7 normalized** | **1/21** |
+| test after the inflection fix (no longer held-out) | 1/7 · 2/7 | 0/21 |
+
+The held-out false flag was a real cue bug: "maximiz**ing** the minimum" did not match the "maximize the minimum" pattern, so a covered topic looked uncovered. Both min/max patterns now accept inflections. The fix was found on the test split, so the post-fix row is not a held-out result.
+
+**Limitation:** the notice only fires for topics that some cue describes (currently geometry, and objectives such as maximize-the-minimum). String matching, number theory, games and flows have no cue, so they pass silently. Adding cues for those topics is deliberately **not** done here: the new out-of-catalog test queries cover exactly those topics, so adding the cues and measuring on those queries would make the evaluation meaningless. A fresh no-match query set should be written by someone else first.
+
+## Results (catalog `6a5fc5904c6de7d5`, queries `8a061f5d9df1b6b4`, TF-IDF)
+
+| Split | Query | Ranking | P@5 | R@5 | MRR |
+|---|---|---|---|---|---|
+| dev (14) | raw | text | 0.171 | 0.556 | 0.606 |
+| dev (14) | raw | + cues | 0.257 | 0.756 | 0.865 |
+| dev (14) | normalized | text | 0.257 | 0.846 | 0.737 |
+| dev (14) | normalized | + cues | 0.286 | 0.893 | 0.776 |
+| test (28: 21 positive, 7 no-match) | raw | text | 0.136 | 0.595 | 0.460 |
+| test (28) | raw | + cues | **0.164** | **0.738** | **0.678** |
+| test (28) | normalized | text | 0.200 | 0.881 | 0.906 |
+| test (28) | normalized | + cues | **0.214** | **0.929** | **0.952** |
+
+These are not comparable with the Stage 5 table. The catalog, labels and no-match count changed, and P@5 counts each no-match query as 0. Full per-query output: [retrieval_results_stage5b.json](retrieval_results_stage5b.json). MiniLM is still not evaluated on this machine.

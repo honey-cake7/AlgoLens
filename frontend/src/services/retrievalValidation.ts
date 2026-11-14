@@ -19,6 +19,7 @@ export function isSimilarResponse(value: unknown): value is SimilarResponse {
     (value.query_source === 'raw_statement' || value.query_source === 'ai_simplification') &&
     method(value.requested_method) && method(value.retrieval_method) && text(value.catalog_revision) && texts(value.warnings) &&
     (value.reranking === undefined || value.reranking === 'none' || value.reranking === 'task_cues') &&
+    (value.uncovered_topics === undefined || (texts(value.uncovered_topics) && (value.uncovered_topics as unknown[]).length <= 30)) &&
     Array.isArray(value.matches) && value.matches.length <= 20 && value.matches.every(item =>
       record(item) && text(item.problem_id) && text(item.title) && text(item.short_description) &&
       ['easy', 'medium', 'hard'].includes(String(item.difficulty)) && texts(item.technique_tags) &&

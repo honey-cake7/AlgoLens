@@ -59,9 +59,9 @@ def test_match_links_only_for_external():
 
 def test_checker_passes_on_shipped_data():
     report = catalog_check.check()
-    assert report["records"] == 50 and report["problems"] == 0
+    assert report["records"] == 58 and report["problems"] == 0
     assert report["near_duplicates"] == [] and report["query_leakage"] == [] and report["unknown_relevance_ids"] == []
-    assert "fenwick_tree" in report["single_record_techniques"]
+    assert report["single_record_techniques"] == []  # every technique has at least two records
 
 
 def test_checker_flags_duplicates_leakage_and_unknown_ids(tmp_path, base):
