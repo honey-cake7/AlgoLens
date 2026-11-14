@@ -12,6 +12,21 @@ test.beforeEach(async ({ context }) => {
   })
 })
 
+test('a pasted problem link is refused with a clear instruction, but text containing a link is allowed', async ({ page }) => {
+  await page.goto('/')
+  const input = page.getByLabel('Problem statement', { exact: true })
+  const submit = page.getByRole('button', { name: 'Analyze Problem', exact: true })
+  for (const link of ['https://leetcode.com/problems/two-sum/', '  https://leetcode.com/problems/two-sum/description/ \n https://leetcode.com/problems/3sum/ ', 'see www.codeforces.com/problemset/problem/4/A please']) {
+    await input.fill(link)
+    await expect(submit).toBeDisabled()
+    await expect(page.getByRole('button', { name: 'Find similar problems', exact: true })).toBeDisabled()
+    await expect(page.getByText('AlgoLens can’t open links.', { exact: false })).toBeVisible()
+  }
+  await input.fill('Given an array of n integers and a target, find two indices whose values add up to the target. Source: https://leetcode.com/problems/two-sum/')
+  await expect(submit).toBeEnabled()
+  await expect(page.getByText('AlgoLens can’t open links.', { exact: false })).toBeHidden()
+})
+
 test('input enforces trimmed length limits and Clear resets it', async ({ page }) => {
   await page.goto('/')
   const input = page.getByLabel('Problem statement', { exact: true })
