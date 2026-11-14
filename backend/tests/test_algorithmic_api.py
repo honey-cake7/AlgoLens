@@ -28,6 +28,47 @@ def test_combined_fake_output_keeps_true_statement_assessment_separate():
     assert result.hints == fake.hints
 
 
+@pytest.mark.parametrize("endpoint", ["assess", "analyze"])
+def test_copied_named_string_and_test_count_are_assessed(endpoint):
+    statement = (
+        "Process a string s\n of length n\n consisting of X and Y.\n"
+        "Input\nEach test contains multiple test cases.\n"
+        "The first line contains the number of test cases t\n (1≤t≤10^4\n).\n"
+        "Each test case gives an integer n\n (1≤n≤100\n), then string s\n of length n\n.\n"
+        "Output\nReport a count for each test case.\n"
+        "Example\nInputCopy\n1\n3\nXYX\nOutputCopy\n2"
+    )
+    with TestClient(create_app()) as client:
+        response = client.post(f"/api/v1/{endpoint}", json={"statement": statement})
+    assert response.status_code == 200
+    data = response.json()
+    result = AlgorithmicAssessment.model_validate(data["deterministic"] if endpoint == "analyze" else data)
+    assert result.selected_parameter == "n"
+    assert result.extraction.size_parameters[0].upper_bound == 100
+    assert result.extraction.test_cases.variable == "t"
+    assert result.extraction.test_cases.upper_bound == 10_000
+    assert next(item for item in result.extraction.constraints if item.variable == "n").source_text == "1≤n≤100"
+
+
+@pytest.mark.parametrize("endpoint", ["assess", "analyze"])
+def test_array_length_constraints_after_examples_are_assessed(endpoint):
+    statement = (
+        "Given an integer array values, inspect its contiguous segments.\n"
+        "Example 1:\nInput: values.length = 3\nOutput: 2\n"
+        "Example 2:\nInput: values.length = 1\nOutput: 1\n"
+        "Constraints:\n1 <= values.length <= 100\n-1000 <= values[i] <= 1000"
+    )
+    with TestClient(create_app()) as client:
+        response = client.post(f"/api/v1/{endpoint}", json={"statement": statement})
+    assert response.status_code == 200
+    data = response.json()
+    result = AlgorithmicAssessment.model_validate(data["deterministic"] if endpoint == "analyze" else data)
+    assert result.selected_parameter == "values.length"
+    assert result.extraction.size_parameters[0].upper_bound == 100
+    assert result.extraction.test_cases.present is False
+    assert next(item for item in result.assessments if item.complexity == "O(n^2)").estimated_work == 10_000
+
+
 def test_offline_endpoint_has_no_configuration_or_provider_dependency(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "invalid-selection")
     monkeypatch.setattr(groq_provider, "AsyncGroq", lambda **_: pytest.fail("Offline assessment must never initialize Groq"))

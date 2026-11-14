@@ -9,7 +9,8 @@ from app.schemas.algorithmic import (
     ConstraintExtraction, ParsedConstraint, ResourceLimit, SizeParameter, TestCases,
 )
 
-VAR = r"[A-Za-z][A-Za-z0-9_]{0,15}(?:\[[A-Za-z0-9_]{1,8}\])?"
+IDENTIFIER = r"[A-Za-z][A-Za-z0-9_]{0,15}"
+VAR = rf"{IDENTIFIER}(?:\.length|\[[A-Za-z0-9_]{{1,8}}\])?"
 VARS = rf"{VAR}(?:\s*,\s*{VAR}){{0,7}}"
 LITERAL = r"[+-]?(?:\d{1,3}(?:,\d{3}){1,5}|\d{1,16})(?:\.\d{1,12})?(?:[eE][+-]?\d{1,5})?"
 NUMBER = rf"{LITERAL}(?:\s*(?:\*\*|\^|\*)\s*{LITERAL}){{0,3}}"
@@ -20,14 +21,43 @@ MAX_CONSTRAINTS = 128
 # Compiled once and matched at an offset, so no per-match string copies are needed.
 _CONTINUATION = re.compile(r"[ \t]*(?:[+*/^]|-(?=[ \t]*\d)|,\d|\.(?=[ \t]*[\d.+*/^]))")
 _EXAMPLE_WORD = re.compile(r"\b(?:example|sample)\b|e\.g\.", re.I)
+_SECTION = re.compile(
+    r"(?im)^[ \t]*(?:(?P<example>examples?|sample[ \t]+(?:input|output))(?:[ \t]+\d+)?|"
+    r"(?P<constraints>constraints))[ \t]*(?::[^\n]*|$)"
+)
 
 CHAIN = re.compile(rf"(?<![\w.])(?P<left>{NUMBER})\s*(?P<op1>{CMP})\s*(?P<vars>{VARS})\s*(?P<op2>{CMP})\s*(?P<right>{NUMBER})")
 FORWARD = re.compile(rf"(?<![\w.])(?P<vars>{VARS})\s*(?P<op>{CMP})\s*(?P<number>{NUMBER})")
-REVERSE = re.compile(rf"(?<![\w.])(?P<number>{NUMBER})\s*(?P<op>{CMP})\s*(?P<vars>{VARS})(?![\w\[])")
+REVERSE = re.compile(rf"(?<![\w.])(?P<number>{NUMBER})\s*(?P<op>{CMP})\s*(?P<vars>{VARS})(?![\w.\[])")
 AGGREGATE = re.compile(
     rf"\b(?:the\s+)?sum\s+of\s+(?P<vars>{VAR})\s+(?:over|across|for)\s+(?:all\s+)?(?:the\s+)?test\s+cases\s*"
     rf"(?P<op>does\s+not\s+exceed|is\s+at\s+most|<=|<|=)\s*(?P<number>{NUMBER})", re.I,
 )
+
+
+def _exclude_examples(statement: str) -> tuple[str, bool]:
+    """Mask samples until an explicit Constraints heading, retaining source offsets."""
+    chunks: list[str] = []
+    cursor = 0
+    example_start: int | None = None
+    excluded = False
+    for match in _SECTION.finditer(statement):
+        if match["example"] and example_start is None:
+            example_start = match.start()
+        elif match["constraints"] and example_start is not None:
+            chunks.append(statement[cursor:example_start])
+            # Non-whitespace masks also stop patterns bridging across an excluded block.
+            chunks.append(re.sub(r"[^\r\n]", "#", statement[example_start:match.start()]))
+            cursor = match.start()
+            example_start = None
+            excluded = True
+    if example_start is not None:
+        chunks.append(statement[cursor:example_start])
+        chunks.append(re.sub(r"[^\r\n]", "#", statement[example_start:]))
+        excluded = True
+    else:
+        chunks.append(statement[cursor:])
+    return "".join(chunks), excluded
 
 
 def _bounds(operator: str, number: int, variable_on_left: bool = True) -> tuple[int | None, int | None]:
@@ -55,12 +85,11 @@ def _expression(variable: str, lower: int | None, upper: int | None) -> str:
 class ConstraintParser:
     def parse(self, statement: str) -> ConstraintExtraction:
         result = ConstraintExtraction()
-        # Example blocks often contain valid-looking numbers that are not bounds.
-        example = re.search(r"(?im)^[ \t]*(?:examples?|sample[ \t]+(?:input|output))(?:[ \t]+\d+)?[ \t]*(?::[^\n]*|$)", statement)
-        original = statement[:example.start()] if example else statement
-        if example:
-            result.uncertainties.append("Example/sample section and subsequent text were excluded from constraint extraction.")
-        text, offsets = normalize_with_offsets(original)
+        original = statement
+        filtered, excluded = _exclude_examples(statement)
+        if excluded:
+            result.uncertainties.append("Example/sample sections were excluded; extraction resumes only at an explicit Constraints heading.")
+        text, offsets = normalize_with_offsets(filtered)
         if any(character == "*" and original[offset] == "." for character, offset in zip(text, offsets)):
             result.uncertainties.append("A period before an explicit power of ten was interpreted as multiplication (2.10^5 means 2 * 10^5); check this notation against the original statement.")
 
@@ -86,6 +115,9 @@ class ConstraintParser:
         patterns = [
             ("array_length", rf"\barray\s+(?:{VAR}\s+)?(?:of|with|containing|has)\s+(?P<v>{VAR})\s+(?:(?:signed|positive|negative|nonnegative|non-negative)\s+)?(?:integers|elements|numbers|values)\b"),
             ("sequence_length", rf"\b(?:sequence|string)\s+(?:{VAR}\s+)?(?:of|with|containing|has|length)\s+(?P<v>{VAR})\s*(?:integers|elements|characters|numbers)?\b"),
+            # Bind the length variable, not the string name, including pasted line breaks.
+            ("sequence_length", rf"\b(?:sequence|string)\s+(?:{VAR}\s+)?(?:of|with)\s+length\s+(?P<v>{VAR})\b"),
+            ("test_cases", rf"\bnumber\s+of\s+test\s+cases\s+(?P<v>{VAR})\b"),
         ]
         descriptions = {
             "array_length": r"(?:length|size)\s+of\s+(?:the\s+|an?\s+)?array|number\s+of\s+(?:array\s+)?elements",
@@ -104,6 +136,16 @@ class ConstraintParser:
         for role, pattern in patterns:
             for match in re.finditer(pattern, text, re.I):
                 record(match["v"], role, match.start(), match.end())
+        # A declared container provides context for its explicit length property.
+        # Keep separate arrays distinct; an indexed value is never a size.
+        containers: dict[str, set[str]] = defaultdict(set)
+        for match in re.finditer(rf"\b(?P<kind>array|string|sequence)\s+(?P<name>{IDENTIFIER})\b", text, re.I):
+            if match["name"].lower() not in RESERVED or match["name"] == "a":
+                role = "array_length" if match["kind"].lower() == "array" else "sequence_length"
+                containers[match["name"]].add(role)
+        for match in re.finditer(rf"(?<![\w.\]])(?P<name>{IDENTIFIER})\.length(?![\w.\[])", text):
+            for role in containers.get(match["name"], ()):
+                record(match[0], role, match.start(), match.end())
         # Common input description: n and m — numbers of vertices and edges.
         pair = rf"\b(?P<n>{VAR})\s*(?:,|and)\s*(?P<m>{VAR})\s*(?:\([^()\n]{{0,160}}\))?\s*[-—–:]\s*(?:the\s+)?numbers?\s+of\s+(?:vertices|nodes)\s+and\s+edges\b"
         for match in re.finditer(pair, text, re.I):
@@ -160,8 +202,10 @@ class ConstraintParser:
                         before -= 1
                     if before >= line_start and text[before].isdigit():
                         return False
-            if end < len(text) and (text[end].isalnum() or text[end] == "_"):
-                return False
+            if end < len(text):
+                property_suffix = text[end] == "." and end + 1 < len(text) and text[end + 1].isalpha()
+                if text[end].isalnum() or text[end] == "_" or property_suffix:
+                    return False
             # A numeric/operator continuation cannot be silently discarded.
             # A terminal sentence period ("n <= 2. Process...") is allowed.
             if _CONTINUATION.match(text, end):

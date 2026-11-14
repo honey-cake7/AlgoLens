@@ -89,6 +89,47 @@ def test_value_bounds_are_not_input_size():
     assert parsed.size_parameters == []
 
 
+@pytest.mark.parametrize("noun", ["string", "sequence"])
+@pytest.mark.parametrize("declaration", [
+    "a {noun} s of length n",
+    "a {noun} of length n",
+    "a {noun} s with length n",
+    "a {noun} s\n of length n\n",
+])
+def test_named_sequence_length_binds_the_count_not_the_sequence(noun, declaration):
+    description = declaration.format(noun=noun)
+    parsed = ConstraintParser().parse(description + ".\n1 <= n <= 100")
+    assert [item.variable for item in parsed.size_parameters] == ["n"]
+    size = parsed.size_parameters[0]
+    assert (size.role, size.lower_bound, size.upper_bound) == ("sequence_length", 1, 100)
+    assert size.meaning_evidence in description
+
+
+@pytest.mark.parametrize("declaration", [
+    "The first line contains the number of test cases t (1 <= t <= 10^4).",
+    "The number of test cases t\n (1 <= t <= 10^4\n) is given first.",
+])
+def test_test_count_directly_after_description(declaration):
+    parsed = ConstraintParser().parse(declaration)
+    assert parsed.test_cases.present is True
+    assert parsed.test_cases.variable == "t"
+    assert (parsed.test_cases.lower_bound, parsed.test_cases.upper_bound) == (1, 10_000)
+    assert parsed.constraints[0].scope == "global"
+    assert parsed.size_parameters == []
+
+
+def test_sequence_content_and_unbound_test_count_do_not_supply_a_size():
+    parsed = ConstraintParser().parse(
+        "A string s of length at most a hundred contains symbol values.\n"
+        "The number of test cases is unknown.\n"
+        "1 <= s <= 100\n1 <= t <= 10^4"
+    )
+    assert parsed.size_parameters == []
+    assert parsed.test_cases.present is True
+    assert parsed.test_cases.variable is None
+    assert parsed.test_cases.upper_bound is None
+
+
 def test_explicit_value_definition_and_graph_query_counts():
     parsed = ConstraintParser().parse("n vertices, m edges, and q queries. x is the value of an element.\n1 <= n, m <= 1000\nq <= 20\n-10 <= x <= 10")
     roles = {item.variable: item.role for item in parsed.constraints}
@@ -141,6 +182,79 @@ def test_resource_limits_are_separate_from_size_and_values():
     parsed = ConstraintParser().parse("Time limit: 1500 ms\nMemory limit: 256 MiB\nGiven an array of n integers. n <= 1000")
     assert [(item.kind, item.amount, item.unit) for item in parsed.resource_limits] == [("time", 1.5, "seconds"), ("memory", 256, "MiB")]
     assert len(parsed.size_parameters) == 1
+
+
+def test_constraints_after_examples_resume_without_using_sample_bounds():
+    statement = (
+        "Given an array of n integers.\n"
+        "Example 1:\nInput: n = 3\nOutput: 2\n"
+        "Example 2:\nInput: n = 1\nOutput: 1\n"
+        "Constraints:\n1 ≤ n ≤ 10³\n"
+        "Example 3:\nInput: n = 2\nOutput: 1"
+    )
+    parsed = ConstraintParser().parse(statement)
+    assert len(parsed.constraints) == 1
+    bound = parsed.constraints[0]
+    assert (bound.variable, bound.lower_bound, bound.upper_bound) == ("n", 1, 1000)
+    assert bound.source_text == "1 ≤ n ≤ 10³"
+    assert parsed.size_parameters[0].upper_bound == 1000
+
+
+def test_sample_prose_cannot_create_test_counts_or_size_meanings():
+    parsed = ConstraintParser().parse(
+        "Inspect the input.\nExample:\n"
+        "There are t test cases and an array of n integers.\n"
+        "t = 3\nn = 4\nConstraints:\n1 <= n <= 100"
+    )
+    assert parsed.size_parameters == []
+    assert parsed.test_cases.present is False
+    assert [(item.variable, item.upper_bound) for item in parsed.constraints] == [("n", 100)]
+
+
+@pytest.mark.parametrize("name", ["nums", "values", "a"])
+def test_array_length_property_is_size_and_indexed_values_are_not(name):
+    parsed = ConstraintParser().parse(
+        f"Given an integer array {name}.\n"
+        f"Example 1:\nInput: {name}.length = 3\nOutput: 2\n"
+        f"Constraints:\n1 <= {name}.length <= 100\n"
+        f"1 <= l <= r <= {name}.length\n-1000 <= {name}[i] <= 1000"
+    )
+    assert [(item.variable, item.role, item.upper_bound) for item in parsed.size_parameters] == [
+        (f"{name}.length", "array_length", 100)
+    ]
+    value = next(item for item in parsed.constraints if item.variable == f"{name}[i]")
+    assert (value.role, value.lower_bound, value.upper_bound) == ("element_value", -1000, 1000)
+    assert all(item.variable != "length" for item in parsed.constraints)
+    assert any("unsupported" in note.lower() for note in parsed.uncertainties)
+
+
+def test_length_property_keeps_distinct_arrays_and_original_evidence():
+    parsed = ConstraintParser().parse(
+        "Given an array left and an array right.\n"
+        "1 ≤ left.length ≤ 100\n1 <= right.length <= 200"
+    )
+    assert {item.variable: item.upper_bound for item in parsed.size_parameters} == {
+        "left.length": 100, "right.length": 200,
+    }
+    assert parsed.constraints[0].source_text == "1 ≤ left.length ≤ 100"
+
+
+@pytest.mark.parametrize("expression", [
+    "1 <= nums.lengthExtra <= 100",
+    "1 <= nums.length.value <= 100",
+    "nums.length + 1 <= 100",
+    "1 <= nums[i].length <= 100",
+])
+def test_unsupported_length_expressions_cannot_supply_array_bounds(expression):
+    parsed = ConstraintParser().parse("Given an array nums.\n" + expression)
+    assert all(item.upper_bound is None for item in parsed.size_parameters)
+    assert all(item.variable != "length" for item in parsed.constraints)
+
+
+def test_length_property_without_container_context_stays_unknown():
+    parsed = ConstraintParser().parse("1 <= record.length <= 100")
+    assert parsed.size_parameters == []
+    assert parsed.constraints[0].role == "unknown"
 
 
 def test_large_input_is_bounded_and_unsupported():

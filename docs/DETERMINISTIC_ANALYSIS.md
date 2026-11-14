@@ -49,6 +49,10 @@ Each `ParsedConstraint` includes variable, lower/upper bounds or null, original 
 
 An upper bound alone does not establish meaning. `n <= 200000` is quantitative evidence but does not prove n is an array length. Add `Given an array of n integers` and the parser has descriptive evidence. Patterns cover common array/string/sequence descriptions, vertices, edges, queries, test-case counts, and explicit element-value descriptions. Indexed identifiers such as `a_i` and `a[i]` are excluded from size selection. The engine does not infer a graph relationship merely from the letters n and m.
 
+Named sequence descriptions such as `string s of length n` and `sequence s with length n` bind `n` as the sequence length, including when copied text places identifiers on separate lines. `number of test cases t` binds the count `t` directly. Bounds are still extracted separately, original evidence is preserved, and the string identifier `s` is not treated as an input size.
+
+Length properties such as `nums.length` are supported when the statement declares the container (for example, `an integer array nums`). The size retains that full name; `nums[i]` remains an element value. Distinct containers retain distinct size parameters. Symbolic chains such as `1 <= l <= r <= nums.length` are not fully propagated into bounds for `l` and `r`; unsupported comparisons remain visible as uncertainties.
+
 | Scope | Meaning |
 | --- | --- |
 | `global` | Test-count bound, or known-role bound without multiple cases |
@@ -60,7 +64,7 @@ These are syntactic/contextual interpretations, not a full document semantics pr
 
 Reliability values are `explicit`, `contextual`, `ambiguous`, and `conflicting`. They are categories, not probabilities. Current recognized size meanings are contextual; an explicit inequality still needs context to describe size. Conflicting bounds retain all original sources. Conditional/disjunctive lines containing if/or/either are recorded as ambiguous and excluded from size estimation. Multiple test-count meanings leave the count unknown while preserving other dimensions. Missing bounds stay null.
 
-Example/sample headings cause that section **and subsequent text** to be excluded, preventing sample assignments such as `n = 3` from shrinking the maximum. This can miss real constraints placed after samples. Inline example comparisons are also skipped conservatively. Unconsumed comparison syntax raises an uncertainty; it is not a complete parser-error detector.
+Example/sample headings exclude that section and subsequent text **until an explicit Constraints heading**. This supports statements with constraints after examples while preventing sample assignments such as `n = 3` from shrinking the maximum. Another example heading suspends extraction again. Excluded spans are masked without changing source offsets, so evidence still quotes the original statement. Without a Constraints heading, text after samples stays excluded. Inline example comparisons are also skipped conservatively. Unconsumed comparison syntax raises an uncertainty; it is not a complete parser-error detector.
 
 ## Selecting a growth parameter
 
