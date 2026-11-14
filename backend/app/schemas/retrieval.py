@@ -27,7 +27,8 @@ class PracticeProblem(RetrievalModel):
     difficulty: Literal["easy", "medium", "hard"]
     constraints_summary: Text | None = None
     # Stage 6: "external_curated" records are allowed only with full provenance
-    # that a person verified by opening the page. Never generate or guess URLs.
+    # checked against source/license evidence (assistant review is allowed).
+    # Record the review in license_note. Never generate or guess URLs.
     source_type: Literal["original_practice", "external_curated"] = "original_practice"
     source_url: str | None = None
     source_name: Text | None = None

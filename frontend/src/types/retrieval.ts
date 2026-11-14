@@ -8,7 +8,7 @@ export interface SimilarMatch {
   retrieval_method: 'tfidf' | 'semantic'
   explanation: string
   source_type: 'original_practice' | 'external_curated'
-  /** Only external curated records (human-verified provenance) carry a link. */
+  /** Only external curated records with checked provenance carry a link. */
   source_url: string | null
   source_name?: string | null
 }
