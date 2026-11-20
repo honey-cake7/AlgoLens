@@ -27,10 +27,13 @@ def write_catalog(tmp_path, data):
 
 
 def test_catalog_is_original_diverse_valid_and_has_no_fake_links(records):
-    assert len(records) == 58
-    assert len({record.id for record in records}) == 58
+    assert len(records) == 72
+    assert len({record.id for record in records}) == 72
     assert len({record.main_technique for record in records}) >= 23
-    assert all(record.source_type == "original_practice" and record.source_url is None for record in records)
+    original = [record for record in records if record.source_type == "original_practice"]
+    assert len(original) == 58 and all(record.source_url is None for record in original)
+    # External records carry only inspected Kattis links (see test_catalog_stage6).
+    assert all(record.source_url.startswith("https://open.kattis.com/problems/") for record in records if record.source_type == "external_curated")
 
 
 @pytest.mark.parametrize("field,value", [("title", " "), ("difficulty", "legendary"), ("main_technique", "Binary Search"), ("source_url", "https://codeforces.com/problemset/problem/999999/A"), ("secondary_tags", ["bfs", "bfs"])])

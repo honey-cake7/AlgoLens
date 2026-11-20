@@ -10,8 +10,9 @@ function httpsUrl(value: unknown) {
   try { const url = new URL(value); return url.protocol === 'https:' && url.username === '' && url.password === '' } catch { return false }
 }
 function provenance(item: Record<string, unknown>) {
-  return (item.source_type === 'original_practice' && item.source_url === null) ||
-    (item.source_type === 'external_curated' && httpsUrl(item.source_url) && text(item.source_name))
+  const none = (value: unknown) => value === null || value === undefined
+  return (item.source_type === 'original_practice' && item.source_url === null && none(item.attribution) && none(item.license_url)) ||
+    (item.source_type === 'external_curated' && httpsUrl(item.source_url) && text(item.source_name) && text(item.attribution) && httpsUrl(item.license_url))
 }
 
 export function isSimilarResponse(value: unknown): value is SimilarResponse {
