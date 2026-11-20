@@ -11,6 +11,9 @@ export interface SimilarMatch {
   /** Only external curated records with checked provenance carry a link. */
   source_url: string | null
   source_name?: string | null
+  /** Credit line (title, author, source, license) and license deed; external records only. */
+  attribution?: string | null
+  license_url?: string | null
 }
 
 export interface SimilarResponse {

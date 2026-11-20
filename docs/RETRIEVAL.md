@@ -8,7 +8,7 @@ Stage 4 adds information retrieval over original practice examples. It retrieves
 
 The searchable corpus representation is `Task: {normalized_description}`. It includes the input structure, objective, permitted operations, and important conditions where relevant, but no solution. Titles, technique labels, IDs, difficulty, and relevance labels do not enter either retriever's vector representation. For example, `capacity_manifest` describes ordered positive weights, at most D contiguous groups, and minimizing capacity; its `binary_search_answer` metadata remains outside retrieval text.
 
-Stage 6 now supports `external_curated` records with verified https source URL, source name, license note, and review date. Under decision 026, the assistant may inspect sources and applicable usage terms without per-record human approval. `license_note` records assistant review, evidence URLs, applicable terms, and attribution requirements; `verified_on` records the actual inspection date. Records with unresolved provenance or usage terms stay outside the catalog. No external records have been imported.
+Stage 6 now supports `external_curated` records with verified https source URL, source name, license note, and review date. Under decision 026, the assistant may inspect sources and applicable usage terms without per-record human approval. `license_note` records assistant review, evidence URLs, applicable terms, and attribution requirements; `verified_on` records the actual inspection date. Records with unresolved provenance or usage terms stay outside the catalog. Stage 6 imported 14 Kattis records (see "Stage 6: verified external records" below); each also carries a display `attribution` and the `license_url` linked from the source page.
 
 `backend/app/data/retrieval_queries.json` is a separate 14-query evaluation set. It includes three story-variation pairs, vocabulary/algorithm mismatches, related extensions, multiple relevant records, a broad six-relevant-record practice request, and an unsupported geometry task. Each record includes raw and normalized queries, relevant IDs, a rationale, category, optional pair identifier, and label status.
 
@@ -240,3 +240,39 @@ The held-out false flag was a real cue bug: "maximiz**ing** the minimum" did not
 | test (28) | normalized | + cues | **0.214** | **0.929** | **0.952** |
 
 These are not comparable with the Stage 5 table. The catalog, labels and no-match count changed, and P@5 counts each no-match query as 0. Full per-query output: [retrieval_results_stage5b.json](retrieval_results_stage5b.json). MiniLM is still not evaluated on this machine.
+
+# Stage 6: verified external records
+
+**What was added.** 14 `external_curated` records from Kattis (catalog 58 → 72; 58 original + 14 external). On 2026-11-20 the assistant opened each problem page (all returned HTTP 200) under decision 026. It read the title, author, source and the Creative Commons badge on each page: 8 are CC BY 3.0, 5 are CC BY-SA 3.0 and 1 is CC0. This is **assistant review, not human verification**, and each `license_note` says so and cites the page.
+
+**What is stored.**
+- AlgoLens stores a paraphrased summary and a link, never the original statement text.
+- Because CC BY and BY-SA require credit, every external record has an `attribution` line (title, author, source, license) and a `license_url`. The match card shows both under the "Open original problem" link.
+- For BY-SA records, the paraphrased summary is offered under CC BY-SA 3.0, and the attribution says so.
+- Backend and browser reject an external match without credit, and reject a non-https license link.
+
+**Left out, with reasons.**
+- `conveyorbelts` (max flow) and `frosting` (pure arithmetic): verified and licensed, but their techniques are outside the catalog's 25-technique taxonomy. Adding a one-record technique would fail the coverage check.
+- Kattis's site-wide licensing page (`/help/licenses`) returned 404, and the Terms of Service page had no reuse text. Permission therefore rests on each page's own license badge, which links to the Creative Commons deed.
+
+**Labels.** The new records were labeled against every query with the existing policy (LABEL_REVIEW.md), not only where they happened to rank well. 12 queries gained relevant IDs (see LABEL_REVIEW.md); hard negatives were kept out, for example Dijkstra for the 0/1-weight query and Fenwick for static range sums. The status remains `assistant_reviewed_pending_user`. Cue rules and the weight (0.2) were **not** changed.
+
+## Results (catalog `3d6d20895ba4f673`, queries `2181d623041c5c7d`, TF-IDF)
+
+| Split | Query | Ranking | Stage 5b (58 records) P@5 / R@5 / MRR | Stage 6 (72 records, relabeled) P@5 / R@5 / MRR |
+|---|---|---|---|---|
+| dev | raw | + cues | 0.257 / 0.756 / 0.865 | 0.300 / 0.726 / 0.904 |
+| dev | normalized | + cues | 0.286 / 0.893 / 0.776 | 0.343 / 0.853 / 0.776 |
+| test (held-out) | raw | text | 0.136 / 0.595 / 0.460 | 0.136 / 0.464 / 0.505 |
+| test (held-out) | raw | + cues | 0.164 / 0.738 / 0.678 | 0.186 / 0.683 / 0.712 |
+| test (held-out) | normalized | + cues | 0.214 / 0.929 / 0.952 | 0.257 / 0.909 / 0.952 |
+
+**Before relabeling** (the new records counted as irrelevant everywhere), held-out raw + cues was 0.150 / 0.667 / 0.639. "No close match" flagging is unchanged: 1/7 raw and 2/7 normalized no-match queries flagged, and 0/21 false flags.
+
+**How to read this.** The two columns are **not** directly comparable, because both the catalog and the relevant sets changed.
+- P@5 and MRR rose: more correct neighbours now exist.
+- R@5 fell: several queries now have more relevant records than fit in five slots, and new distractors compete. For example, the `stateful_choices` query now has 11 relevant records.
+
+None of this shows the method improved; it is a bigger, more realistic catalog measured honestly. Full per-query output: [retrieval_results_stage6.json](retrieval_results_stage6.json).
+
+**Known regression.** For "range-sum queries on an array that is never updated", the update-based `sensor_adjustments` now edges out the static `ledger_ranges` (0.352 vs 0.351). The new records shift how much each word counts in TF-IDF. The cue for "fixed data" does not penalise "single-position assignments" as updates. This cue gap is left for a future change validated on dev only. The unit test now checks the cue lift rather than first place.

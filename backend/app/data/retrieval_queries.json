@@ -59,7 +59,9 @@
     "normalized_query": "Compute minimum nonnegative weighted directed-graph path costs from one source to all vertices.",
     "relevant_ids": [
       "toll_routes",
-      "delivery_distances"
+      "delivery_distances",
+      "kattis_shortestpath1",
+      "kattis_getshorty"
     ],
     "category": "same_algorithm_different_story",
     "notes": "Weighted cheapest paths are related; unweighted maze steps and connectivity-only tasks are not primary matches.",
@@ -73,7 +75,9 @@
     "normalized_query": "Find single-source shortest total-cost paths in a directed graph with nonnegative edge weights.",
     "relevant_ids": [
       "toll_routes",
-      "delivery_distances"
+      "delivery_distances",
+      "kattis_shortestpath1",
+      "kattis_getshorty"
     ],
     "category": "story_invariance",
     "notes": "Same nonnegative weighted shortest-path task as battery paths, in a different narrative.",
@@ -113,7 +117,8 @@
     "normalized_query": "Find a longest strictly increasing subsequence, permitting gaps between selected positions.",
     "relevant_ids": [
       "rising_readings",
-      "envelope_chain"
+      "envelope_chain",
+      "kattis_longincsubseq"
     ],
     "category": "same_algorithm_different_story",
     "notes": "Rising readings is direct; envelope nesting is a structurally related extension with an extra coordinate, a subjective broader relevance judgment.",
@@ -141,7 +146,8 @@
     "normalized_query": "Choose each weighted, valued item at most once to maximize total value under a capacity cap.",
     "relevant_ids": [
       "rucksack_value",
-      "exact_weight_check"
+      "exact_weight_check",
+      "kattis_knapsack"
     ],
     "category": "same_algorithm_different_story",
     "notes": "One-use optimization differs from unlimited coin combination counting.",
@@ -176,7 +182,9 @@
       "shared_melody",
       "rucksack_value",
       "coin_combinations",
-      "exact_weight_check"
+      "exact_weight_check",
+      "kattis_knapsack",
+      "kattis_pebblesolitaire"
     ],
     "category": "multiple_relevant",
     "notes": "Broad practice request; relevant set is every record whose main technique is dynamic programming or knapsack (recall denominator 9). Rewritten 2026-11-14 so it no longer lists the records it should find.",
@@ -201,7 +209,8 @@
     "normalized_query": "Support single-position assignments interleaved with contiguous range-sum queries on an array.",
     "relevant_ids": [
       "sensor_adjustments",
-      "scoreboard_bonuses"
+      "scoreboard_bonuses",
+      "kattis_fenwick"
     ],
     "category": "hard_negative",
     "notes": "Range sums with interleaved point changes; the static prefix-sum record is a deliberate near miss.",
@@ -268,7 +277,8 @@
     "normalized_query": "Count four-directionally connected regions of marked grid cells.",
     "relevant_ids": [
       "island_count",
-      "paint_bucket"
+      "paint_bucket",
+      "kattis_countingstars"
     ],
     "category": "coverage",
     "notes": "Grid connected components; unit-step grid shortest path is related vocabulary only.",
@@ -296,7 +306,8 @@
     "normalized_query": "Single-source shortest paths with possibly negative directed edge weights and negative-cycle detection.",
     "relevant_ids": [
       "rebate_routes",
-      "arbitrage_alarm"
+      "arbitrage_alarm",
+      "kattis_shortestpath3"
     ],
     "category": "hard_negative",
     "notes": "Negative weights rule out the nonnegative shortest-path records.",
@@ -310,7 +321,9 @@
     "normalized_query": "Minimum total weight set of edges connecting all vertices of a weighted undirected graph.",
     "relevant_ids": [
       "cable_network",
-      "bottleneck_cables"
+      "bottleneck_cables",
+      "kattis_minspantree",
+      "kattis_lostmap"
     ],
     "category": "hard_negative",
     "notes": "Connect everything cheaply, not shortest paths from a source.",
@@ -366,7 +379,8 @@
     "normalized_query": "Decide if a subset of positive integers sums exactly to a target, each used once.",
     "relevant_ids": [
       "exact_weight_check",
-      "rucksack_value"
+      "rucksack_value",
+      "kattis_knapsack"
     ],
     "category": "multiple_relevant",
     "notes": "0/1 capacity optimization is a related single-use item DP.",
@@ -419,7 +433,8 @@
     "query": "A hero walks in a dungeon grid with walls, moving one square up, down, left or right per turn. What is the minimum number of turns to reach the treasure?",
     "normalized_query": "Unit-cost shortest path between two cells in an obstacle grid.",
     "relevant_ids": [
-      "maze_steps"
+      "maze_steps",
+      "kattis_grid"
     ],
     "category": "coverage",
     "notes": "Grid BFS; counting regions is a related grid vocabulary near miss.",
@@ -446,7 +461,8 @@
     "normalized_query": "Track connected component count under union operations.",
     "relevant_ids": [
       "friend_components",
-      "road_redundancy"
+      "road_redundancy",
+      "kattis_unionfind"
     ],
     "category": "coverage",
     "notes": "Incremental connectivity; redundant-edge detection uses the same structure.",

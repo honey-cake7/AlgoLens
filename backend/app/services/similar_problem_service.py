@@ -61,7 +61,8 @@ class SimilarProblemService:
             matches.append(SimilarMatch(problem_id=problem.id, title=problem.title, short_description=problem.short_description,
                 difficulty=problem.difficulty, technique_tags=[problem.main_technique, *problem.secondary_tags],
                 similarity_score=item.score, retrieval_method=method, explanation=reason,
-                source_type=problem.source_type, source_url=problem.source_url, source_name=problem.source_name))
+                source_type=problem.source_type, source_url=problem.source_url, source_name=problem.source_name,
+                attribution=problem.attribution, license_url=problem.license_url))
         if not matches:
             warnings.append("No positive-similarity candidates were found; try a concise description of the task and its conditions.")
         return SimilarResponse(query=query, query_source=query_source, requested_method=settings.method, retrieval_method=method, catalog_revision=revision, reranking=reranking, uncovered_topics=uncovered, matches=matches, warnings=warnings)

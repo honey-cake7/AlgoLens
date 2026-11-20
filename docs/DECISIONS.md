@@ -141,3 +141,11 @@ The user authorizes the assistant to verify external sources and applicable usag
 Keep the existing provenance contract: `source_url`, `source_name`, `license_note`, and `verified_on`. In `license_note`, identify the review as assistant review and record the evidence URLs, dataset version or revision when applicable, license terms, and attribution requirements. `verified_on` is the actual date of inspection. Leave records with unresolved provenance or usage terms out of the catalog and report why; never invent verification evidence or describe assistant review as human verification. Run the strict catalog checker after imports. Schema validation checks metadata structure, not the truth of provenance or legal permission.
 
 This decision changes external-source review responsibility. Existing relevance-label statuses still describe their actual review history; delegating source checks does not make labels user-reviewed.
+
+## 027 — Stage 6 import: licensed Kattis records, paraphrased with attribution
+
+Kattis was chosen because each problem page shows its own license badge. On 2026-11-20 the assistant inspected 16 candidate pages. 14 were imported: 8 CC BY 3.0, 5 CC BY-SA 3.0, 1 CC0. Conveyor Belts (max flow) and Frosting (arithmetic) were verified but left out because their techniques are outside the 25-technique taxonomy. Kattis's site-wide license help page returned 404, so permission rests on each page's badge, which links to the Creative Commons deed.
+
+AlgoLens stores a paraphrased summary and a link, never statement text. Because CC BY and BY-SA require credit where the material is shown, records gain `attribution` and `license_url`; both are required for external records, forbidden for original ones, validated in the backend and browser, and rendered on the match card. BY-SA summaries state they are shared under CC BY-SA 3.0. Titles and authors come from the pages; nothing was guessed.
+
+The new records were labeled against all 42 queries with the existing policy, including the test split; cue rules and the 0.2 weight were not changed. Pre-relabel held-out numbers are reported alongside post-relabel numbers in RETRIEVAL.md. Labels stay `assistant_reviewed_pending_user`.

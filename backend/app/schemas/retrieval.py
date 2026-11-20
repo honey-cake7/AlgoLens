@@ -34,18 +34,23 @@ class PracticeProblem(RetrievalModel):
     source_name: Text | None = None
     license_note: Text | None = None
     verified_on: date | None = None
+    # Credit line shown with the match (title, author, source, license) and the
+    # license deed linked from the source page; required by CC BY / BY-SA.
+    attribution: Text | None = None
+    license_url: str | None = None
 
     @model_validator(mode="after")
     def provenance_matches_source_type(self):
-        provenance = (self.source_url, self.source_name, self.license_note, self.verified_on)
+        provenance = (self.source_url, self.source_name, self.license_note, self.verified_on, self.attribution, self.license_url)
         if self.source_type == "original_practice":
             if any(value is not None for value in provenance):
                 raise ValueError("Original practice records must not claim external URLs or provenance")
         else:
             if any(value is None for value in provenance):
-                raise ValueError("External records need source_url, source_name, license_note and verified_on")
-            if not re.fullmatch(r"https://[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?:/[^\s<>\"']*)?", self.source_url):
-                raise ValueError("External source URLs must be plain https links")
+                raise ValueError("External records need source_url, source_name, license_note, verified_on, attribution and license_url")
+            for url in (self.source_url, self.license_url):
+                if not re.fullmatch(r"https://[A-Za-z0-9.-]+\.[A-Za-z]{2,}(?:/[^\s<>\"']*)?", url):
+                    raise ValueError("External source and license URLs must be plain https links")
         return self
 
     @field_validator("secondary_tags")
@@ -72,11 +77,14 @@ class SimilarMatch(RetrievalModel):
     source_type: Literal["original_practice", "external_curated"] = "original_practice"
     source_url: str | None = None
     source_name: str | None = None
+    attribution: str | None = None
+    license_url: str | None = None
 
     @model_validator(mode="after")
     def link_only_for_external(self):
-        if (self.source_type == "original_practice") != (self.source_url is None):
-            raise ValueError("Only external curated matches carry a source URL")
+        original = self.source_type == "original_practice"
+        if any(original != (value is None) for value in (self.source_url, self.attribution, self.license_url)):
+            raise ValueError("Only external curated matches carry a source URL, attribution and license URL")
         return self
 
 

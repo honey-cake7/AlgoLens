@@ -1,6 +1,6 @@
 # Relevance label review
 
-**Status: assistant-reviewed on 2026-11-14, waiting for user sign-off.** Every query in `backend/app/data/retrieval_queries.json` has `label_status: assistant_reviewed_pending_user`. That means labels were checked for consistency against all 58 catalog records, but **no human has confirmed them**. Do not describe the benchmark as human-labeled until the sign-off below is done.
+**Status: assistant-reviewed on 2026-11-14 (58 records) and 2026-11-20 (14 Kattis records added in Stage 6), waiting for user sign-off.** Every query in `backend/app/data/retrieval_queries.json` has `label_status: assistant_reviewed_pending_user`. That means labels were checked for consistency against all 72 catalog records, but **no human has confirmed them**. Do not describe the benchmark as human-labeled until the sign-off below is done.
 
 ## Policy used
 
@@ -27,6 +27,12 @@ A catalog record is **relevant** to a query when a student who solved the record
 | `pair_to_target` | test | + `price_gap_pairs` (new) | Hash-map complement lookup. |
 | `org_chart_manager` | test | + `kth_ancestor_lookup` (new) | Binary-lifting ancestor jumps. |
 | 6 new queries | test | Added with no relevant records | Out-of-catalog topics (string matching, primes, huge-N recurrence, impartial games, max flow, convex hull) for the "no close match" notice. Written before that rule existed. |
+| `battery_paths`, `currency_paths` | dev | + `kattis_shortestpath1`, `kattis_getshorty` (Stage 6) | Nonnegative single-source shortest paths; Get Shorty is the multiplicative variant of the same method. Not added to `token_corridors` (0/1 weights target a simpler method). |
+| `rising_noncontiguous` | dev | + `kattis_longincsubseq` (Stage 6) | Same longest increasing subsequence. |
+| `one_use_equipment`, `stateful_choices` | dev | + `kattis_knapsack`; `stateful_choices` also + `kattis_pebblesolitaire` (Stage 6) | 0/1 knapsack; `stateful_choices` keeps its rule (every DP or knapsack record), now 11 records. |
+| `rebate_loop` | test | + `kattis_shortestpath3` (Stage 6) | Negative weights with negative-cycle detection. |
+| `pipeline_layout` | test | + `kattis_minspantree`, `kattis_lostmap` (Stage 6) | Spanning-tree method; Lost Map (tree from a distance matrix) is the most subjective call. |
+| `merging_clubs`, `mixing_desk_levels`, `exact_parcel`, `lake_regions`, `dungeon_moves` | test | + `kattis_unionfind`, `kattis_fenwick`, `kattis_knapsack`, `kattis_countingstars`, `kattis_grid` (Stage 6) | Same main idea. Fenwick not added to static or offline range-sum queries (hard negatives); `kattis_bank` and `kattis_kastenlauf` matched no query. |
 
 The cue weight was **not** changed after relabeling. The dev sweep is flat between 0.15 and 0.4 (within 0.02), and re-tuning on 14 queries would chase noise. See RETRIEVAL.md.
 

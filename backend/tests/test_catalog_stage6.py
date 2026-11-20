@@ -1,4 +1,4 @@
-"""Stage 6: provenance rules for future external records and the catalog checker."""
+"""Stage 6: provenance rules for external records, the shipped Kattis imports, and the catalog checker."""
 
 import json
 
@@ -10,18 +10,37 @@ from app.retrieval.catalog import load_catalog
 from app.schemas.retrieval import PracticeProblem, SimilarMatch
 
 EXTERNAL = {"source_type": "external_curated", "source_url": "https://example.org/fixture-problem",
-            "source_name": "Example fixture archive", "license_note": "Fixture only; not a real record", "verified_on": "2026-11-14"}
+            "source_name": "Example fixture archive", "license_note": "Fixture only; not a real record", "verified_on": "2026-11-14",
+            "attribution": "Fixture attribution", "license_url": "https://example.org/license"}
+PROVENANCE = ["source_url", "source_name", "license_note", "verified_on", "attribution", "license_url"]
 
 
 @pytest.fixture
 def base():
-    return load_catalog()[0][0].model_dump()
+    return _original(load_catalog()[0])
 
 
-def test_shipped_catalog_is_all_original(base):
+def _original(records):
+    return next(item for item in records if item.source_type == "original_practice").model_dump()
+
+
+def test_shipped_catalog_mixes_original_and_reviewed_external_records():
     records = load_catalog()[0]
-    assert {item.source_type for item in records} == {"original_practice"}
-    assert all(item.source_url is None and item.source_name is None for item in records)
+    original = [item for item in records if item.source_type == "original_practice"]
+    external = [item for item in records if item.source_type == "external_curated"]
+    assert len(original) == 58 and len(external) == 14
+    assert all(item.source_url is None and item.attribution is None for item in original)
+    for item in external:
+        # Only pages actually inspected; ids mirror the URL slug.
+        assert item.source_url == f"https://open.kattis.com/problems/{item.id.removeprefix('kattis_')}"
+        assert item.source_name == "Kattis" and str(item.verified_on) == "2026-11-20"
+        # Assistant review is recorded as such, never as human verification.
+        assert item.license_note.startswith("Assistant review (not human verification)")
+        assert item.source_url in item.license_note and item.license_url in item.license_note
+        assert item.license_url.startswith("https://creativecommons.org/")
+        assert item.title in item.attribution and "paraphrased" in item.attribution
+        if "by-sa" in item.license_url:
+            assert "shared under CC BY-SA 3.0" in item.attribution
 
 
 def test_external_record_with_full_provenance_validates(base):
@@ -29,19 +48,20 @@ def test_external_record_with_full_provenance_validates(base):
     assert record.source_type == "external_curated" and str(record.verified_on) == "2026-11-14"
 
 
-@pytest.mark.parametrize("missing", ["source_url", "source_name", "license_note", "verified_on"])
+@pytest.mark.parametrize("missing", PROVENANCE)
 def test_external_record_requires_every_provenance_field(base, missing):
     with pytest.raises(ValidationError):
         PracticeProblem.model_validate({**base, **EXTERNAL, missing: None})
 
 
 @pytest.mark.parametrize("url", ["http://example.org/x", "javascript:alert(1)", "https://example.org/a b", "data:text/html,x", "https://localhost/x"])
-def test_external_urls_must_be_plain_https(base, url):
+@pytest.mark.parametrize("field", ["source_url", "license_url"])
+def test_external_urls_must_be_plain_https(base, url, field):
     with pytest.raises(ValidationError):
-        PracticeProblem.model_validate({**base, **EXTERNAL, "source_url": url})
+        PracticeProblem.model_validate({**base, **EXTERNAL, field: url})
 
 
-@pytest.mark.parametrize("field", ["source_url", "source_name", "license_note", "verified_on"])
+@pytest.mark.parametrize("field", PROVENANCE)
 def test_original_records_cannot_claim_provenance(base, field):
     with pytest.raises(ValidationError):
         PracticeProblem.model_validate({**base, field: EXTERNAL[field]})
@@ -55,11 +75,25 @@ def test_match_links_only_for_external():
         SimilarMatch.model_validate({**common, "source_url": "https://example.org/x"})
     with pytest.raises(ValidationError):
         SimilarMatch.model_validate({**common, "source_type": "external_curated"})
+    external = {**common, "source_type": "external_curated", "source_url": "https://example.org/x", "source_name": "S"}
+    with pytest.raises(ValidationError):  # a link without credit is refused
+        SimilarMatch.model_validate(external)
+    assert SimilarMatch.model_validate({**external, "attribution": "A", "license_url": "https://example.org/l"}).attribution == "A"
+    with pytest.raises(ValidationError):
+        SimilarMatch.model_validate({**common, "attribution": "A"})
+
+
+def test_service_passes_attribution_to_external_matches():
+    from app.retrieval.config import RetrievalSettings
+    from app.services.similar_problem_service import SimilarProblemService
+    response = SimilarProblemService(RetrievalSettings()).search("Merge the sets of two elements or answer whether two elements are in the same set; elements start in singleton sets.", 20)
+    match = next(item for item in response.matches if item.problem_id == "kattis_unionfind")
+    assert match.source_type == "external_curated" and match.license_url and "Per Austrin" in match.attribution
 
 
 def test_checker_passes_on_shipped_data():
     report = catalog_check.check()
-    assert report["records"] == 58 and report["problems"] == 0
+    assert report["records"] == 72 and report["problems"] == 0
     assert report["near_duplicates"] == [] and report["query_leakage"] == [] and report["unknown_relevance_ids"] == []
     assert report["single_record_techniques"] == []  # every technique has at least two records
 

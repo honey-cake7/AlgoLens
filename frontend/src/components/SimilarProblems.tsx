@@ -30,6 +30,7 @@ export default function SimilarProblems({ result, collapsed = false }: { result:
         </div>
         <p className="mt-2 break-words text-xs leading-5 text-ink-3">{item.explanation}</p>
         {item.source_type === 'external_curated' && item.source_url && <a className="mt-2 inline-block break-all font-mono text-xs font-medium text-accent underline underline-offset-4" href={item.source_url} target="_blank" rel="noopener noreferrer">Open original problem (external site)</a>}
+        {item.source_type === 'external_curated' && item.attribution && <p className="mt-1.5 break-words text-[0.7rem] leading-5 text-ink-3">{item.attribution}{item.license_url && <> <a className="underline underline-offset-2 hover:text-ink" href={item.license_url} target="_blank" rel="noopener noreferrer">License terms</a></>}</p>}
       </li>)}</ol>
     </details>}
   </section>

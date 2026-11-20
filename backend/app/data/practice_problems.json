@@ -823,5 +823,286 @@
     "constraints_summary": null,
     "source_type": "original_practice",
     "source_url": null
+  },
+  {
+    "id": "kattis_shortestpath1",
+    "title": "Single source shortest path, non-negative weights",
+    "short_description": "Several directed graphs with non-negative edge weights. For each graph and a fixed start node, answer queries for the shortest distance to a target node, or report that it cannot be reached.",
+    "normalized_description": "Given a directed graph with non-negative integer edge weights and a source vertex, answer many queries for the minimum total weight path from the source to a target vertex, or report it unreachable.",
+    "main_technique": "dijkstra",
+    "secondary_tags": [
+      "shortest_path",
+      "weighted_graph"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "n ≤ 10⁴, m ≤ 3·10⁴, q ≤ 100, weights 0..1000",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/shortestpath1",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/shortestpath1 shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: KTH CSC Popup 2005. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Single source shortest path, non-negative weights” by Per Austrin (KTH CSC Popup 2005), Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_shortestpath3",
+    "title": "Single source shortest path, negative weights",
+    "short_description": "Directed graphs whose edge weights may be negative. Answer distance queries from a fixed start node, reporting unreachable targets and targets whose distance can be made arbitrarily small.",
+    "normalized_description": "Given a directed graph with possibly negative edge weights and a source vertex, answer queries for the minimum path weight to a target, reporting unreachable targets and targets reachable through a negative-weight cycle as unbounded below.",
+    "main_technique": "bellman_ford",
+    "secondary_tags": [
+      "shortest_path",
+      "negative_cycle"
+    ],
+    "difficulty": "hard",
+    "constraints_summary": "n ≤ 1000, m ≤ 5000, weights −2000..2000",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/shortestpath3",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/shortestpath3 shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: KTH CSC Popup 2005. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Single source shortest path, negative weights” by Per Austrin (KTH CSC Popup 2005), Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_minspantree",
+    "title": "Minimum Spanning Tree",
+    "short_description": "Several undirected weighted graphs. For each one, output the cheapest set of edges connecting all vertices and its total cost, or say that the graph cannot be connected.",
+    "normalized_description": "Given an undirected graph with integer edge weights, choose edges connecting all vertices with minimum total weight and list them, or report that no connecting set exists.",
+    "main_technique": "minimum_spanning_tree",
+    "secondary_tags": [
+      "weighted_graph",
+      "connectivity"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "n ≤ 2·10⁴, m ≤ 3·10⁴",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/minspantree",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/minspantree shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: KTH CSC Popup 2005. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Minimum Spanning Tree” by Per Austrin (KTH CSC Popup 2005), Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_unionfind",
+    "title": "Union-Find",
+    "short_description": "Up to a million elements start in separate groups. Process a long stream of operations that merge two groups or ask whether two elements are currently in the same group.",
+    "normalized_description": "Given N elements initially in singleton sets and an online sequence of operations, merge the sets containing two elements or answer whether two elements are in the same set.",
+    "main_technique": "disjoint_set_union",
+    "secondary_tags": [
+      "online_queries",
+      "connectivity"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": "N, Q ≤ 10⁶",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/unionfind",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/unionfind shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: KTH CSC Popup spring 2013. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Union-Find” by Per Austrin (KTH CSC Popup spring 2013), Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_fenwick",
+    "title": "Fenwick Tree",
+    "short_description": "An array starts as all zeros. Handle millions of operations that add a value at one position or ask for the sum of all elements before a position.",
+    "normalized_description": "Given an array of N zeros, process interleaved point additions and prefix-sum queries online, answering each prefix sum after the earlier updates.",
+    "main_technique": "fenwick_tree",
+    "secondary_tags": [
+      "point_update",
+      "prefix_query"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "N, Q ≤ 5·10⁶, |δ| ≤ 10⁹",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/fenwick",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/fenwick shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: KTH CSC Popup spring 2013. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Fenwick Tree” by Per Austrin (KTH CSC Popup spring 2013), Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_longincsubseq",
+    "title": "Longest Increasing Subsequence",
+    "short_description": "For each integer sequence, find the length of a longest strictly increasing subsequence and print the positions of one such subsequence.",
+    "normalized_description": "Given an integer sequence, find the maximum length of a strictly increasing subsequence, not necessarily contiguous, and reconstruct the indices of one optimal subsequence.",
+    "main_technique": "longest_increasing_subsequence",
+    "secondary_tags": [
+      "reconstruction",
+      "subsequence"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "n ≤ 10⁵ per case",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/longincsubseq",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/longincsubseq shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: KTH CSC Popup 2006. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Longest Increasing Subsequence” by Per Austrin (KTH CSC Popup 2006), Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_knapsack",
+    "title": "Knapsack",
+    "short_description": "Each test gives a bag capacity and items with a value and a weight. Choose items, each at most once, with total weight within capacity and the largest total value, and list them.",
+    "normalized_description": "Given a capacity and items with integer weights and values, select a subset, each item at most once, with total weight at most the capacity maximizing total value, and output the chosen items.",
+    "main_technique": "knapsack",
+    "secondary_tags": [
+      "dynamic_programming",
+      "reconstruction"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "C ≤ 2000, n ≤ 2000",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/knapsack",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/knapsack shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: KTH CSC Popup 2006. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Knapsack” by Per Austrin (KTH CSC Popup 2006), Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_countingstars",
+    "title": "Counting Stars",
+    "short_description": "A small image is drawn with two characters. Count how many separate groups of sky-coloured cells there are, where cells belong together if they touch up, down, left or right.",
+    "normalized_description": "Given a character grid, count the connected components of one cell type under four-directional adjacency.",
+    "main_technique": "flood_fill",
+    "secondary_tags": [
+      "grid",
+      "connected_components"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": "m, n ≤ 100",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/countingstars",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/countingstars shows license badge CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/); author: Greg Hamerly; source: ICPC Dress Rehearsal 2012. Attribution required: title, author, source and license link. Share-alike: this paraphrased summary is offered under CC BY-SA 3.0. Statement text not copied.",
+    "attribution": "“Counting Stars” by Greg Hamerly (ICPC Dress Rehearsal 2012), Kattis. License: CC BY-SA 3.0. Summary paraphrased by AlgoLens and shared under CC BY-SA 3.0.",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_grid",
+    "title": "Grid",
+    "short_description": "Each cell of a digit grid says exactly how far you must jump, in one of four directions, from that cell. Find the fewest jumps from the top-left corner to the bottom-right corner, or -1.",
+    "normalized_description": "Given a grid where each cell digit k allows a move exactly k cells up, down, left or right within bounds, find the minimum number of moves from the top-left to the bottom-right cell, or report impossible.",
+    "main_technique": "bfs",
+    "secondary_tags": [
+      "grid",
+      "unweighted_shortest_path"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "n, m ≤ 500",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/grid",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/grid shows license badge CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/); author: no author listed; source: 2015 Southeast USA Regionals Division 1. Attribution required: title, author, source and license link. Share-alike: this paraphrased summary is offered under CC BY-SA 3.0. Statement text not copied.",
+    "attribution": "“Grid” (2015 Southeast USA Regionals Division 1), Kattis. License: CC BY-SA 3.0. Summary paraphrased by AlgoLens and shared under CC BY-SA 3.0.",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_pebblesolitaire",
+    "title": "Pebble Solitaire",
+    "short_description": "A row of twelve cells holds pebbles. A pebble may jump over a neighbouring pebble into an empty cell, removing the jumped one. Find the fewest pebbles that can be left.",
+    "normalized_description": "Given a length-12 binary row, a move replaces two adjacent occupied cells next to an empty cell by a single occupied cell on the far side; minimize the number of occupied cells reachable by any sequence of moves.",
+    "main_technique": "dynamic_programming",
+    "secondary_tags": [
+      "bitmask",
+      "memoization",
+      "state_search"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "row length 12, ≤ 10 games",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/pebblesolitaire",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/pebblesolitaire shows license badge CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/); author: no author listed; source: Swedish Championships 2000. Attribution required: title, author, source and license link. Share-alike: this paraphrased summary is offered under CC BY-SA 3.0. Statement text not copied.",
+    "attribution": "“Pebble Solitaire” (Swedish Championships 2000), Kattis. License: CC BY-SA 3.0. Summary paraphrased by AlgoLens and shared under CC BY-SA 3.0.",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_getshorty",
+    "title": "Get Shorty",
+    "short_description": "Corridors between rooms each shrink you by a factor between 0 and 1. Find the route from the first room to the last that leaves you as large as possible.",
+    "normalized_description": "Given an undirected graph whose edges carry multiplicative factors in [0, 1], find the path from the first to the last vertex that maximizes the product of edge factors.",
+    "main_technique": "dijkstra",
+    "secondary_tags": [
+      "multiplicative_path",
+      "weighted_graph"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "n ≤ 10⁴, m ≤ 1.5·10⁴",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/getshorty",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/getshorty shows license badge CC BY 3.0 (https://creativecommons.org/licenses/by/3.0/); author: Per Austrin; source: no source listed. Attribution required: title, author, source and license link; AlgoLens text is a paraphrase, not the original statement. Statement text not copied.",
+    "attribution": "“Get Shorty” by Per Austrin, Kattis. License: CC BY 3.0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/licenses/by/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_lostmap",
+    "title": "Lost Map",
+    "short_description": "You are given the full table of road distances between every pair of villages, and the roads are known to form a tree. Recover any set of roads that produces this table.",
+    "normalized_description": "Given a symmetric matrix of pairwise path distances known to come from a weighted tree, output n−1 edges of a tree that reproduces all the distances.",
+    "main_technique": "minimum_spanning_tree",
+    "secondary_tags": [
+      "distance_matrix",
+      "tree_reconstruction"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "n ≤ 2500",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/lostmap",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/lostmap shows license badge CC0 (https://creativecommons.org/about/cc0); author: Bryce Sandlund; source: 2017 ACM ICPC North Central NA Regional. No attribution required; source credited anyway. AlgoLens text is a paraphrase. Statement text not copied.",
+    "attribution": "“Lost Map” by Bryce Sandlund (2017 ACM ICPC North Central NA Regional), Kattis. License: CC0. Summary paraphrased by AlgoLens.",
+    "license_url": "https://creativecommons.org/about/cc0",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_bank",
+    "title": "Bank Queue",
+    "short_description": "People in a queue each bring some cash and will leave after a given minute. Serving one person takes a minute. Choose whom to serve to collect the most cash.",
+    "normalized_description": "Given jobs with unit processing time, a deadline and a profit, schedule a subset so each chosen job finishes by its deadline, maximizing total profit.",
+    "main_technique": "greedy",
+    "secondary_tags": [
+      "scheduling",
+      "deadlines"
+    ],
+    "difficulty": "medium",
+    "constraints_summary": "N ≤ 10⁴, T ≤ 47",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/bank",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/bank shows license badge CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/); author: Lukáš Poláček; source: KTH Challenge 2013. Attribution required: title, author, source and license link. Share-alike: this paraphrased summary is offered under CC BY-SA 3.0. Statement text not copied.",
+    "attribution": "“Bank Queue” by Lukáš Poláček (KTH Challenge 2013), Kattis. License: CC BY-SA 3.0. Summary paraphrased by AlgoLens and shared under CC BY-SA 3.0.",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "verified_on": "2026-11-20"
+  },
+  {
+    "id": "kattis_kastenlauf",
+    "title": "Kastenlauf",
+    "short_description": "Walk from home to a party, buying drinks at stores on the way. With a full box you can walk a fixed distance before needing a store. Decide whether you can reach the party.",
+    "normalized_description": "Given points for a start, a destination and intermediate refill stations, with travel allowed only between points within a fixed Manhattan distance, decide whether the destination is reachable from the start.",
+    "main_technique": "bfs",
+    "secondary_tags": [
+      "reachability",
+      "implicit_graph"
+    ],
+    "difficulty": "easy",
+    "constraints_summary": "≤ 100 stores, ≤ 50 cases",
+    "source_type": "external_curated",
+    "source_url": "https://open.kattis.com/problems/kastenlauf",
+    "source_name": "Kattis",
+    "license_note": "Assistant review (not human verification) on 2026-11-20 under decision 026. Evidence: https://open.kattis.com/problems/kastenlauf shows license badge CC BY-SA 3.0 (https://creativecommons.org/licenses/by-sa/3.0/); author: Jakob Krainz; source: GCPC 2013. Attribution required: title, author, source and license link. Share-alike: this paraphrased summary is offered under CC BY-SA 3.0. Statement text not copied.",
+    "attribution": "“Kastenlauf” by Jakob Krainz (GCPC 2013), Kattis. License: CC BY-SA 3.0. Summary paraphrased by AlgoLens and shared under CC BY-SA 3.0.",
+    "license_url": "https://creativecommons.org/licenses/by-sa/3.0/",
+    "verified_on": "2026-11-20"
   }
 ]

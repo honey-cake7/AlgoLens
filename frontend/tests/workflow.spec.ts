@@ -434,7 +434,7 @@ test('semantic fixture displays honest local method and cosine score', async ({ 
 test('external curated fixture renders a safe provenance link', async ({ page }) => {
   await page.route('**/api/v1/similar', async route => {
     const data = await (await route.fetch()).json()
-    const first = { ...data.matches[0], title: 'Fixture external record', source_type: 'external_curated', source_url: 'https://example.org/fixture-problem', source_name: 'Example fixture archive' }
+    const first = { ...data.matches[0], title: 'Fixture external record', source_type: 'external_curated', source_url: 'https://example.org/fixture-problem', source_name: 'Example fixture archive', attribution: 'Fixture credit line', license_url: 'https://example.org/fixture-license' }
     await route.fulfill({ json: { ...data, matches: [first, ...data.matches.slice(1)] } })
   })
   await page.goto('/')
@@ -446,14 +446,19 @@ test('external curated fixture renders a safe provenance link', async ({ page })
   await expect(link).toHaveCount(1)
   await expect(link).toHaveAttribute('href', 'https://example.org/fixture-problem')
   await expect(link).toHaveAttribute('rel', 'noopener noreferrer')
-  await expect(section.getByText('AlgoLens practice example', { exact: false })).toHaveCount(4)
+  await expect(section).toContainText('Fixture credit line')
+  const license = section.getByRole('link', { name: 'License terms' })
+  await expect(license).toHaveAttribute('href', 'https://example.org/fixture-license')
+  await expect(license).toHaveAttribute('rel', 'noopener noreferrer')
 })
 
-for (const [label, url] of [['javascript', 'javascript:alert(1)'], ['plain http', 'http://example.org/x'], ['original with link', null]] as const) {
+const credit = { attribution: 'Fixture credit line', license_url: 'https://example.org/fixture-license' }
+for (const [label, url, extra] of [['javascript', 'javascript:alert(1)', credit], ['plain http', 'http://example.org/x', credit], ['original with link', null, {}],
+  ['external without credit', 'https://example.org/x', {}], ['unsafe license link', 'https://example.org/x', { ...credit, license_url: 'javascript:alert(1)' }]] as const) {
   test(`unsafe provenance is rejected: ${label}`, async ({ page }) => {
     await page.route('**/api/v1/similar', async route => {
       const data = await (await route.fetch()).json()
-      const bad = url === null ? { ...data.matches[0], source_url: 'https://example.org/x' } : { ...data.matches[0], source_type: 'external_curated', source_url: url, source_name: 'Fixture' }
+      const bad = url === null ? { ...data.matches[0], source_url: 'https://example.org/x' } : { ...data.matches[0], source_type: 'external_curated', source_url: url, source_name: 'Fixture', ...extra }
       await route.fulfill({ json: { ...data, matches: [bad, ...data.matches.slice(1)] } })
     })
     await page.goto('/')
