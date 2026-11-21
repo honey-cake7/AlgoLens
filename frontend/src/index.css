@@ -124,7 +124,12 @@
 
   /* ---------- Hero headline ---------- */
   .hero-title .ital { font-style: italic; font-variation-settings: "SOFT" 100, "WONK" 1; color: var(--color-accent); }
-  .hero-title .line { display: block; overflow: hidden; }
+  /* Each line clips so words can slide up into view. The padding enlarges the
+     clip window so ascenders (h), descenders (p, g) and the italic overhang are
+     not cut by the tight line height; equal negative margins cancel it, so the
+     spacing is unchanged. A flex column stops those margins from collapsing. */
+  .hero-title { display: flex; flex-direction: column; }
+  .hero-title .line { display: block; overflow: hidden; padding: 0.1em 0.14em 0.22em 0.04em; margin: -0.1em -0.14em -0.22em -0.04em; }
   .hero-title .line > span { display: inline-block; animation: line-up 0.9s cubic-bezier(0.2, 0.75, 0.15, 1) backwards; }
   .hero-title .line:nth-child(2) > span { animation-delay: 0.08s; }
   .hero-title .line:nth-child(3) > span { animation-delay: 0.16s; }
@@ -208,7 +213,7 @@
 }
 
 @keyframes rise { from { opacity: 0; transform: translateY(14px); } to { opacity: 1; transform: none; } }
-@keyframes line-up { from { transform: translateY(105%); } to { transform: none; } }
+@keyframes line-up { from { transform: translateY(135%); } to { transform: none; } }
 @keyframes unfold { from { opacity: 0; transform: perspective(700px) rotateX(-60deg); transform-origin: 50% 0; } to { opacity: 1; transform: none; } }
 @keyframes scan { to { transform: translateX(100%); } }
 @keyframes blink { 0%, 100% { opacity: 0.2; } 50% { opacity: 1; } }
