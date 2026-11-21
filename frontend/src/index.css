@@ -58,12 +58,13 @@
   body {
     margin: 0; background: var(--color-paper); color: var(--color-ink);
     font-family: var(--font-sans); -webkit-font-smoothing: antialiased;
-    /* Faint graph-paper grid: the notebook the problem is worked out on. */
-    background-image:
-      linear-gradient(to right, color-mix(in srgb, var(--color-rule) 45%, transparent) 1px, transparent 1px),
-      linear-gradient(to bottom, color-mix(in srgb, var(--color-rule) 45%, transparent) 1px, transparent 1px);
-    background-size: 28px 28px;
-    background-attachment: fixed;
+  }
+  /* Animated background (Backdrop.tsx), fixed behind all content. The paper
+     colour stays on body; a soft vignette keeps the edges calm. */
+  .backdrop-canvas { position: fixed; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+  body::after {
+    content: ''; position: fixed; inset: 0; z-index: -1; pointer-events: none;
+    background: radial-gradient(ellipse 70% 60% at 50% 45%, transparent 40%, color-mix(in srgb, var(--color-paper) 55%, transparent) 100%);
   }
   ::selection { background: var(--color-mark); color: var(--color-ink); }
   button, a, textarea, summary { outline-offset: 3px; }
