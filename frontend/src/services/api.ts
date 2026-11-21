@@ -4,7 +4,10 @@ import { isAlgorithmicAssessment } from './algorithmicValidation'
 import type { SimilarResponse } from '../types/retrieval'
 import { isSimilarResponse } from './retrievalValidation'
 
-const baseUrl = (import.meta.env.VITE_API_BASE_URL || 'http://127.0.0.1:8000').replace(/\/+$/, '')
+// Empty by default: requests go to /api on the page's own origin, which the
+// Vite dev/preview proxy forwards to the backend (see vite.config.ts). Set
+// VITE_API_BASE_URL only to call a backend on a different origin directly.
+const baseUrl = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/+$/, '')
 
 export async function getHealth(signal: AbortSignal): Promise<HealthResponse> {
   const response = await fetch(`${baseUrl}/api/v1/health`, { signal })

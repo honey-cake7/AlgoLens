@@ -97,7 +97,7 @@ Set-Location C:\path\to\AlgoLens\frontend
 npm.cmd run dev
 ```
 
-Open <http://127.0.0.1:5173>. API docs: <http://127.0.0.1:8000/docs>. Health: <http://127.0.0.1:8000/api/v1/health>. Ctrl+C stops each server. Vite requires port 5173 to be free instead of silently choosing a different CORS origin.
+Open <http://127.0.0.1:5173>. To use it from a phone or another device on the same Wi-Fi, start the frontend with `npm run dev:lan` instead and open the **Network** address Vite prints (for example `http://192.168.1.20:5173`). Only the frontend port is shared; the backend stays private on 127.0.0.1. On Windows, allow inbound TCP 5173 for your local subnet once (an admin PowerShell `New-NetFirewallRule -DisplayName "AlgoLens dev (LAN only)" -Direction Inbound -Protocol TCP -LocalPort 5173 -RemoteAddress LocalSubnet -Action Allow`). Anyone on that Wi-Fi can then use the app, including Groq analysis if a key is configured. API docs: <http://127.0.0.1:8000/docs>. Health: <http://127.0.0.1:8000/api/v1/health>. Ctrl+C stops each server. Vite requires port 5173 to be free instead of silently choosing a different CORS origin.
 
 ## Configuration and manual live activation
 
@@ -113,7 +113,7 @@ The backend reads the **repository-root `.env`**, independently of the working d
 | `GROQ_TIMEOUT_SECONDS` | `30` | Total provider deadline, greater than 0 and at most 40 seconds |
 | `CORS_ORIGINS` | localhost/127.0.0.1:5173 | Comma-separated exact allowed browser origins |
 
-The frontend reads `VITE_API_BASE_URL` from frontend/.env, defaulting to `http://127.0.0.1:8000`. Every `VITE_*` value is public, embedded into the browser bundle; **never place an API key there**. Frontend settings require a Vite restart/rebuild. The browser analysis deadline is 45 seconds, longer than the backend limit.
+The browser calls `/api` on the page's own address, and the Vite dev/preview server forwards it to the backend (`ALGOLENS_API_TARGET`, default `http://127.0.0.1:8000`), so no CORS setup is needed. `VITE_API_BASE_URL` (frontend/.env) is optional and only for calling a backend on another origin directly; that backend then needs `CORS_ORIGINS`. Every `VITE_*` value is public, embedded into the browser bundle; **never place an API key there**. Frontend settings require a Vite restart/rebuild. The browser analysis deadline is 45 seconds, longer than the backend limit.
 
 To enable live inference manually:
 

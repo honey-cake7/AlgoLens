@@ -1,11 +1,12 @@
 """Small in-memory cosine searches. Neither constructor downloads a model."""
 
+import re
 import weakref
 from dataclasses import dataclass
 from typing import Protocol
 
 import numpy as np
-from sklearn.feature_extraction.text import TfidfVectorizer
+from sklearn.feature_extraction.text import ENGLISH_STOP_WORDS, TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 from app.retrieval import cues
@@ -34,10 +35,34 @@ def rank(records: list[PracticeProblem], scores, k: int) -> list[RankedMatch]:
     return sorted(candidates, key=lambda item: (-item.score, item.problem.id))[:k]
 
 
+_WORD = re.compile(r"(?u)\b\w\w+\b")
+
+
+def _singular(token: str) -> str:
+    """Light plural folding so "ranges"/"range" and "queries"/"query" match.
+
+    Deliberately crude and symmetric (applied to catalog and query alike), not
+    a linguistic stemmer: "-ies" becomes "-y"; a trailing "s" is dropped
+    except after "ss", "us" or "is". Chosen on the dev split only.
+    """
+    if len(token) > 4 and token.endswith("ies"):
+        return token[:-3] + "y"
+    if len(token) > 3 and token.endswith("s") and not token.endswith(("ss", "us", "is")):
+        return token[:-1]
+    return token
+
+
+def analyze(text: str) -> list[str]:
+    """Same as scikit-learn's word analyzer with English stop words and
+    unigrams+bigrams, plus plural folding after stop-word removal."""
+    tokens = [_singular(token) for token in _WORD.findall(text.lower()) if token not in ENGLISH_STOP_WORDS]
+    return tokens + [f"{left} {right}" for left, right in zip(tokens, tokens[1:])]
+
+
 class TFIDFRetriever:
     def __init__(self, records: list[PracticeProblem]):
         self.records = records
-        self.vectorizer = TfidfVectorizer(stop_words="english", ngram_range=(1, 2), sublinear_tf=True)
+        self.vectorizer = TfidfVectorizer(analyzer=analyze, sublinear_tf=True)
         self.matrix = None
         if records:
             try:

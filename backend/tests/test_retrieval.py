@@ -234,3 +234,11 @@ def test_download_command_requires_an_explicit_flag():
 def test_evaluation_does_not_substitute_fallback_scores(tmp_path):
     with pytest.raises(RetrievalUnavailable):
         evaluate("semantic", RetrievalSettings(model_dir=tmp_path / "missing"))
+
+
+def test_tfidf_folds_plurals_symmetrically_without_touching_stop_words():
+    from app.retrieval.retrievers import analyze
+    assert analyze("Many range queries over index ranges") == ["range", "query", "index", "range", "range query", "query index", "index range"]
+    # "ss"/"us"/"is" endings and short words are left alone; stop words are removed first.
+    assert analyze("process status axis gas")[:4] == ["process", "status", "axis", "gas"]
+    assert analyze("this is it") == []

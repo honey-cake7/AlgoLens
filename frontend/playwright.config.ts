@@ -51,7 +51,9 @@ export default defineConfig({
       command: `npm run dev -- --port ${frontendPort}`,
       url: frontendUrl,
       reuseExistingServer: false,
-      env: { VITE_API_BASE_URL: backendUrl },
+      // Same path real users take: the page calls /api on its own origin and
+      // the Vite proxy forwards to the test backend.
+      env: { ALGOLENS_API_TARGET: backendUrl, VITE_API_BASE_URL: '' },
     },
   ],
 })

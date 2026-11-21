@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <!-- AlgoLens mark: a reading lens with a marked line, in the app's ink and accent colours. -->
+  <style>
+    .ring { stroke: #17171a; } .bg { fill: #f3efe6; }
+    @media (prefers-color-scheme: dark) { .ring { stroke: #efeae0; } .bg { fill: #121214; } }
+  </style>
+  <rect class="bg" width="32" height="32" rx="7" />
+  <circle class="ring" cx="14" cy="14" r="8" fill="none" stroke-width="2.6" />
+  <path d="M10 14h8" stroke="#d9481f" stroke-width="2.6" stroke-linecap="round" />
+  <path d="M20 20l6 6" stroke="#d9481f" stroke-width="3.2" stroke-linecap="round" />
+</svg>

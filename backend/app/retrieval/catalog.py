@@ -9,7 +9,7 @@ from pydantic import TypeAdapter
 from app.schemas.retrieval import PracticeProblem
 
 CATALOG_PATH = Path(__file__).resolve().parents[1] / "data" / "practice_problems.json"
-REPRESENTATION_VERSION = "task-only-v1"
+REPRESENTATION_VERSION = "task-only-v1-plural"  # bumped when TF-IDF began folding plurals
 
 
 def load_catalog(path: Path = CATALOG_PATH) -> tuple[list[PracticeProblem], str]:
