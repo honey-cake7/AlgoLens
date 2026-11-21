@@ -88,7 +88,7 @@ Default fake mode and the independent offline assessment need no key or external
 
 Status mapping: configuration/auth/model-access 503, quota 429, timeout 504, invalid output 502, unavailable 503, unexpected internal error 500. Messages never use raw exceptions. No paid fallback, auto-upgrade, automatic retry, startup model probe, or model-list request is implemented. The app cannot inspect an account's billing plan; manual setup must stay on Groq Free, and fake mode remains available if free access is unavailable.
 
-Exact local CORS origins and GET/POST are retained. Ports 5173 and 8000 are distinct origins; JSON POST uses a preflight. CORS is not authentication. Backend settings stay in the root .env/process environment; frontend VITE_API_BASE_URL is public. No real environment files are overwritten. Existing .gitignore patterns cover nested .env files.
+Exact local CORS origins and GET/POST are retained for direct cross-origin use. By default the browser calls `/api` on its own origin and the Vite dev/preview proxy forwards to the backend (decision 028), so no preflight or CORS is involved; when `VITE_API_BASE_URL` points at another origin, ports 5173 and 8000 are distinct origins and JSON POST uses a preflight. CORS is not authentication. Backend settings stay in the root .env/process environment; frontend VITE_API_BASE_URL is public. No real environment files are overwritten. Existing .gitignore patterns cover nested .env files.
 
 ## Offline verification and future work
 

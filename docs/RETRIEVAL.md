@@ -275,4 +275,33 @@ These are not comparable with the Stage 5 table. The catalog, labels and no-matc
 
 None of this shows the method improved; it is a bigger, more realistic catalog measured honestly. Full per-query output: [retrieval_results_stage6.json](retrieval_results_stage6.json).
 
-**Known regression.** For "range-sum queries on an array that is never updated", the update-based `sensor_adjustments` now edges out the static `ledger_ranges` (0.352 vs 0.351). The new records shift how much each word counts in TF-IDF. The cue for "fixed data" does not penalise "single-position assignments" as updates. This cue gap is left for a future change validated on dev only. The unit test now checks the cue lift rather than first place.
+**Known regression (fixed in 6b below).** For "range-sum queries on an array that is never updated", the update-based `sensor_adjustments` edged out the static `ledger_ranges` (0.352 vs 0.351). The cause first given here, a cue gap, was **wrong**: the cue rules already mark the conflict. The real cause is lexical; see 6b.
+
+## Stage 6b: plural folding in TF-IDF
+
+**Diagnosis.** The cue rules already handled the slipping query above: the query is "fixed data", `ledger_ranges` agrees and `sensor_adjustments` conflicts ("assignments" are updates). The ranking was lost on text. TF-IDF treated "range" and "ranges", or "query" and "queries", as unrelated words. The query's "range-sum queries" overlapped the update record's exact wording more than the static record's "index ranges".
+
+**Change.** TF-IDF now folds simple plurals on both the catalog and query side: "-ies" becomes "-y", and a trailing "s" is dropped except after "ss", "us" or "is". Stop words are removed first, exactly as before. This is not a stemmer. `analyze()` in `retrievers.py` reproduces scikit-learn's word analyzer (English stop words, unigrams + bigrams), and a run with folding switched off reproduced the previous dev numbers exactly. `REPRESENTATION_VERSION` is now `task-only-v1-plural`, so cached indexes rebuild.
+
+**Chosen on dev only.** Dev split, with the cue weight unchanged at 0.2; each cell is P@5 / R@5 / MRR:
+
+| Dev | Before | After |
+|---|---|---|
+| raw text | 0.186 / 0.488 / 0.624 | 0.200 / 0.515 / 0.629 |
+| raw + cues | 0.300 / 0.726 / 0.904 | 0.329 / 0.784 / 0.904 |
+| normalized text | 0.314 / 0.821 / 0.737 | 0.357 / 0.873 / 0.788 |
+| normalized + cues | 0.343 / 0.853 / 0.776 | 0.343 / 0.853 / 0.801 |
+
+The unit-test query now ranks `ledger_ranges` first by a clear margin (0.426 vs 0.379).
+
+**Held-out test, measured once afterwards (catalog `827559d9f7ca0747`).** Nothing was tuned on these numbers.
+
+| Test (held-out) | Before | After |
+|---|---|---|
+| raw text | 0.136 / 0.464 / 0.505 | 0.150 / 0.528 / 0.466 |
+| raw + cues (**app default**) | 0.186 / 0.683 / 0.712 | 0.186 / 0.683 / 0.712 (unchanged) |
+| normalized text | 0.221 / 0.774 / 0.905 | 0.221 / 0.774 / 0.873 |
+| normalized + cues | 0.257 / 0.909 / 0.952 | 0.264 / 0.925 / 0.921 |
+
+**How to read this.** On held-out data the default configuration is unchanged. Elsewhere, recall and precision rise slightly while MRR falls slightly. The test split confirms "no harm to the default", not a general improvement. "No close match" flagging is unchanged (1/7 raw, 2/7 normalized, 0/21 false flags). Full output: [retrieval_results_stage6b.json](retrieval_results_stage6b.json).
+
