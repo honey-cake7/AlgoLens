@@ -9,6 +9,7 @@ import ProblemInput from './components/ProblemInput'
 import ResultNav from './components/ResultNav'
 import SimilarProblems from './components/SimilarProblems'
 import ThemeToggle from './components/ThemeToggle'
+import Backdrop from './components/Backdrop'
 import { usePageScroll, useScrollProgress } from './hooks/useScrollEffects'
 import { analyzeProblem, assessProblem, findSimilarProblems } from './services/api'
 import type { SimilarResponse } from './types/retrieval'
@@ -94,6 +95,7 @@ export default function App() {
 
   return (
     <div className="min-h-screen">
+      <Backdrop />
       <div ref={bar} aria-hidden="true" className="scroll-progress" />
       <header data-scrolled={scrolled} className="site-header sticky top-0 z-50">
         <div className={`mx-auto flex max-w-6xl items-center justify-between gap-4 px-4 sm:px-6 ${scrolled ? 'py-2.5' : 'py-4'}`} style={{ transition: 'padding 0.3s' }}>
